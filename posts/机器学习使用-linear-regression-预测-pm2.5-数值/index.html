@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>【机器学习】使用 Linear Regression 预测 PM2.5 数值 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="机器学习">
+<meta name="description" content="一、实验目的
+利用即墨站的空气质量监测数据，使用线性回归（Linear Regression）预测 PM2.5 的数值。
+二、实验环境
+
+操作系统：Windows 11
+处理器：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz)
+显卡：NVIDIA GeForce GTX 1650
+运行环境：
+
+Python 3.10.11
+pandas 2.1.0
+numpy 1.24.2
+matplotlib 3.7.1
+tqdm 4.66.1
+
+
+
+三、数据说明
+1. 训练集（Train Set）
+train.csv包含了  2014 年 1 月 1 日至 2014 年 12 月 20 日的即墨站的全部监测数据，使用 VScode 插件转成表格形式如下所示：">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eb8f5da85697cd810df09cc87c7f69c1a1690fdc75d0a7bc8bcd70301c4c3cca.css" integrity="sha256-649dqFaXzYEN8JzIfH9pwaFpD9x10Ke8i81wMBxMPMo=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            },
+            "HTML-CSS": {
+                availableFonts: ["Arial", "TeX"],
+                preferredFont: "TeX",
+                webFont: "TeX"
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+<meta property="og:title" content="【机器学习】使用 Linear Regression 预测 PM2.5 数值" />
+<meta property="og:description" content="一、实验目的
+利用即墨站的空气质量监测数据，使用线性回归（Linear Regression）预测 PM2.5 的数值。
+二、实验环境
+
+操作系统：Windows 11
+处理器：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz)
+显卡：NVIDIA GeForce GTX 1650
+运行环境：
+
+Python 3.10.11
+pandas 2.1.0
+numpy 1.24.2
+matplotlib 3.7.1
+tqdm 4.66.1
+
+
+
+三、数据说明
+1. 训练集（Train Set）
+train.csv包含了  2014 年 1 月 1 日至 2014 年 12 月 20 日的即墨站的全部监测数据，使用 VScode 插件转成表格形式如下所示：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-01-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-01-21T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="【机器学习】使用 Linear Regression 预测 PM2.5 数值"/>
+<meta name="twitter:description" content="一、实验目的
+利用即墨站的空气质量监测数据，使用线性回归（Linear Regression）预测 PM2.5 的数值。
+二、实验环境
+
+操作系统：Windows 11
+处理器：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz)
+显卡：NVIDIA GeForce GTX 1650
+运行环境：
+
+Python 3.10.11
+pandas 2.1.0
+numpy 1.24.2
+matplotlib 3.7.1
+tqdm 4.66.1
+
+
+
+三、数据说明
+1. 训练集（Train Set）
+train.csv包含了  2014 年 1 月 1 日至 2014 年 12 月 20 日的即墨站的全部监测数据，使用 VScode 插件转成表格形式如下所示："/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "【机器学习】使用 Linear Regression 预测 PM2.5 数值",
+      "item": "https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "【机器学习】使用 Linear Regression 预测 PM2.5 数值",
+  "name": "【机器学习】使用 Linear Regression 预测 PM2.5 数值",
+  "description": "一、实验目的 利用即墨站的空气质量监测数据，使用线性回归（Linear Regression）预测 PM2.5 的数值。\n二、实验环境 操作系统：Windows 11 处理器：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz) 显卡：NVIDIA GeForce GTX 1650 运行环境： Python 3.10.11 pandas 2.1.0 numpy 1.24.2 matplotlib 3.7.1 tqdm 4.66.1 三、数据说明 1. 训练集（Train Set） train.csv包含了 2014 年 1 月 1 日至 2014 年 12 月 20 日的即墨站的全部监测数据，使用 VScode 插件转成表格形式如下所示：\n",
+  "keywords": [
+    "机器学习"
+  ],
+  "articleBody": "一、实验目的 利用即墨站的空气质量监测数据，使用线性回归（Linear Regression）预测 PM2.5 的数值。\n二、实验环境 操作系统：Windows 11 处理器：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz) 显卡：NVIDIA GeForce GTX 1650 运行环境： Python 3.10.11 pandas 2.1.0 numpy 1.24.2 matplotlib 3.7.1 tqdm 4.66.1 三、数据说明 1. 训练集（Train Set） train.csv包含了 2014 年 1 月 1 日至 2014 年 12 月 20 日的即墨站的全部监测数据，使用 VScode 插件转成表格形式如下所示：\n表头包含了日期、站点、测项以及24小时的监测数值 测项共有 18 项观测数据：AMB_TEMP， CH4， CO， NHMC， NO， NO2， NOx， O3， PM10， PM2.5， RAINFALL， RH， SO2， THC， WD_HR， WIND_DIREC， WIND_SPEED， WS_HR。 2. 测试集（Test Set） test.csv是从剩下的数据中取出的连续的 10 小时作为一笔数据，前 9 小时作为 feature，第 10 小时的 PM2.5 数值作为 answer。\n使用 VScode 插件转成表格形式如下所示：\n四、实验方法 1. 导入必要的库 import pandas as pd # 用于读取 csv 文件 import numpy as np # 用于创建向量和进行数学统计 import matplotlib.pyplot as plt # 用于绘制图像 from tqdm import tqdm # 用于显示进度条 2. 数据预处理 将数据按月份分为 12 组，每组有 18 行，每行有 $20 \\times 24 =480$ 小时的数据。\n构建训练数据 x，x 为每个连续 9 小时的数据，共 $12 \\times (480-9)=12 \\times 471$ 组，每组有 $9 \\times 18$ 个观测值。\n构建标签数据 y，y 为每个第 10 小时的数据，共 $12 \\times (480-9)=12 \\times 471$ 组，每组 1 个 观测值，即第 9 个观测项 PM2.5。\n然后计算每个特征的均值和标准差，再对每一个特征进行标准化处理。\n标准化： $$ \\hat{x_{i,j}}=\\frac{x_{i,j}-\\overline{x_{j}}}{\\sigma_j} $$ 对特征进行标准化处理可以使标准化后的特征的均值和方差变为 0\n# 读取训练数据集 data = pd.read_csv('./train.csv') # 处理数据，将 NR 替换为 0，并将数据转换为 numpy 数组 # 只选取有用的数据列 (从第四列开始) data = data.iloc[:, 3:] data[data == 'NR'] = 0 raw_data = data.to_numpy() # 将数据按月份分割成 12 组，每个月有 18 行传感器数据，每行有 480 小时的数据 month_data = {} for month in range(12): sample = np.empty([18, 480]) for day in range(20): sample[:, day * 24: (day + 1) * 24] = raw_data[18 * (20 * month + day): 18 * (20 * month + day + 1), :] month_data[month] = sample # 构造训练数据 x 和标签数据 y，x 代表 9 小时的特征数据，y 代表第 10 小时的 PM2.5 数据 x = np.empty([12 * 471, 18 * 9], dtype=float) y = np.empty([12 * 471, 1], dtype=float) for month in range(12): for day in range(20): for hour in range(24): if day == 19 and hour \u003e 14: # 最后一天只取到第 15 小时 continue x[month * 471 + day * 24 + hour, :] = month_data[month][:, day * 24 + hour: day * 24 + hour + 9].reshape(1, -1) y[month * 471 + day * 24 + hour, 0] = month_data[month][9, day * 24 + hour + 9] # 预测第 10 小时 PM2.5 值 mean_x = np.mean(x, axis=0) # 计算每个特征的均值 std_x = np.std(x, axis=0) # 计算每个特征的标准差 # 对特征数据 x 进行标准化处理 for i in range(len(x)): for j in range(len(x[0])): if std_x[j] != 0: # 避免除以零 x[i][j] = (x[i][j] - mean_x[j]) / std_x[j] 3. 训练模型 I. 模型定义 $$ \\hat{y}=X \\cdot w $$\n其中 $X$ 是特征矩阵，$w$ 是参数向量，$\\hat{y}$ 是预测值\nII. 损失函数 在训练过程中，我们使用**均方根误差（Root Mean Squared Error, RMSE）**作为损失函数来衡量模型的好坏。\nRMSE表达式： $$ Loss=\\sqrt{\\frac{1}{N}\\sum_{i=1}^{N}(\\hat{y_i}-y_i)^2} $$ 其中：\n$N$ 表示样本数。\n$\\hat{y_i}$ 表示模型预测的第 $i$ 个样本的预测值。\n$y_i$ 表示第 $i$ 个样本的真实值。\n$Loss$ 值越小表示模型的预测结果越接近真实值。\nIII. 梯度下降和 Adagrad 更新算法 梯度下降：\n线性回归使用梯度下降算法来最小化损失函数。 梯度计算公式： $$ grad=2X^T(Xw-y) $$\nAdagrad 更新算法：\nAdagrad（自适应梯度算法），该算法可以自适应地调整学习率。 Adagrad 累计梯度平方： $$ G_t=G_{t-1}+grad^2 $$\n​\t其中 $G_t$ 是累计梯度平方，用于存储从开始到现在的梯度平方和。\n权重更新公式（Adagrad）： $$ w=w-\\frac{\\alpha}{\\sqrt{G_t+\\epsilon}}\\cdot grad $$\n​\t其中 $\\alpha$ 是学习率，$\\epsilon$ 是一个很小的值，用于避免除以 0。\nIV. 代码实现 # 划分训练集和验证集，80% 作为训练集，20% 作为验证集 import math x_train_set = x[:math.floor(len(x) * 0.8), :] y_train_set = y[:math.floor(len(y) * 0.8), :] x_validation = x[math.floor(len(x) * 0.8):, :] y_validation = y[math.floor(len(y) * 0.8):, :] print(len(x_train_set)) print(len(y_train_set)) print(len(x_validation)) print(len(y_validation)) # 特征维度为 18 * 9，加上偏置项 w_0 dim = 18 * 9 + 1 w = np.zeros([dim, 1]) # 初始化权重为 0 x_train_set = np.concatenate((np.ones([len(x_train_set), 1]), x_train_set), axis=1).astype(float) # 添加偏置项，x_train_set 的第一列为 1 x_validation = np.concatenate((np.ones([len(x_validation), 1]), x_validation), axis=1).astype(float) # 添加偏置项，x_validation 的第一列为 1 learning_rates = [10,50,100,200] # 学习率 iter_time = 1000 # 迭代次数 adagrad = np.zeros([dim, 1]) # Adagrad 累积梯度平方 eps = 1e-10 # 避免除以零 loss_list=[] loss_list_dict={} # 训练模型，使用 Adagrad 方法更新参数 for learning_rate in learning_rates: for t in range(iter_time): loss = np.sqrt(np.sum((np.dot(x_train_set, w) - y_train_set) ** 2) / len(y_train_set)) # 计算 RMSE 损失 print(str(t) + \":\" + str(loss)) loss_list.append(loss) gradient = 2 * np.dot(x_train_set.T, (np.dot(x_train_set, w) - y_train_set)) # 计算梯度 adagrad += gradient ** 2 w = w - learning_rate * gradient / np.sqrt(adagrad + eps) # 更新权重 loss_list_dict[learning_rate]=loss_list loss_list=[] np.save(f'weight{learning_rate}.npy', w) # 保存模型参数 w=np.zeros([dim,1]) # 重新初始化权重 adagrad=np.zeros([dim,1]) # 重新初始化累积梯度平方 V. 保存参数和结果 将预测结果写入文件，文件格式为 submit_learning_rate{learning_rate}.csv，同时要处理预测结果为负值的情况，将负值替换为 0 。 # 将预测结果写入文件 if learning_rate==0.2: with open(f'submit.csv', mode='w') as submit_file: submit_file.write('id,value\\n') for i in range(240): # 由于预测结果可能为负数，将负数转换为 0 if (predictions[i][0] \u003e= 0): submit_file.write(f'id_{i},{predictions[i][0]}\\n') else: submit_file.write(f'id_{i},0.00\\n') 保存权重参数。 np.save(f'weight_learning_rate{learning_rate}.npy', w) # 保存模型参数 4. 算法评估 I. 参数设置 选取学习率（Learning rate）为 [0.01,0.05,0.1,0.2,0.3]，迭代次数（iteration）设为40000\nII. 绘制关系曲线 绘制不同的学习率下，迭代次数和损失率之间的关系曲线：\nimport matplotlib.pyplot as plt # 用于绘制图像 plt.figure(figsize=(10,6)) colors=['r','g','b','y','c','m','k','w'] plt.ylim(0,30) plt.xlim(0,iter_time) for i, learning_rate in enumerate(learning_rates): plt.plot(range(iter_time),loss_list_dict[learning_rate],colors[i],label='learning rate = '+str(learning_rate)) plt.xlabel('iterations') plt.ylabel('loss') plt.legend() # 添加图例 plt.grid() plt.show() 从曲线上可以看出：\n学习率为 0.01 时，损失率（Loss）较大，而且曲线不够平滑。 学习率为 0.05 和 0.1 时，损失率下降的速度太慢，学习速度较慢。 学习率为 0.2 时，曲线较为平滑，而且平稳后的 Loss 值较低。 学习率为 0.3 时，曲线下降的速度较快，适合迭代次数较少的情况。 因此学习率选取为 0.2 较好，曲线平滑且损失率较低。\n5. 算法优化 I. 正则化 使用正则化防止过拟合\nL2 正则化（Ridge Regression）：\n在损失函数中加入 L2 正则化项，可以防止模型对训练数据的过度拟合。这样做可以惩罚权重过大的情况，使得模型更加平滑。 损失函数： $$ Loss=\\sqrt{\\frac{1}{N}\\sum_{i=1}^{N}(\\hat{y_i}-y_i)^2}+\\lambda \\sum_{i=1}^{N}w_i^2 $$\n​\t其中$\\lambda$ 为正则化强度。\n更新权重： $$ grad=grad+2\\lambda w $$\nL1 正则化（Lasso Regression）：\n使用 L1 正则化可以实现特征选择，可以减小模型复杂度，防止过拟合。\n正则化项：\n$$ \\lambda \\sum_{i=1}^N|w_i| $$\nII. 正则化代码实现 设置学习率为 0.2，迭代次数为 20000，lambdaL1=0.0005，lambda_L2=0.0005\nlearning_rate = 0.2 # 学习率 iter_time = 20000 # 迭代次数 # 正则化参数 lambda_l1 = 0.0005 # L1 正则化系数 lambda_l2 = 0.0005 # L2 正则化系数 loss_list = [] validation_loss_list = [] # 训练模型，使用 L1 和 L2 正则化的 Adagrad 方法更新参数 for t in range(iter_time): # 计算训练集损失 (RMSE) loss = np.sqrt(np.sum((np.dot(x_train_set, w) - y_train_set) ** 2) / len(y_train_set)) # 添加 L1 和 L2 正则化项到损失函数中 loss += lambda_l1 * np.sum(np.abs(w)) + lambda_l2 * np.sum(w ** 2) validation_loss = np.sqrt(np.sum((np.dot(x_validation, w) - y_validation) ** 2) / len(y_validation)) validation_loss_list.append(validation_loss) loss_list.append(loss) # 计算梯度 gradient = 2 * np.dot(x_train_set.T, (np.dot(x_train_set, w) - y_train_set)) # 添加 L1 正则化梯度 gradient += lambda_l1 * np.sign(w) # 添加 L2 正则化梯度 gradient += 2 * lambda_l2 * w # 使用 Adagrad 更新参数 adagrad += gradient ** 2 w = w - learning_rate * gradient / np.sqrt(adagrad + eps) III. 绘制曲线 绘制训练集和验证集的 Loss 曲线，如下所示：\n收敛趋势正常 训练集和验证集的损失接近 平稳期的损失率较低 五、实验结果 实验结果保存在了submit.csv中，预测了 1-12 月每个月最后 10 天第 10 小时的 PM2.5 数值，如下所示：\n六、实验总结 在本次实验中，成功地使用线性回归模型预测了 PM2.5 的数值。通过对数据的清洗和特征提取，使用训练集 train.csv 中的特征成功拟合出线性回归模型，并在验证集上进行了验证，最后使用了 test.csv 进行了预测。验证了线性回归模型在 PM2.5 预测中的应用效果。但是实验中使用的线性模型比较简单，难以适应空气质量等复杂的、非线性波动的数据，预测值可能与实际值之间存在较大偏差。\n七、附录 线性回归代码 lr.py from kaggle.api.kaggle_api_extended import KaggleApi import pandas as pd import numpy as np import matplotlib.pyplot as plt from tqdm import tqdm # 读取训练数据集 data = pd.read_csv('./train.csv') # 处理数据，将 NR 替换为 0，并将数据转换为 numpy 数组 # 只选取有用的数据列 (从第四列开始) data = data.iloc[:, 3:] data[data == 'NR'] = 0 raw_data = data.to_numpy() # 将数据按月份分割成 12 组，每个月有 18 行传感器数据，每行有 480 小时的数据 month_data = {} for month in range(12): sample = np.empty([18, 480]) for day in range(20): sample[:, day * 24: (day + 1) * 24] = raw_data[18 * (20 * month + day): 18 * (20 * month + day + 1), :] month_data[month] = sample # 构造训练数据 x 和标签数据 y，x 代表 9 小时的特征数据，y 代表第 10 小时的 PM2.5 数据 x = np.empty([12 * 471, 18 * 9], dtype=float) y = np.empty([12 * 471, 1], dtype=float) for month in range(12): for day in range(20): for hour in range(24): if day == 19 and hour \u003e 14: # 最后一天只取到第 15 小时 continue x[month * 471 + day * 24 + hour, :] = month_data[month][:, day * 24 + hour: day * 24 + hour + 9].reshape(1, -1) y[month * 471 + day * 24 + hour, 0] = month_data[month][9, day * 24 + hour + 9] # 预测第 10 小时 PM2.5 值 # 对特征数据 x 进行标准化处理 mean_x = np.mean(x, axis=0) # 计算每个特征的均值 std_x = np.std(x, axis=0) # 计算每个特征的标准差 # for i in range(len(x)): for j in range(len(x[0])): if std_x[j] != 0: # 避免除以零 x[i][j] = (x[i][j] - mean_x[j]) / std_x[j] # 划分训练集和验证集，80% 作为训练集，20% 作为验证集 import math x_train_set = x[:math.floor(len(x) * 0.8), :] y_train_set = y[:math.floor(len(y) * 0.8), :] x_validation = x[math.floor(len(x) * 0.8):, :] y_validation = y[math.floor(len(y) * 0.8):, :] # 打印训练集和验证集的维度 print(len(x_train_set)) print(len(y_train_set)) print(len(x_validation)) print(len(y_validation)) # 读取测试数据并进行预处理 testdata = pd.read_csv('./test.csv', header=None) test_data = testdata.iloc[:, 2:] #test_data[test_data == 'NR'] = 0 test_data = test_data.replace('NR', 0) test_data = test_data.to_numpy() # 构造测试数据集 test_x test_x = np.empty([240, 18 * 9], dtype=float) for i in range(240): test_x[i, :] = test_data[18 * i: 18 * (i + 1), :].reshape(1, -1) for i in range(len(test_x)): for j in range(len(test_x[0])): if std_x[j] != 0: test_x[i][j] = (test_x[i][j] - mean_x[j]) / std_x[j] test_x = np.concatenate((np.ones([240, 1]), test_x), axis=1).astype(float) # 添加偏置项 # 初始化线性回归模型的参数 # 特征维度为 18 * 9，加上偏置项 w_0 dim = 18 * 9 + 1 w = np.zeros([dim, 1]) # 初始化权重为 0 x_train_set = np.concatenate((np.ones([len(x_train_set), 1]), x_train_set), axis=1).astype(float) # 添加偏置项，x_train_set 的第一列为 1 x_validation = np.concatenate((np.ones([len(x_validation), 1]), x_validation), axis=1).astype(float) # 添加偏置项，x_validation 的第一列为 1 learning_rates = [0.05,0.1,0.2,0.3] # 学习率列表 iter_time = 20000 # 迭代次数 adagrad = np.zeros([dim, 1]) # Adagrad 累积梯度平方 eps = 1e-10 # 避免除以零 loss_list=[] # 训练集损失列表 validation_loss_list=[] # 验证集损失列表 loss_list_dict={} # 训练集损失字典 validation_loss_list_dict={} # 验证集损失字典 # 训练模型，使用 Adagrad 方法更新参数 print('\\033[31m---------Training...---------\\033[32m') for learning_rate in learning_rates: print('learning rate = '+str(learning_rate)) for t in tqdm(range(iter_time)): loss = np.sqrt(np.sum((np.dot(x_train_set, w) - y_train_set) ** 2) / len(y_train_set)) # 计算 RMSE 损失 validation_loss = np.sqrt(np.sum((np.dot(x_validation, w) - y_validation) ** 2) / len(y_validation)) validation_loss_list.append(validation_loss) # print(str(t) + \":\" + str(loss)) loss_list.append(loss) gradient = 2 * np.dot(x_train_set.T, (np.dot(x_train_set, w) - y_train_set)) # 计算梯度 adagrad += gradient ** 2 w = w - learning_rate * gradient / np.sqrt(adagrad + eps) # 更新权重 # 预测测试数据 predictions = np.dot(test_x, w) # 将预测结果写入文件 if learning_rate==0.2: with open(f'submit.csv', mode='w') as submit_file: submit_file.write('id,value\\n') for i in range(240): # 由于预测结果可能为负数，将负数转换为 0 if (predictions[i][0] \u003e= 0): submit_file.write(f'id_{i},{predictions[i][0]}\\n') else: submit_file.write(f'id_{i},0.00\\n') loss_list_dict[learning_rate]=loss_list validation_loss_list_dict[learning_rate]=validation_loss_list loss_list=[] validation_loss_list=[] np.save(f'weight_learning_rate{learning_rate}.npy', w) # 保存模型参数 w=np.zeros([dim,1]) # 重新初始化权重 adagrad=np.zeros([dim,1]) # 重新初始化累积梯度平方 print('\\033[34m---------Done!---------\\033[0m') plt.figure(figsize=(10,6)) colors=['r','g','b','y','c','m','k','w'] plt.ylim(0,30) plt.xlim(0,iter_time) for i, learning_rate in enumerate(learning_rates): plt.plot(range(iter_time),loss_list_dict[learning_rate],colors[i],label='learning rate = '+str(learning_rate)) plt.xlabel('iterations') plt.ylabel('loss') plt.legend() # 添加图例 plt.grid() plt.title('Training Loss') plt.savefig('Loss.png') plt.show() 使用正则化优化后的线性回归代码 lr_L1L2.py： import pandas as pd import numpy as np import matplotlib.pyplot as plt from tqdm import tqdm # 读取训练数据集 data = pd.read_csv('./train.csv') # 处理数据，将 NR 替换为 0，并将数据转换为 numpy 数组 # 只选取有用的数据列 (从第四列开始) data = data.iloc[:, 3:] data[data == 'NR'] = 0 raw_data = data.to_numpy() # 将数据按月份分割成 12 组，每个月有 18 行传感器数据，每行有 480 小时的数据 month_data = {} for month in range(12): sample = np.empty([18, 480]) for day in range(20): sample[:, day * 24: (day + 1) * 24] = raw_data[18 * (20 * month + day): 18 * (20 * month + day + 1), :] month_data[month] = sample # 构造训练数据 x 和标签数据 y，x 代表 9 小时的特征数据，y 代表第 10 小时的 PM2.5 数据 x = np.empty([12 * 471, 18 * 9], dtype=float) y = np.empty([12 * 471, 1], dtype=float) for month in range(12): for day in range(20): for hour in range(24): if day == 19 and hour \u003e 14: # 最后一天只取到第 15 小时 continue x[month * 471 + day * 24 + hour, :] = month_data[month][:, day * 24 + hour: day * 24 + hour + 9].reshape(1, -1) y[month * 471 + day * 24 + hour, 0] = month_data[month][9, day * 24 + hour + 9] # 预测第 10 小时 PM2.5 值 # 对特征数据 x 进行标准化处理 mean_x = np.mean(x, axis=0) # 计算每个特征的均值 std_x = np.std(x, axis=0) # 计算每个特征的标准差 # 标准化特征数据 for i in range(len(x)): for j in range(len(x[0])): if std_x[j] != 0: # 避免除以零 x[i][j] = (x[i][j] - mean_x[j]) / std_x[j] # 划分训练集和验证集，80% 作为训练集，20% 作为验证集 import math x_train_set = x[:math.floor(len(x) * 0.8), :] y_train_set = y[:math.floor(len(y) * 0.8), :] x_validation = x[math.floor(len(x) * 0.8):, :] y_validation = y[math.floor(len(y) * 0.8):, :] # 初始化线性回归模型的参数 # 特征维度为 18 * 9，加上偏置项 w_0 dim = 18 * 9 + 1 w = np.zeros([dim, 1]) # 初始化权重为 0 x_train_set = np.concatenate((np.ones([len(x_train_set), 1]), x_train_set), axis=1).astype(float) # 添加偏置项，x_train_set 的第一列为 1 x_validation = np.concatenate((np.ones([len(x_validation), 1]), x_validation), axis=1).astype(float) # 添加偏置项，x_validation 的第一列为 1 learning_rate = 0.2 # 学习率 iter_time = 20000 # 迭代次数 adagrad = np.zeros([dim, 1]) # Adagrad 累积梯度平方 eps = 1e-10 # 避免除以零 # 正则化参数 lambda_l1 = 0.0005 # L1 正则化系数 lambda_l2 = 0.0005 # L2 正则化系数 loss_list = [] validation_loss_list = [] # 训练模型，使用 L1 和 L2 正则化的 Adagrad 方法更新参数 for t in tqdm(range(iter_time)): # 计算训练集损失 (RMSE) loss = np.sqrt(np.sum((np.dot(x_train_set, w) - y_train_set) ** 2) / len(y_train_set)) # 添加 L1 和 L2 正则化项到损失函数中 loss += lambda_l1 * np.sum(np.abs(w)) + lambda_l2 * np.sum(w ** 2) validation_loss = np.sqrt(np.sum((np.dot(x_validation, w) - y_validation) ** 2) / len(y_validation)) validation_loss_list.append(validation_loss) loss_list.append(loss) # 计算梯度 gradient = 2 * np.dot(x_train_set.T, (np.dot(x_train_set, w) - y_train_set)) # 添加 L1 正则化梯度 gradient += lambda_l1 * np.sign(w) # 添加 L2 正则化梯度 gradient += 2 * lambda_l2 * w # 使用 Adagrad 更新参数 adagrad += gradient ** 2 w = w - learning_rate * gradient / np.sqrt(adagrad + eps) # 绘制训练集和验证集的损失曲线 plt.figure(figsize=(10, 6)) plt.plot(range(iter_time), loss_list, 'b', label='Training Loss') plt.plot(range(iter_time), validation_loss_list, 'r', label='Validation Loss') plt.xlabel('Iterations') plt.ylabel('Loss (RMSE)') plt.legend() # 添加图例 plt.grid() plt.title('Training and Validation Loss with L1 and L2 Regularization') plt.savefig('loss_l1l2.png') plt.show() ",
+  "wordCount" : "4631",
+  "inLanguage": "zh",
+  "datePublished": "2024-01-21T00:00:00Z",
+  "dateModified": "2024-01-21T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      【机器学习】使用 Linear Regression 预测 PM2.5 数值
+    </h1>
+    <div class="post-meta"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;10 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/%e3%80%90%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0%e3%80%91%e4%bd%bf%e7%94%a8%20Linear%20Regression%20%e9%a2%84%e6%b5%8b%20PM2.5%20%e6%95%b0%e5%80%bc.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e4%b8%80%e5%ae%9e%e9%aa%8c%e7%9b%ae%e7%9a%84" aria-label="一、实验目的">一、实验目的</a></li>
+                <li>
+                    <a href="#%e4%ba%8c%e5%ae%9e%e9%aa%8c%e7%8e%af%e5%a2%83" aria-label="二、实验环境">二、实验环境</a></li>
+                <li>
+                    <a href="#%e4%b8%89%e6%95%b0%e6%8d%ae%e8%af%b4%e6%98%8e" aria-label="三、数据说明">三、数据说明</a><ul>
+                        
+                <li>
+                    <a href="#1-%e8%ae%ad%e7%bb%83%e9%9b%86train-set" aria-label="1. 训练集（Train Set）">1. 训练集（Train Set）</a></li>
+                <li>
+                    <a href="#2-%e6%b5%8b%e8%af%95%e9%9b%86test-set" aria-label="2. 测试集（Test Set）">2. 测试集（Test Set）</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%9b%9b%e5%ae%9e%e9%aa%8c%e6%96%b9%e6%b3%95" aria-label="四、实验方法">四、实验方法</a><ul>
+                        
+                <li>
+                    <a href="#1-%e5%af%bc%e5%85%a5%e5%bf%85%e8%a6%81%e7%9a%84%e5%ba%93" aria-label="1. 导入必要的库">1. 导入必要的库</a></li>
+                <li>
+                    <a href="#2-%e6%95%b0%e6%8d%ae%e9%a2%84%e5%a4%84%e7%90%86" aria-label="2. 数据预处理">2. 数据预处理</a></li>
+                <li>
+                    <a href="#3-%e8%ae%ad%e7%bb%83%e6%a8%a1%e5%9e%8b" aria-label="3. 训练模型">3. 训练模型</a><ul>
+                        
+                <li>
+                    <a href="#i-%e6%a8%a1%e5%9e%8b%e5%ae%9a%e4%b9%89" aria-label="I. 模型定义">I. 模型定义</a></li>
+                <li>
+                    <a href="#ii-%e6%8d%9f%e5%a4%b1%e5%87%bd%e6%95%b0" aria-label="II. 损失函数">II. 损失函数</a></li>
+                <li>
+                    <a href="#iii-%e6%a2%af%e5%ba%a6%e4%b8%8b%e9%99%8d%e5%92%8c-adagrad-%e6%9b%b4%e6%96%b0%e7%ae%97%e6%b3%95" aria-label="III. 梯度下降和 Adagrad 更新算法">III. 梯度下降和 Adagrad 更新算法</a></li>
+                <li>
+                    <a href="#iv-%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0" aria-label="IV. 代码实现">IV. 代码实现</a></li>
+                <li>
+                    <a href="#v-%e4%bf%9d%e5%ad%98%e5%8f%82%e6%95%b0%e5%92%8c%e7%bb%93%e6%9e%9c" aria-label="V. 保存参数和结果">V. 保存参数和结果</a></li></ul>
+                </li>
+                <li>
+                    <a href="#4-%e7%ae%97%e6%b3%95%e8%af%84%e4%bc%b0" aria-label="4. 算法评估">4. 算法评估</a><ul>
+                        
+                <li>
+                    <a href="#i-%e5%8f%82%e6%95%b0%e8%ae%be%e7%bd%ae" aria-label="I. 参数设置">I. 参数设置</a></li>
+                <li>
+                    <a href="#ii-%e7%bb%98%e5%88%b6%e5%85%b3%e7%b3%bb%e6%9b%b2%e7%ba%bf" aria-label="II. 绘制关系曲线">II. 绘制关系曲线</a></li></ul>
+                </li>
+                <li>
+                    <a href="#5-%e7%ae%97%e6%b3%95%e4%bc%98%e5%8c%96" aria-label="5. 算法优化">5. 算法优化</a><ul>
+                        
+                <li>
+                    <a href="#i-%e6%ad%a3%e5%88%99%e5%8c%96" aria-label="I. 正则化">I. 正则化</a></li>
+                <li>
+                    <a href="#ii-%e6%ad%a3%e5%88%99%e5%8c%96%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0" aria-label="II. 正则化代码实现">II. 正则化代码实现</a></li>
+                <li>
+                    <a href="#iii-%e7%bb%98%e5%88%b6%e6%9b%b2%e7%ba%bf" aria-label="III. 绘制曲线">III. 绘制曲线</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%94%e5%ae%9e%e9%aa%8c%e7%bb%93%e6%9e%9c" aria-label="五、实验结果">五、实验结果</a></li>
+                <li>
+                    <a href="#%e5%85%ad%e5%ae%9e%e9%aa%8c%e6%80%bb%e7%bb%93" aria-label="六、实验总结">六、实验总结</a></li>
+                <li>
+                    <a href="#%e4%b8%83%e9%99%84%e5%bd%95" aria-label="七、附录">七、附录</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="一实验目的">一、实验目的<a hidden class="anchor" aria-hidden="true" href="#一实验目的">#</a></h2>
+<p>利用即墨站的空气质量监测数据，使用线性回归（Linear Regression）预测 PM2.5 的数值。</p>
+<h2 id="二实验环境">二、实验环境<a hidden class="anchor" aria-hidden="true" href="#二实验环境">#</a></h2>
+<ul>
+<li>操作系统：Windows 11</li>
+<li>处理器：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz)</li>
+<li>显卡：NVIDIA GeForce GTX 1650</li>
+<li>运行环境：
+<ul>
+<li>Python 3.10.11</li>
+<li>pandas 2.1.0</li>
+<li>numpy 1.24.2</li>
+<li>matplotlib 3.7.1</li>
+<li>tqdm 4.66.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="三数据说明">三、数据说明<a hidden class="anchor" aria-hidden="true" href="#三数据说明">#</a></h2>
+<h3 id="1-训练集train-set">1. 训练集（Train Set）<a hidden class="anchor" aria-hidden="true" href="#1-训练集train-set">#</a></h3>
+<p><code>train.csv</code>包含了  2014 年 1 月 1 日至 2014 年 12 月 20 日的即墨站的全部监测数据，使用 VScode 插件转成表格形式如下所示：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/10/25/ksHphuO5w2oZPFx.png" alt="image-20241025114108891"  />
+</p>
+<ul>
+<li>表头包含了日期、站点、测项以及24小时的监测数值</li>
+<li>测项共有 18 项观测数据：AMB_TEMP， CH4， CO， NHMC， NO， NO2， NOx， O3， PM10， PM2.5， RAINFALL， RH， SO2， THC， WD_HR， WIND_DIREC， WIND_SPEED， WS_HR。</li>
+</ul>
+<h3 id="2-测试集test-set">2. 测试集（Test Set）<a hidden class="anchor" aria-hidden="true" href="#2-测试集test-set">#</a></h3>
+<p><code>test.csv</code>是从剩下的数据中取出的连续的 10 小时作为一笔数据，前 9 小时作为 feature，第 10 小时的 PM2.5 数值作为 answer。</p>
+<p>使用 VScode 插件转成表格形式如下所示：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/10/25/SDJVotP5CnU4aWF.png" alt="image-20241025114926809"  />
+</p>
+<h2 id="四实验方法">四、实验方法<a hidden class="anchor" aria-hidden="true" href="#四实验方法">#</a></h2>
+<h3 id="1-导入必要的库">1. 导入必要的库<a hidden class="anchor" aria-hidden="true" href="#1-导入必要的库">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># 用于读取 csv 文件</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> <span class="c1"># 用于创建向量和进行数学统计</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># 用于绘制图像</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span> <span class="c1"># 用于显示进度条</span>
+</span></span></code></pre></div><h3 id="2-数据预处理">2. 数据预处理<a hidden class="anchor" aria-hidden="true" href="#2-数据预处理">#</a></h3>
+<ul>
+<li>
+<p>将数据按月份分为 12 组，每组有 18 行，每行有 $20 \times 24 =480$ 小时的数据。</p>
+</li>
+<li>
+<p>构建训练数据 x，x 为每个连续 9 小时的数据，共 $12 \times (480-9)=12 \times 471$ 组，每组有 $9 \times 18$ 个观测值。</p>
+</li>
+<li>
+<p>构建标签数据 y，y 为每个第 10 小时的数据，共 $12 \times (480-9)=12 \times 471$ 组，每组 1 个 观测值，即第 9 个观测项 PM2.5。</p>
+</li>
+<li>
+<p>然后计算每个特征的均值和标准差，再对每一个特征进行标准化处理。</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>标准化：</strong>
+$$
+\hat{x_{i,j}}=\frac{x_{i,j}-\overline{x_{j}}}{\sigma_j}
+$$
+对特征进行标准化处理可以使标准化后的特征的均值和方差变为 0</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 读取训练数据集</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./train.csv&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 处理数据，将 NR 替换为 0，并将数据转换为 numpy 数组</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 只选取有用的数据列 (从第四列开始)</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;NR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">raw_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将数据按月份分割成 12 组，每个月有 18 行传感器数据，每行有 480 小时的数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">month_data</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">18</span><span class="p">,</span> <span class="mi">480</span><span class="p">])</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sample</span><span class="p">[:,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span><span class="p">:</span> <span class="p">(</span><span class="n">day</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">24</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw_data</span><span class="p">[</span><span class="mi">18</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">month</span> <span class="o">+</span> <span class="n">day</span><span class="p">):</span> <span class="mi">18</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">month</span> <span class="o">+</span> <span class="n">day</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">:]</span> 
+</span></span><span class="line"><span class="cl">    <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 构造训练数据 x 和标签数据 y，x 代表 9 小时的特征数据，y 代表第 10 小时的 PM2.5 数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">12</span> <span class="o">*</span> <span class="mi">471</span><span class="p">,</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">9</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">12</span> <span class="o">*</span> <span class="mi">471</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">day</span> <span class="o">==</span> <span class="mi">19</span> <span class="ow">and</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>  <span class="c1"># 最后一天只取到第 15 小时</span>
+</span></span><span class="line"><span class="cl">                <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span><span class="p">[</span><span class="n">month</span> <span class="o">*</span> <span class="mi">471</span> <span class="o">+</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">][:,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">:</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">y</span><span class="p">[</span><span class="n">month</span> <span class="o">*</span> <span class="mi">471</span> <span class="o">+</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">][</span><span class="mi">9</span><span class="p">,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span>  <span class="c1"># 预测第 10 小时 PM2.5 值</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mean_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 计算每个特征的均值</span>
+</span></span><span class="line"><span class="cl"><span class="n">std_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 计算每个特征的标准差</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 对特征数据 x 进行标准化处理</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">std_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># 避免除以零</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">mean_x</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">/</span> <span class="n">std_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+</span></span></code></pre></div><h3 id="3-训练模型">3. 训练模型<a hidden class="anchor" aria-hidden="true" href="#3-训练模型">#</a></h3>
+<h4 id="i-模型定义">I. 模型定义<a hidden class="anchor" aria-hidden="true" href="#i-模型定义">#</a></h4>
+<p>$$
+\hat{y}=X \cdot w
+$$</p>
+<p>其中 $X$ 是特征矩阵，$w$ 是参数向量，$\hat{y}$ 是预测值</p>
+<h4 id="ii-损失函数">II. 损失函数<a hidden class="anchor" aria-hidden="true" href="#ii-损失函数">#</a></h4>
+<p>在训练过程中，我们使用**均方根误差（Root Mean Squared Error, RMSE）**作为损失函数来衡量模型的好坏。</p>
+<p>RMSE表达式：
+$$
+Loss=\sqrt{\frac{1}{N}\sum_{i=1}^{N}(\hat{y_i}-y_i)^2}
+$$
+其中：</p>
+<ul>
+<li>
+<p>$N$ 表示样本数。</p>
+</li>
+<li>
+<p>$\hat{y_i}$ 表示模型预测的第 $i$ 个样本的预测值。</p>
+</li>
+<li>
+<p>$y_i$ 表示第 $i$ 个样本的真实值。</p>
+</li>
+<li>
+<p>$Loss$ 值越小表示模型的预测结果越接近真实值。</p>
+</li>
+</ul>
+<h4 id="iii-梯度下降和-adagrad-更新算法">III. 梯度下降和 Adagrad 更新算法<a hidden class="anchor" aria-hidden="true" href="#iii-梯度下降和-adagrad-更新算法">#</a></h4>
+<ul>
+<li>
+<p><strong>梯度下降：</strong></p>
+<ul>
+<li>线性回归使用梯度下降算法来最小化损失函数。</li>
+<li>梯度计算公式：</li>
+</ul>
+<p>$$
+grad=2X^T(Xw-y)
+$$</p>
+</li>
+<li>
+<p><strong>Adagrad 更新算法：</strong></p>
+<ul>
+<li>Adagrad（自适应梯度算法），该算法可以自适应地调整学习率。</li>
+<li>Adagrad 累计梯度平方：</li>
+</ul>
+<p>$$
+G_t=G_{t-1}+grad^2
+$$</p>
+<p>​	其中 $G_t$ 是累计梯度平方，用于存储从开始到现在的梯度平方和。</p>
+<ul>
+<li>权重更新公式（Adagrad）：</li>
+</ul>
+<p>$$
+w=w-\frac{\alpha}{\sqrt{G_t+\epsilon}}\cdot grad
+$$</p>
+<p>​	其中 $\alpha$ 是学习率，$\epsilon$ 是一个很小的值，用于避免除以 0。</p>
+</li>
+</ul>
+<h4 id="iv-代码实现">IV. 代码实现<a hidden class="anchor" aria-hidden="true" href="#iv-代码实现">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="c1"># 划分训练集和验证集，80% 作为训练集，20% 作为验证集</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">math</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_train_set</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">),</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">y_train_set</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">),</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_validation</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">):,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">y_validation</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">):,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_train_set</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_validation</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_validation</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 特征维度为 18 * 9，加上偏置项 w_0</span>
+</span></span><span class="line"><span class="cl"><span class="n">dim</span> <span class="o">=</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># 初始化权重为 0</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_train_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">),</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">x_train_set</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 添加偏置项，x_train_set 的第一列为 1</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_validation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x_validation</span><span class="p">),</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">x_validation</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 添加偏置项，x_validation 的第一列为 1</span>
+</span></span><span class="line"><span class="cl"><span class="n">learning_rates</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">]</span>  <span class="c1"># 学习率</span>
+</span></span><span class="line"><span class="cl"><span class="n">iter_time</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># 迭代次数</span>
+</span></span><span class="line"><span class="cl"><span class="n">adagrad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># Adagrad 累积梯度平方</span>
+</span></span><span class="line"><span class="cl"><span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-10</span>  <span class="c1"># 避免除以零</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">loss_list</span><span class="o">=</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">loss_list_dict</span><span class="o">=</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 训练模型，使用 Adagrad 方法更新参数</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">learning_rate</span> <span class="ow">in</span> <span class="n">learning_rates</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iter_time</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_train_set</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train_set</span><span class="p">))</span>  <span class="c1"># 计算 RMSE 损失</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&#34;:&#34;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">gradient</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_train_set</span><span class="p">))</span>  <span class="c1"># 计算梯度</span>
+</span></span><span class="line"><span class="cl">        <span class="n">adagrad</span> <span class="o">+=</span> <span class="n">gradient</span> <span class="o">**</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradient</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">adagrad</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>  <span class="c1"># 更新权重</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss_list_dict</span><span class="p">[</span><span class="n">learning_rate</span><span class="p">]</span><span class="o">=</span><span class="n">loss_list</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss_list</span><span class="o">=</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;weight</span><span class="si">{</span><span class="n">learning_rate</span><span class="si">}</span><span class="s1">.npy&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="c1"># 保存模型参数</span>
+</span></span><span class="line"><span class="cl">    <span class="n">w</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># 重新初始化权重</span>
+</span></span><span class="line"><span class="cl">    <span class="n">adagrad</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># 重新初始化累积梯度平方</span>
+</span></span></code></pre></div><h4 id="v-保存参数和结果">V. 保存参数和结果<a hidden class="anchor" aria-hidden="true" href="#v-保存参数和结果">#</a></h4>
+<ol>
+<li>将预测结果写入文件，文件格式为 <code>submit_learning_rate{learning_rate}.csv</code>，同时要处理预测结果为负值的情况，将负值替换为 0 。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">    <span class="c1"># 将预测结果写入文件</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">learning_rate</span><span class="o">==</span><span class="mf">0.2</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;submit.csv&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">submit_file</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">submit_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;id,value</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">240</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 由于预测结果可能为负数，将负数转换为 0</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">submit_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;id_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">submit_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;id_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">,0.00</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><ol start="2">
+<li>保存权重参数。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl">    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;weight_learning_rate</span><span class="si">{</span><span class="n">learning_rate</span><span class="si">}</span><span class="s1">.npy&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="c1"># 保存模型参数</span>
+</span></span></code></pre></div><h3 id="4-算法评估">4. 算法评估<a hidden class="anchor" aria-hidden="true" href="#4-算法评估">#</a></h3>
+<h4 id="i-参数设置">I. 参数设置<a hidden class="anchor" aria-hidden="true" href="#i-参数设置">#</a></h4>
+<p>选取学习率（Learning rate）为 [0.01,0.05,0.1,0.2,0.3]，迭代次数（iteration）设为40000</p>
+<h4 id="ii-绘制关系曲线">II. 绘制关系曲线<a hidden class="anchor" aria-hidden="true" href="#ii-绘制关系曲线">#</a></h4>
+<p>绘制不同的学习率下，迭代次数和损失率之间的关系曲线：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># 用于绘制图像</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">iter_time</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">learning_rate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">learning_rates</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iter_time</span><span class="p">),</span><span class="n">loss_list_dict</span><span class="p">[</span><span class="n">learning_rate</span><span class="p">],</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;learning rate = &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">learning_rate</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;iterations&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>  <span class="c1"># 添加图例</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span></code></pre></div><img src="https://s2.loli.net/2024/10/26/yWLsETgj3ZcPzUD.png" alt="Figure_1" style="zoom:80%;" />
+<p>从曲线上可以看出：</p>
+<ul>
+<li>学习率为 0.01 时，损失率（Loss）较大，而且曲线不够平滑。</li>
+<li>学习率为 0.05 和 0.1 时，损失率下降的速度太慢，学习速度较慢。</li>
+<li>学习率为 0.2 时，曲线较为平滑，而且平稳后的 Loss 值较低。</li>
+<li>学习率为 0.3 时，曲线下降的速度较快，适合迭代次数较少的情况。</li>
+</ul>
+<p>因此学习率选取为 0.2 较好，曲线平滑且损失率较低。</p>
+<h3 id="5-算法优化">5. 算法优化<a hidden class="anchor" aria-hidden="true" href="#5-算法优化">#</a></h3>
+<h4 id="i-正则化">I. 正则化<a hidden class="anchor" aria-hidden="true" href="#i-正则化">#</a></h4>
+<p>使用<strong>正则化</strong>防止过拟合</p>
+<ul>
+<li>
+<p>L2 正则化（Ridge Regression）：</p>
+<ul>
+<li>在损失函数中加入 L2 正则化项，可以防止模型对训练数据的过度拟合。这样做可以惩罚权重过大的情况，使得模型更加平滑。</li>
+<li>损失函数：</li>
+</ul>
+<p>$$
+Loss=\sqrt{\frac{1}{N}\sum_{i=1}^{N}(\hat{y_i}-y_i)^2}+\lambda \sum_{i=1}^{N}w_i^2
+$$</p>
+<p>​	其中$\lambda$ 为正则化强度。</p>
+<ul>
+<li>更新权重：</li>
+</ul>
+<p>$$
+grad=grad+2\lambda w
+$$</p>
+</li>
+<li>
+<p>L1 正则化（Lasso Regression）：</p>
+<ul>
+<li>
+<p>使用 L1 正则化可以实现特征选择，可以减小模型复杂度，防止过拟合。</p>
+</li>
+<li>
+<p>正则化项：</p>
+</li>
+</ul>
+<p>$$
+\lambda \sum_{i=1}^N|w_i|
+$$</p>
+</li>
+</ul>
+<h4 id="ii-正则化代码实现">II. 正则化代码实现<a hidden class="anchor" aria-hidden="true" href="#ii-正则化代码实现">#</a></h4>
+<p>设置学习率为 0.2，迭代次数为 20000，lambdaL1=0.0005，lambda_L2=0.0005</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># 学习率</span>
+</span></span><span class="line"><span class="cl"><span class="n">iter_time</span> <span class="o">=</span> <span class="mi">20000</span>  <span class="c1"># 迭代次数</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 正则化参数</span>
+</span></span><span class="line"><span class="cl"><span class="n">lambda_l1</span> <span class="o">=</span> <span class="mf">0.0005</span>  <span class="c1"># L1 正则化系数</span>
+</span></span><span class="line"><span class="cl"><span class="n">lambda_l2</span> <span class="o">=</span> <span class="mf">0.0005</span>  <span class="c1"># L2 正则化系数</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">loss_list</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">validation_loss_list</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 训练模型，使用 L1 和 L2 正则化的 Adagrad 方法更新参数</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iter_time</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 计算训练集损失 (RMSE)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_train_set</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train_set</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 添加 L1 和 L2 正则化项到损失函数中</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss</span> <span class="o">+=</span> <span class="n">lambda_l1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">w</span><span class="p">))</span> <span class="o">+</span> <span class="n">lambda_l2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validation_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_validation</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_validation</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_validation</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validation_loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">validation_loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 计算梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gradient</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_train_set</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 添加 L1 正则化梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gradient</span> <span class="o">+=</span> <span class="n">lambda_l1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 添加 L2 正则化梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gradient</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">lambda_l2</span> <span class="o">*</span> <span class="n">w</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 使用 Adagrad 更新参数</span>
+</span></span><span class="line"><span class="cl">    <span class="n">adagrad</span> <span class="o">+=</span> <span class="n">gradient</span> <span class="o">**</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradient</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">adagrad</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="iii-绘制曲线">III. 绘制曲线<a hidden class="anchor" aria-hidden="true" href="#iii-绘制曲线">#</a></h4>
+<p>绘制训练集和验证集的 Loss 曲线，如下所示：</p>
+<img src="https://s2.loli.net/2024/10/26/EyPcIOMAR28FYls.png" alt="image-20241026144108134" style="zoom: 50%;" />
+<ul>
+<li>收敛趋势正常</li>
+<li>训练集和验证集的损失接近</li>
+<li>平稳期的损失率较低</li>
+</ul>
+<h2 id="五实验结果">五、实验结果<a hidden class="anchor" aria-hidden="true" href="#五实验结果">#</a></h2>
+<p>实验结果保存在了<code>submit.csv</code>中，预测了 1-12 月每个月最后 10 天第 10 小时的 PM2.5 数值，如下所示：</p>
+<img src="https://s2.loli.net/2024/11/05/OkrAMR6EPsjanQv.png" alt="image-20241105203441995" style="zoom:80%;" />
+<h2 id="六实验总结">六、实验总结<a hidden class="anchor" aria-hidden="true" href="#六实验总结">#</a></h2>
+<p>在本次实验中，成功地使用线性回归模型预测了 PM2.5 的数值。通过对数据的清洗和特征提取，使用训练集 <code>train.csv</code> 中的特征成功拟合出线性回归模型，并在验证集上进行了验证，最后使用了 <code>test.csv</code> 进行了预测。验证了线性回归模型在 PM2.5 预测中的应用效果。但是实验中使用的线性模型比较简单，难以适应空气质量等复杂的、非线性波动的数据，预测值可能与实际值之间存在较大偏差。</p>
+<h2 id="七附录">七、附录<a hidden class="anchor" aria-hidden="true" href="#七附录">#</a></h2>
+<ol>
+<li>线性回归代码 <code>lr.py</code></li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">kaggle.api.kaggle_api_extended</span> <span class="kn">import</span> <span class="n">KaggleApi</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 读取训练数据集</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./train.csv&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 处理数据，将 NR 替换为 0，并将数据转换为 numpy 数组</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 只选取有用的数据列 (从第四列开始)</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;NR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">raw_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将数据按月份分割成 12 组，每个月有 18 行传感器数据，每行有 480 小时的数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">month_data</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">18</span><span class="p">,</span> <span class="mi">480</span><span class="p">])</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sample</span><span class="p">[:,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span><span class="p">:</span> <span class="p">(</span><span class="n">day</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">24</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw_data</span><span class="p">[</span><span class="mi">18</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">month</span> <span class="o">+</span> <span class="n">day</span><span class="p">):</span> <span class="mi">18</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">month</span> <span class="o">+</span> <span class="n">day</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">:]</span> 
+</span></span><span class="line"><span class="cl">    <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 构造训练数据 x 和标签数据 y，x 代表 9 小时的特征数据，y 代表第 10 小时的 PM2.5 数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">12</span> <span class="o">*</span> <span class="mi">471</span><span class="p">,</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">9</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">12</span> <span class="o">*</span> <span class="mi">471</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">day</span> <span class="o">==</span> <span class="mi">19</span> <span class="ow">and</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>  <span class="c1"># 最后一天只取到第 15 小时</span>
+</span></span><span class="line"><span class="cl">                <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span><span class="p">[</span><span class="n">month</span> <span class="o">*</span> <span class="mi">471</span> <span class="o">+</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">][:,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">:</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">y</span><span class="p">[</span><span class="n">month</span> <span class="o">*</span> <span class="mi">471</span> <span class="o">+</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">][</span><span class="mi">9</span><span class="p">,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span>  <span class="c1"># 预测第 10 小时 PM2.5 值</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 对特征数据 x 进行标准化处理</span>
+</span></span><span class="line"><span class="cl"><span class="n">mean_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 计算每个特征的均值</span>
+</span></span><span class="line"><span class="cl"><span class="n">std_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 计算每个特征的标准差</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># </span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">std_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># 避免除以零</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">mean_x</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">/</span> <span class="n">std_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 划分训练集和验证集，80% 作为训练集，20% 作为验证集</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">math</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_train_set</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">),</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">y_train_set</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">),</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_validation</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">):,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">y_validation</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">):,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 打印训练集和验证集的维度</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_train_set</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_validation</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_validation</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 读取测试数据并进行预处理</span>
+</span></span><span class="line"><span class="cl"><span class="n">testdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./test.csv&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">test_data</span> <span class="o">=</span> <span class="n">testdata</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#test_data[test_data == &#39;NR&#39;] = 0</span>
+</span></span><span class="line"><span class="cl"><span class="n">test_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;NR&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">test_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 构造测试数据集 test_x</span>
+</span></span><span class="line"><span class="cl"><span class="n">test_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">240</span><span class="p">,</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">9</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">240</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">test_x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="mi">18</span> <span class="o">*</span> <span class="n">i</span><span class="p">:</span> <span class="mi">18</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_x</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_x</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">std_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">test_x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">test_x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">mean_x</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">/</span> <span class="n">std_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">test_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">240</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">test_x</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 添加偏置项</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 初始化线性回归模型的参数</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 特征维度为 18 * 9，加上偏置项 w_0</span>
+</span></span><span class="line"><span class="cl"><span class="n">dim</span> <span class="o">=</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># 初始化权重为 0</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_train_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">),</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">x_train_set</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 添加偏置项，x_train_set 的第一列为 1</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_validation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x_validation</span><span class="p">),</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">x_validation</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 添加偏置项，x_validation 的第一列为 1</span>
+</span></span><span class="line"><span class="cl"><span class="n">learning_rates</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.3</span><span class="p">]</span>  <span class="c1"># 学习率列表</span>
+</span></span><span class="line"><span class="cl"><span class="n">iter_time</span> <span class="o">=</span> <span class="mi">20000</span>  <span class="c1"># 迭代次数</span>
+</span></span><span class="line"><span class="cl"><span class="n">adagrad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># Adagrad 累积梯度平方</span>
+</span></span><span class="line"><span class="cl"><span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-10</span>  <span class="c1"># 避免除以零</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">loss_list</span><span class="o">=</span><span class="p">[]</span> <span class="c1"># 训练集损失列表</span>
+</span></span><span class="line"><span class="cl"><span class="n">validation_loss_list</span><span class="o">=</span><span class="p">[]</span> <span class="c1"># 验证集损失列表</span>
+</span></span><span class="line"><span class="cl"><span class="n">loss_list_dict</span><span class="o">=</span><span class="p">{}</span> <span class="c1"># 训练集损失字典</span>
+</span></span><span class="line"><span class="cl"><span class="n">validation_loss_list_dict</span><span class="o">=</span><span class="p">{}</span> <span class="c1"># 验证集损失字典</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 训练模型，使用 Adagrad 方法更新参数</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[31m---------Training...---------</span><span class="se">\033</span><span class="s1">[32m&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">learning_rate</span> <span class="ow">in</span> <span class="n">learning_rates</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;learning rate = &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">learning_rate</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iter_time</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_train_set</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train_set</span><span class="p">))</span>  <span class="c1"># 计算 RMSE 损失</span>
+</span></span><span class="line"><span class="cl">        <span class="n">validation_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_validation</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_validation</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_validation</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">validation_loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">validation_loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># print(str(t) + &#34;:&#34; + str(loss))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">gradient</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_train_set</span><span class="p">))</span>  <span class="c1"># 计算梯度</span>
+</span></span><span class="line"><span class="cl">        <span class="n">adagrad</span> <span class="o">+=</span> <span class="n">gradient</span> <span class="o">**</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradient</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">adagrad</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>  <span class="c1"># 更新权重</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="c1"># 预测测试数据</span>
+</span></span><span class="line"><span class="cl">    <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="c1"># 将预测结果写入文件</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">learning_rate</span><span class="o">==</span><span class="mf">0.2</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;submit.csv&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">submit_file</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">submit_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;id,value</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">240</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 由于预测结果可能为负数，将负数转换为 0</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">submit_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;id_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">submit_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;id_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">,0.00</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">loss_list_dict</span><span class="p">[</span><span class="n">learning_rate</span><span class="p">]</span><span class="o">=</span><span class="n">loss_list</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validation_loss_list_dict</span><span class="p">[</span><span class="n">learning_rate</span><span class="p">]</span><span class="o">=</span><span class="n">validation_loss_list</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss_list</span><span class="o">=</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validation_loss_list</span><span class="o">=</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;weight_learning_rate</span><span class="si">{</span><span class="n">learning_rate</span><span class="si">}</span><span class="s1">.npy&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="c1"># 保存模型参数</span>
+</span></span><span class="line"><span class="cl">    <span class="n">w</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># 重新初始化权重</span>
+</span></span><span class="line"><span class="cl">    <span class="n">adagrad</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># 重新初始化累积梯度平方</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[34m---------Done!---------</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">iter_time</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">learning_rate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">learning_rates</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iter_time</span><span class="p">),</span><span class="n">loss_list_dict</span><span class="p">[</span><span class="n">learning_rate</span><span class="p">],</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;learning rate = &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">learning_rate</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;iterations&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>  <span class="c1"># 添加图例</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Training Loss&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;Loss.png&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span></code></pre></div><ol start="2">
+<li>使用正则化优化后的线性回归代码 <code>lr_L1L2.py</code>：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 读取训练数据集</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./train.csv&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 处理数据，将 NR 替换为 0，并将数据转换为 numpy 数组</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 只选取有用的数据列 (从第四列开始)</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;NR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">raw_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将数据按月份分割成 12 组，每个月有 18 行传感器数据，每行有 480 小时的数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">month_data</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">18</span><span class="p">,</span> <span class="mi">480</span><span class="p">])</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sample</span><span class="p">[:,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span><span class="p">:</span> <span class="p">(</span><span class="n">day</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">24</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw_data</span><span class="p">[</span><span class="mi">18</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">month</span> <span class="o">+</span> <span class="n">day</span><span class="p">):</span> <span class="mi">18</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">month</span> <span class="o">+</span> <span class="n">day</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">:]</span> 
+</span></span><span class="line"><span class="cl">    <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 构造训练数据 x 和标签数据 y，x 代表 9 小时的特征数据，y 代表第 10 小时的 PM2.5 数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">12</span> <span class="o">*</span> <span class="mi">471</span><span class="p">,</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">9</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">12</span> <span class="o">*</span> <span class="mi">471</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">day</span> <span class="o">==</span> <span class="mi">19</span> <span class="ow">and</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>  <span class="c1"># 最后一天只取到第 15 小时</span>
+</span></span><span class="line"><span class="cl">                <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span><span class="p">[</span><span class="n">month</span> <span class="o">*</span> <span class="mi">471</span> <span class="o">+</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">][:,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">:</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">y</span><span class="p">[</span><span class="n">month</span> <span class="o">*</span> <span class="mi">471</span> <span class="o">+</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">month_data</span><span class="p">[</span><span class="n">month</span><span class="p">][</span><span class="mi">9</span><span class="p">,</span> <span class="n">day</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span>  <span class="c1"># 预测第 10 小时 PM2.5 值</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 对特征数据 x 进行标准化处理</span>
+</span></span><span class="line"><span class="cl"><span class="n">mean_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 计算每个特征的均值</span>
+</span></span><span class="line"><span class="cl"><span class="n">std_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 计算每个特征的标准差</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 标准化特征数据</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">std_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># 避免除以零</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">mean_x</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">/</span> <span class="n">std_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 划分训练集和验证集，80% 作为训练集，20% 作为验证集</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">math</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_train_set</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">),</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">y_train_set</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">),</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_validation</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">):,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl"><span class="n">y_validation</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">):,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 初始化线性回归模型的参数</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 特征维度为 18 * 9，加上偏置项 w_0</span>
+</span></span><span class="line"><span class="cl"><span class="n">dim</span> <span class="o">=</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># 初始化权重为 0</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_train_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">),</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">x_train_set</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 添加偏置项，x_train_set 的第一列为 1</span>
+</span></span><span class="line"><span class="cl"><span class="n">x_validation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x_validation</span><span class="p">),</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">x_validation</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 添加偏置项，x_validation 的第一列为 1</span>
+</span></span><span class="line"><span class="cl"><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># 学习率</span>
+</span></span><span class="line"><span class="cl"><span class="n">iter_time</span> <span class="o">=</span> <span class="mi">20000</span>  <span class="c1"># 迭代次数</span>
+</span></span><span class="line"><span class="cl"><span class="n">adagrad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># Adagrad 累积梯度平方</span>
+</span></span><span class="line"><span class="cl"><span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-10</span>  <span class="c1"># 避免除以零</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 正则化参数</span>
+</span></span><span class="line"><span class="cl"><span class="n">lambda_l1</span> <span class="o">=</span> <span class="mf">0.0005</span>  <span class="c1"># L1 正则化系数</span>
+</span></span><span class="line"><span class="cl"><span class="n">lambda_l2</span> <span class="o">=</span> <span class="mf">0.0005</span>  <span class="c1"># L2 正则化系数</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">loss_list</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">validation_loss_list</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 训练模型，使用 L1 和 L2 正则化的 Adagrad 方法更新参数</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iter_time</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 计算训练集损失 (RMSE)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_train_set</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train_set</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 添加 L1 和 L2 正则化项到损失函数中</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss</span> <span class="o">+=</span> <span class="n">lambda_l1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">w</span><span class="p">))</span> <span class="o">+</span> <span class="n">lambda_l2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validation_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_validation</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_validation</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_validation</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validation_loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">validation_loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 计算梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gradient</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_train_set</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_train_set</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 添加 L1 正则化梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gradient</span> <span class="o">+=</span> <span class="n">lambda_l1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 添加 L2 正则化梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gradient</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">lambda_l2</span> <span class="o">*</span> <span class="n">w</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 使用 Adagrad 更新参数</span>
+</span></span><span class="line"><span class="cl">    <span class="n">adagrad</span> <span class="o">+=</span> <span class="n">gradient</span> <span class="o">**</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradient</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">adagrad</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 绘制训练集和验证集的损失曲线</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iter_time</span><span class="p">),</span> <span class="n">loss_list</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Training Loss&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iter_time</span><span class="p">),</span> <span class="n">validation_loss_list</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Validation Loss&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Iterations&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Loss (RMSE)&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>  <span class="c1"># 添加图例</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Training and Validation Loss with L1 and L2 Regularization&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;loss_l1l2.png&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>【机器学习】使用 generative model 和 logistic regression 预测年收入</span>
+  </a>
+  <a class="next" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>SEEDlab—竞争条件漏洞</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

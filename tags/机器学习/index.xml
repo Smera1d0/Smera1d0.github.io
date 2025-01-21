@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>机器学习 on Smera1d0&#39;s Blog</title>
+    <link>https://smera1d0.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
+    <description>Recent content in 机器学习 on Smera1d0&#39;s Blog</description>
+    <image>
+      <title>Smera1d0&#39;s Blog</title>
+      <url>https://smera1d0.github.io/images/papermod-cover.png</url>
+      <link>https://smera1d0.github.io/images/papermod-cover.png</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
+    <lastBuildDate>Sun, 21 Jan 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://smera1d0.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【机器学习】使用 Linear Regression 预测 PM2.5 数值</title>
+      <link>https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/</link>
+      <pubDate>Sun, 21 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/</guid>
+      <description>&lt;h2 id=&#34;一实验目的&#34;&gt;一、实验目的&lt;/h2&gt;
+&lt;p&gt;利用即墨站的空气质量监测数据，使用线性回归（Linear Regression）预测 PM2.5 的数值。&lt;/p&gt;
+&lt;h2 id=&#34;二实验环境&#34;&gt;二、实验环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;操作系统：Windows 11&lt;/li&gt;
+&lt;li&gt;处理器：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz)&lt;/li&gt;
+&lt;li&gt;显卡：NVIDIA GeForce GTX 1650&lt;/li&gt;
+&lt;li&gt;运行环境：
+&lt;ul&gt;
+&lt;li&gt;Python 3.10.11&lt;/li&gt;
+&lt;li&gt;pandas 2.1.0&lt;/li&gt;
+&lt;li&gt;numpy 1.24.2&lt;/li&gt;
+&lt;li&gt;matplotlib 3.7.1&lt;/li&gt;
+&lt;li&gt;tqdm 4.66.1&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;三数据说明&#34;&gt;三、数据说明&lt;/h2&gt;
+&lt;h3 id=&#34;1-训练集train-set&#34;&gt;1. 训练集（Train Set）&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;train.csv&lt;/code&gt;包含了  2014 年 1 月 1 日至 2014 年 12 月 20 日的即墨站的全部监测数据，使用 VScode 插件转成表格形式如下所示：&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

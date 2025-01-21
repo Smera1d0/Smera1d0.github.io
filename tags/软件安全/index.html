@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="Mi Yu">
 <link rel="canonical" href="https://smera1d0.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.c9cbbbc76aa9d1a7b2aae0ded0f3c40bed7459082df7601ab1a59f234f7e0ccc.css" integrity="sha256-ycu7x2qp0aeyquDe0PPEC&#43;10WQgt92AasaWfI09&#43;DMw=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eb8f5da85697cd810df09cc87c7f69c1a1690fdc75d0a7bc8bcd70301c4c3cca.css" integrity="sha256-649dqFaXzYEN8JzIfH9pwaFpD9x10Ke8i81wMBxMPMo=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://smera1d0.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
@@ -56,7 +56,49 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="软件安全" />
+</noscript>
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            },
+            "HTML-CSS": {
+                availableFonts: ["Arial", "TeX"],
+                preferredFont: "TeX",
+                webFont: "TeX"
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+<meta property="og:title" content="软件安全" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://smera1d0.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
@@ -161,6 +203,62 @@
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">【机器学习】使用 generative model 和 logistic regression 预测年收入
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>1 实验目的 使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。
+2 实验环境 操作系统：windows 11 CPU：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz) GPU：NVIDIA GeForce GTX 1650 运行环境： Python 3.10.11 pandas 2.1.0 numpy 1.24.2 matplotlib 3.7.1 tqdm 4.66.1 3 数据处理 3.1 数据文件描述 train.csv / test.csv：包含 age, workclass, fnlwgt (总人数), education, education num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, make over 50K a year or not 这些特征。
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;7 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to 【机器学习】使用 generative model 和 logistic regression 预测年收入" href="https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">SEEDlab—竞争条件漏洞
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>1. 环境设置 1.1 关闭反制措施 使用 neofetch 查看 Ubuntu 版本信息，如下所示：
+Ubuntu 20.04 引入了一种安全机制，防止 root 用户写入 /tmp 中其他人拥有的文件。使用下面的命令禁用这个安全机制：
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;6 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to SEEDlab—竞争条件漏洞" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">SEEDlab—密码技术应用实验
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Task 1：使用不同的加密算法和加密模式加密 1. AES-128-CBC 模式加密 使用 OpenSSL 随机生成 128bit 的 Key 和 IV
+$ openssl rand -hex 16 使用OpenSSL对明文进行加密
+2. AES-128-CFB 模式加密 3. Blowfish-CBC 模式加密 ...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;5 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to SEEDlab—密码技术应用实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">SEEDlab—伪随机数生成实验
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Task 1：用错误的方式生成加密密钥 #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;time.h&gt; #define KEYSIZE 16 void main() { int i; char key[KEYSIZE]; printf(&#34;%lld\n&#34;, (long long) time(NULL)); srand (time(NULL)); //➀ for (i = 0; i&lt; KEYSIZE; i&#43;&#43;){ key[i] = rand()%256; printf(&#34;%.2x&#34;, (unsigned char)key[i]); } printf(&#34;\n&#34;); } 编译并运行上述代码，结果如下：
+第一行输出的是从纪元 1970-01-01 00:00:00 &#43;0000 (UTC) 到现在的秒数，第二行输出的是以当前时间作为随机数种子产生的加密密钥，可以发现，当初始化随机数生成器的随机数种子不一样时，产生的加密密钥也不同。
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;4 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to SEEDlab—伪随机数生成实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">SEEDlab—SQL注入攻击实验
     </h2>
   </header>
@@ -184,20 +282,12 @@
   <footer class="entry-footer"><span title='2024-01-12 00:00:00 +0000 UTC'>一月 12, 2024</span>&nbsp;·&nbsp;10 分钟&nbsp;·&nbsp;Mi Yu</footer>
   <a class="entry-link" aria-label="post link to SEEDlab—环境变量与 Set-UID 实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/"></a>
 </article>
-
-<article class="post-entry tag-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">SEEDlab—缓冲区溢出漏洞
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>SEEDlab—缓冲区溢出漏洞 环境设置 关闭反制措施 地址空间布局随机化 地址空间布局随机化：Linux操作系统的使用随机的地址来设置堆栈的起始地址，使得攻击者很难猜测出确切的堆栈起始地址。
-使用命令sudo sysctl -w kernel.randomize_va_space=0来关闭地址空间布局随机化。
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-01-12 00:00:00 +0000 UTC'>一月 12, 2024</span>&nbsp;·&nbsp;11 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to SEEDlab—缓冲区溢出漏洞" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/"></a>
-</article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="next" href="https://smera1d0.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/page/2/">下一页&nbsp;2/2&nbsp;»
+    </a>
+  </nav>
+</footer>
     </main>
     
 <footer class="footer">

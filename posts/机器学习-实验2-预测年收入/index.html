@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="【机器学习】 实验2  预测年收入
+
+姓名：密语
+学号：202200460104
+班级：网安 1 班
+
+[TOC]
+1 实验目的
+使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.247a96f71b72231c18421a2a1a4333c8fd7011670d184abb187f72283a5697ee.css" integrity="sha256-JHqW9xtyIxwYQhoqGkMzyP1wEWcNGEq7GH9yKDpWl&#43;4=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            },
+            "HTML-CSS": {
+                availableFonts: ["Arial", "TeX"],
+                preferredFont: "TeX",
+                webFont: "TeX"
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+<meta property="og:title" content="" />
+<meta property="og:description" content="【机器学习】 实验2  预测年收入
+
+姓名：密语
+学号：202200460104
+班级：网安 1 班
+
+[TOC]
+1 实验目的
+使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/" /><meta property="og:image" content="http://localhost:1313/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+
+
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://localhost:1313/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="【机器学习】 实验2  预测年收入
+
+姓名：密语
+学号：202200460104
+班级：网安 1 班
+
+[TOC]
+1 实验目的
+使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://localhost:1313/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "",
+      "item": "http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "",
+  "name": "",
+  "description": "【机器学习】 实验2 预测年收入 姓名：密语 学号：202200460104 班级：网安 1 班\n[TOC]\n1 实验目的 使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "【机器学习】 实验2 预测年收入 姓名：密语 学号：202200460104 班级：网安 1 班\n[TOC]\n1 实验目的 使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。\n2 实验环境 操作系统：windows 11 CPU：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz) GPU：NVIDIA GeForce GTX 1650 运行环境： Python 3.10.11 pandas 2.1.0 numpy 1.24.2 matplotlib 3.7.1 tqdm 4.66.1 3 数据处理 3.1 数据文件描述 train.csv / test.csv：包含 age, workclass, fnlwgt (总人数), education, education num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, make over 50K a year or not 这些特征。\nX_train / X_test：包含 106-dim 的特征的数据，是将 train.csv 进行 one-hot Encoding（独热编码）之后的数据，将分类向量转化为了二进制向量。\nY_train：包含 1-dim 标签的数据，1 表示 make over 50K a year，0 表示 not make over 50K a year.\n3.2 读取数据 在 data_manager 类中有读取数据的函数 read()：\ndef read(self,name,path): with open(path,newline = '') as csvfile: # 读取数据,从第二行开始读取 rows = np.array(list(csv.reader(csvfile))[1:] ,dtype = float) 3.3 数据预处理 3.3.1 对训练数据进行标准化 $$ \\sigma = \\sqrt{\\frac{1}{N}\\sum_{i=1}^{N}(x_i-\\mu)^2}\\ z_i = \\frac{x_i-\\mu}{\\sigma} $$\n这样可以使多组数据的均值为 0，方差为 1，使数据标准统一化。\nif name == 'X_train': self.mean = np.mean(rows,axis = 0).reshape(1,-1) self.std = np.std(rows,axis = 0).reshape(1,-1) self.theta = np.ones((rows.shape[1] + 1,1),dtype = float) #初始化参数 for i in range(rows.shape[0]): rows[i,:] = (rows[i,:] - self.mean) / self.std #标准化 # 注意，testing data要跟training data的normalize方式一致，要用training data的mean和std elif name == 'X_test': for i in range(rows.shape[0]): rows[i,:] = (rows[i,:] - self.mean) / self.std #标准化 4 概率生成模型（generative model） 4.1 公式推导 4.1.1 贝叶斯定理 根据条件概率： $$ P(x,y)=P(x|y)P(y) $$ 其中，$P(x|y)$ 是数据 $x$ 在给定标签 $y$ 下的条件概率，而 $P(y)$ 是标签 $y$ 的先验概率。\n贝叶斯定理： $$ P(y|x)=\\frac{P(x|y)P(y)}{P(x)} $$ 其中 $P(y|x)$ 是后验概率，$P(x)$ 是数据的边际条件。\n4.1.2 高斯分布 高斯分布概率密度函数为： $$ P(x) = \\frac{1}{(2\\pi)^{d/2} |\\Sigma|^{1/2}} \\exp \\left( -\\frac{1}{2} (x - \\mu)^T \\Sigma^{-1} (x - \\mu) \\right) $$\n$$ \\ln \\left( \\frac{P(C_1 | x)}{P(C_0 | x)} \\right) = \\ln \\left( \\frac{P(x | C_1) P(C_1)}{P(x | C_0) P(C_0)} \\right)= \\ln P(x | C_1) - \\ln P(x | C_0) + \\ln \\frac{P(C_1)}{P(C_0)} $$\n将上面的判别函数带入高斯分布的密度函数： $$ = -\\frac{1}{2} (x - \\mu_1)^T \\Sigma^{-1} (x - \\mu_1) + \\frac{1}{2} (x - \\mu_0)^T \\Sigma^{-1} (x - \\mu_0) + \\ln \\frac{n_1}{n_0} $$ 所以我们得到了判别函数： $$ f(x) = x^T \\Sigma^{-1} (\\mu_1 - \\mu_0) - \\frac{1}{2} (\\mu_1^T \\Sigma^{-1} \\mu_1 - \\mu_0^T \\Sigma^{-1} \\mu_0) + \\ln \\frac{n_1}{n_0} $$\n4.2 代码实现 4.2.1 对数据进行二分类 我们需要先根据 Y_train 中的数据，也就是根据年收入是否大于 5 万元，记录对应的下标。\nclass_0_id = [] class_1_id = [] for i in range(self.data['Y_train'].shape[0]): # 对数据进行分类 if self.data['Y_train'][i][0] == 0: class_0_id.append(i) else: class_1_id.append(i) class_0 = self.data['X_train'][class_0_id] class_1 = self.data['X_train'][class_1_id] 4.2.2 计算均值和协方差 $$ \\mu_ = \\frac{1}{n}\\sum_{i=0}^{n} x_i \\ \\sigma = \\frac{1}{n} \\sum_{i=0}^{n}(x_i -\\mu)(x_i-\\mu)^T $$\nmean_0 = np.mean(class_0, axis=0) # 分别计算两类的均值 mean_1 = np.mean(class_1, axis=0) n = class_0.shape[1] cov_0 = np.zeros((n, n)) cov_1 = np.zeros((n, n)) n_0 = class_0.shape[0] n_1 = class_1.shape[0] for i in range(class_0.shape[0]): # 计算协方差矩阵 # please add code here cov_0 += np.dot(np.transpose([class_0[i]-mean_0]), [class_0[i]-mean_0]) / n_0 for i in range(class_1.shape[0]): cov_1 += np.dot(np.transpose([class_1[i]-mean_1]), [class_1[i]-mean_1]) / n_1 然后我们需要合并这两个协方差矩阵，采用加权平均的方式。 $$ \\Sigma = \\frac{n_1 \\sigma_1+n_2 \\sigma_2}{n_1+n_2} $$\ncov = (n_0*cov_0+n_1*cov_1)/(n_0+n_1) # 计算协方差矩阵，使用加权的方法 cov_inv = inv(cov) 4.2.3 计算参数权重向量和偏置项 根据 Gaussian Distribution，将 Gaussian Distribution 代入 Sigmoid 函数 ，我们可以得到 $P(C_1|x)=\\sigma(w \\cdot x+b)$ ，我们需要计算出权重向量 w 和偏置项 b。\n化简得到： $$ w= \\Sigma ^{-1}(\\mu_1 - \\mu_0) $$ $$ b=-\\frac{1}{2}(\\mu_1^T\\Sigma^{-1}\\mu_1-\\mu_0^T\\Sigma^{-1}\\mu_0)+ln \\frac{n_1}{n_0} $$\nself.w = np.dot((mean_0-mean_1).transpose(), cov_inv).transpose() # 计算w self.b = (-0.5)*np.dot(np.dot(mean_0.transpose(), cov_inv), mean_0)+0.5 * \\ np.dot(np.dot(mean_1.transpose(), cov_inv),mean_1)+np.log(float(n_0)/n_1) # 计算b 4.2.4 Sigmoid 函数 $$\r\\sigma(z)=\\frac{1}{1+e^{-z}}\r$$\r将 $z=w \\cdot x+b$ 代入 sigmoid 函数，我们可以得到 $C_1$ 的后验概率 $P(C_1|x)=\\sigma(w \\cdot x+b)$ ，我们就可以根据这个概率来进行分类了，可以发现，Sigmoid函数的值域是 $(0,1)$，根据大于/小于 0.5 进行二分类。\rdef func(self, x): arr = np.empty([x.shape[0], 1], dtype=float) for i in range(x.shape[0]): z = x[i, :].dot(self.w) + self.b z *= (-1) arr[i][0] = 1 / (1 + np.exp(z)) return np.clip(arr, 1e-8, 1-(1e-8)) 4.2.5 predict 预测函数 根据公式 $P(C_1|x)=\\sigma(w \\cdot x+b)$ 计算出的概率，大于0.5设为 0，小于0.5设为 1。\ndef predict(self, x): ans = np.ones([x.shape[0], 1], dtype=int) for i in range(x.shape[0]): if x[i] \u003e 0.5: ans[i] = 0 return ans 4.2.6 计算准确率 我们使用 X_train 进行预测，并使用 Y_train 的正确结果进行验证，从而计算出 acc。\ndef accuracy(self, x, y): # 根据训练数据计算准确率 result = self.func(x) answer = self.predict(result) return 1 - np.mean(np.abs(answer-y)) 4.2.7 将预测结果写入文件 def write_file(self, path): #预测测试数据并将结果写入文件 result = self.func(self.data['X_test']) answer = self.predict(result) with open(path, 'w', newline='') as csvfile: writer = csv.writer(csvfile) writer.writerow(['id', 'label']) for i in range(answer.shape[0]): writer.writerow([i+1, answer[i][0]]) 预测结果：\n5 逻辑回归（Logistic Regression） 5.1 公式推导 5.1.1 Logistic Regression 的前提 假设我们有一组数据集 $(X, Y)$，其中：\n$X \\in \\mathbb{R}^{m \\times n}$：包含 $m$ 个样本，每个样本有 $n$ 个特征。 $Y \\in {0, 1}^m$：对应的分类标签，取值为 $0$ 或 $1$。 目标是学习一个模型，能够预测输入样本属于类 $1$ 的概率 $P(Y=1|X)$。 5.1.2 模型假设 逻辑回归假设： $$ P(Y=1|X) = \\sigma(z) = \\frac{1}{1 + e^{-z}} $$ 其中：\n$z = w^T X + b$：是线性组合，$w \\in \\mathbb{R}^n$ 是权重向量，$b$ 是偏置。\n$\\sigma(z)$ 是 sigmoid 函数，将任意实数映射到区间 $[0, 1]$。 因此，逻辑回归模型可以表示为： $$ P(Y=1|X) = \\frac{1}{1 + e^{-(w^T X + b)}} $$\n5.1.3 Loss 函数：最大似然估计 假设所有样本是独立同分布的，联合概率可以表示为： $$ P(Y|X; w, b) = \\prod_{i=1}^m \\Big(P(y^{(i)}|x^{(i)})\\Big) $$ 其中 $y^{(i)} \\in {0, 1}$ 是第 $i$ 个样本的标签。\n将 $P(y^{(i)}|x^{(i)})$ 写成通式： $$ P(y^{(i)}|x^{(i)}) = \\sigma(z^{(i)})^{y^{(i)}} \\cdot (1 - \\sigma(z^{(i)}))^{1 - y^{(i)}} $$ 因此，联合概率的对数似然函数为： $$ \\ell(w, b) = \\sum_{i=1}^m \\Big(y^{(i)} \\log(\\sigma(z^{(i)})) + (1 - y^{(i)}) \\log(1 - \\sigma(z^{(i)}))\\Big) $$ 其中 $z^{(i)} = w^T x^{(i)} + b$。\n为了优化方便，最小化负对数似然，其表达式为： $$ J(w, b) = -\\ell(w, b) = -\\frac{1}{m} \\sum_{i=1}^m \\Big(y^{(i)} \\log(\\sigma(z^{(i)})) + (1 - y^{(i)}) \\log(1 - \\sigma(z^{(i)}))\\Big) $$ 这被称为二分类的交叉熵损失函数（Cross-Entropy Loss）。\n5.1.4 梯度下降优化 为了最小化损失函数 $J(w, b)$，使用梯度下降法更新参数 $w$ 和 $b$。梯度计算如下：\n对 $w$ 的梯度： $$ \\frac{\\partial J(w, b)}{\\partial w} = \\frac{1}{m} \\sum_{i=1}^m (h^{(i)} - y^{(i)}) x^{(i)} $$\n​\t其中 $h^{(i)} = \\sigma(w^T x^{(i)} + b)$。\n对 $b$ 的梯度： $$ \\frac{\\partial J(w, b)}{\\partial b} = \\frac{1}{m} \\sum_{i=1}^m (h^{(i)} - y^{(i)}) $$\n梯度更新公式： $$ w = w - \\alpha \\frac{\\partial J(w, b)}{\\partial w} \\ b = b - \\alpha \\frac{\\partial J(w, b)}{\\partial b} $$\n​\t其中 $\\alpha$ 是学习率。\n5.2 代码实现 5.2.1 标准化 normalize 和 generative model 一致。\ndef normalize(X, mean=None, std=None): mean = np.mean(X, axis=0).reshape(1, -1) # 将每一行的元素相加求均值，实际上返回的是1行106列的数组 std = np.std(X, axis=0).reshape(1, -1) # 将每一行的元素相加求标准差，实际上返回的是1行106列的数组 X = (X - mean) / std # 标准化 return X, mean, std X_train, mean, std = normalize(X_train) # 标准化 X_test = (X_test - mean) / std # 使用训练集的均值和方差对测试集进行标准化 5.2.2 对训练数据进行划分 X_train 中 80% 作为训练集，20% 作为验证集。\ndef train_data_split(X, Y, ratio=0.8): # 对训练集进行划分 size = int(X.shape[0] * ratio) return X[:size], Y[:size], X[size:], Y[size:] X_train, Y_train, X_val, Y_val = train_data_split(X_train, Y_train) # 输出数据的大小和维度 print(\"Size of X_train: {}\".format(X_train.shape[0])) print(\"Size of X_val: {}\".format(X_val.shape[0])) print(\"Size of X_test: {}\".format(X_test.shape[0])) print(\"Dimension of X_train: {}\".format(X_train.shape[1])) 5.2.3 对数据进行打乱 将数据按行打乱，这样可以保证数据的随机性。\ndef shuffle(X, Y): # 对数据进行打乱 np.random.seed(0) randomize = np.arange(X.shape[0]) np.random.shuffle(randomize) return X[randomize], Y[randomize] 5.2.4 Loss 函数 根据交叉熵损失函数的公式： $$ J(w, b) = -\\ell(w, b) = -\\frac{1}{m} \\sum_{i=1}^m \\Big(y^{(i)} \\log(\\sigma(z^{(i)})) + (1 - y^{(i)}) \\log(1 - \\sigma(z^{(i)}))\\Big) $$\ndef cross_entropy_loss(y_pred, Y_label): cross_entropy = -np.mean( Y_label * np.log(y_pred) + (1 - Y_label) * np.log(1 - y_pred) ) return cross_entropy 5.2.5 计算梯度 根据梯度计算公式： $$ w_{grad}=\\frac{\\partial J(w, b)}{\\partial w} = \\frac{1}{m} \\sum_{i=1}^m (h^{(i)} - y^{(i)}) x^{(i)} \\ b_{grad}=\\frac{\\partial J(w, b)}{\\partial b} = \\frac{1}{m} \\sum_{i=1}^m (h^{(i)} - y^{(i)}) $$\ndef gradient(X, Y_label, w, b): # 计算梯度 y_pred = f(X, w, b) pred_error = Y_label - y_pred w_grad = -np.dot(pred_error, X) b_grad = -np.sum(pred_error) return w_grad, b_grad 5.2.6 训练 训练模型时，采用 Mini-Batch Gradient Descent 和 Adagrad 这两种梯度下降法。\nMini-Batch Gradient Descent： 结合了随机梯度下降（SGD）和全梯度下降的优点。 每次更新使用一小部分数据，计算速度较快，具有一定的噪声引入效果，有助于跳出局部极值。 Adagrad : 可以动态的调整学习率。 # 开始训练 Y_train = Y_train.flatten() # 将Y_train展平 Y_val = Y_val.flatten() # 将Y_val展平 w = np.zeros((X_train.shape[1],)) # 初始化w b = np.zeros((1,)) # 初始化b iter = 20 # 迭代次数 batch_size = 8 # 批次大小 learning_rate = 0.1 # 学习率 train_loss = [] val_loss = [] train_acc = [] val_acc = [] count = 1 # 初始化累积梯度 w_accum_grad = np.zeros((X_train.shape[1],)) b_accum_grad = np.zeros((1,)) for epoch in tqdm(range(iter)): X_train, Y_train = shuffle(X_train, Y_train) # 每次取batch_size个数据进行训练 for idx in range(int(np.floor(X_train.shape[0] / batch_size))): X = X_train[idx * batch_size:(idx + 1) * batch_size] Y = Y_train[idx * batch_size:(idx + 1) * batch_size] w_grad, b_grad = gradient(X, Y, w, b) # 累积梯度平方和，adagrad w_accum_grad += w_grad**2 b_accum_grad += b_grad**2 # 更新w和b w -= (learning_rate / np.sqrt(w_accum_grad + 1e-8)) * w_grad b -= (learning_rate / np.sqrt(b_accum_grad + 1e-8)) * b_grad 5.3 实验结果 6 实验评估 6.1 Accuracy 准确率方面，Logistic Regression 要略优于 Generative Model。\nLogistic Regression:\n逻辑回归是 判别模型，直接建模 P(Y∣X)，即条件概率分布。它的目标是通过最大化数据点的对数似然，直接优化分类边界，专注于如何在给定特征 X 下预测 Y。\n不关心特征 X 的分布，因此对于 X 分布的假设较少，更灵活。\nGenerative Model:\n生成模型通过建模联合概率分布 P(X, Y) 来推导条件概率 P(Y∣X)。它要求对 P(X∣Y) 和 P(Y) 分布做出明确的假设（如高斯分布）。\n如果数据本身不符合假设（例如 P(X∣Y) 不是高斯分布），生成模型可能产生偏差，影响分类性能。\n6.2 特征标准化对准确率的影响 未进行标准化： 进行标准化： 可以发现 acc 和 loss 的波动很大，而且几乎没有收敛的趋势，准确率也大大降低。\n标准化可以统一不同数据的平均值和标准差，提高了数据可比性，削弱了数据解释性。\n6.3 Logistic Regression 的正则化对模型准确率的影响 加入正则化后的损失函数： $$ Loss = CrossEntropyLoss+\\frac{\\lambda}{2}||w||^2 $$ 其中 $\\lambda$ 是正则化系数。\n$\\lambda=0.1$ 时：\n使用正则化 未使用正则化 train_acc 0.8528101965601965 0.8540770884520885 val_acc 0.8483033932135728 0.8515277138031629 可以发现加入了正则化参数后，模型的准确率有些许的下降，这可能与我们选择 adagrad 梯度下降有关。\n6.4 找到对结果影响最大的特征 # 找到影响最大的特征 with open('X_train', newline='') as csvfile: featrues = list(csv.reader(csvfile))[0] # 通过表头获取特征名 max = np.max(np.abs(w)) # 获取绝对值最大的权重 for i in range(len(w)): if abs(w[i]) == max: print(\"The most important feature is: \", featrues[i], \"with weight: \", w[i]) # 找出前五个特征 top_5_indices = np.argsort(-np.abs(w))[:5] print(\"Top 5 important features and their weights:\") for i in top_5_indices: print(f\"Feature: {featrues[i]}, Weight: {w[i]}\") ",
+  "wordCount" : "3280",
+  "inLanguage": "zh",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:1313/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="http://localhost:1313/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">主页</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      
+    </h1>
+    <div class="post-meta">7 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0%20%e5%ae%9e%e9%aa%8c2%20%e9%a2%84%e6%b5%8b%e5%b9%b4%e6%94%b6%e5%85%a5.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e5%ae%9e%e9%aa%8c2--%e9%a2%84%e6%b5%8b%e5%b9%b4%e6%94%b6%e5%85%a5" aria-label="【机器学习】 实验2  预测年收入">【机器学习】 实验2  预测年收入</a><ul>
+                        
+                <li>
+                    <a href="#1-%e5%ae%9e%e9%aa%8c%e7%9b%ae%e7%9a%84" aria-label="1 实验目的">1 实验目的</a></li>
+                <li>
+                    <a href="#2-%e5%ae%9e%e9%aa%8c%e7%8e%af%e5%a2%83" aria-label="2 实验环境">2 实验环境</a></li>
+                <li>
+                    <a href="#3-%e6%95%b0%e6%8d%ae%e5%a4%84%e7%90%86" aria-label="3 数据处理">3 数据处理</a><ul>
+                        
+                <li>
+                    <a href="#31-%e6%95%b0%e6%8d%ae%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0" aria-label="3.1 数据文件描述">3.1 数据文件描述</a></li>
+                <li>
+                    <a href="#32-%e8%af%bb%e5%8f%96%e6%95%b0%e6%8d%ae" aria-label="3.2 读取数据">3.2 读取数据</a></li>
+                <li>
+                    <a href="#33-%e6%95%b0%e6%8d%ae%e9%a2%84%e5%a4%84%e7%90%86" aria-label="3.3 数据预处理">3.3 数据预处理</a><ul>
+                        
+                <li>
+                    <a href="#331-%e5%af%b9%e8%ae%ad%e7%bb%83%e6%95%b0%e6%8d%ae%e8%bf%9b%e8%a1%8c%e6%a0%87%e5%87%86%e5%8c%96" aria-label="3.3.1 对训练数据进行标准化">3.3.1 对训练数据进行标准化</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#4-%e6%a6%82%e7%8e%87%e7%94%9f%e6%88%90%e6%a8%a1%e5%9e%8bgenerative-model" aria-label="4 概率生成模型（generative model）">4 概率生成模型（generative model）</a><ul>
+                        
+                <li>
+                    <a href="#41-%e5%85%ac%e5%bc%8f%e6%8e%a8%e5%af%bc" aria-label="4.1 公式推导">4.1 公式推导</a><ul>
+                        
+                <li>
+                    <a href="#411-%e8%b4%9d%e5%8f%b6%e6%96%af%e5%ae%9a%e7%90%86" aria-label="4.1.1 贝叶斯定理">4.1.1 贝叶斯定理</a></li>
+                <li>
+                    <a href="#412-%e9%ab%98%e6%96%af%e5%88%86%e5%b8%83" aria-label="4.1.2 高斯分布">4.1.2 高斯分布</a></li></ul>
+                </li>
+                <li>
+                    <a href="#42-%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0" aria-label="4.2 代码实现">4.2 代码实现</a><ul>
+                        
+                <li>
+                    <a href="#421-%e5%af%b9%e6%95%b0%e6%8d%ae%e8%bf%9b%e8%a1%8c%e4%ba%8c%e5%88%86%e7%b1%bb" aria-label="4.2.1 对数据进行二分类">4.2.1 对数据进行二分类</a></li>
+                <li>
+                    <a href="#422-%e8%ae%a1%e7%ae%97%e5%9d%87%e5%80%bc%e5%92%8c%e5%8d%8f%e6%96%b9%e5%b7%ae" aria-label="4.2.2 计算均值和协方差">4.2.2 计算均值和协方差</a></li>
+                <li>
+                    <a href="#423-%e8%ae%a1%e7%ae%97%e5%8f%82%e6%95%b0%e6%9d%83%e9%87%8d%e5%90%91%e9%87%8f%e5%92%8c%e5%81%8f%e7%bd%ae%e9%a1%b9" aria-label="4.2.3 计算参数权重向量和偏置项">4.2.3 计算参数权重向量和偏置项</a></li>
+                <li>
+                    <a href="#424-sigmoid-%e5%87%bd%e6%95%b0" aria-label="4.2.4 Sigmoid 函数">4.2.4 Sigmoid 函数</a></li>
+                <li>
+                    <a href="#425-predict-%e9%a2%84%e6%b5%8b%e5%87%bd%e6%95%b0" aria-label="4.2.5 predict 预测函数">4.2.5 predict 预测函数</a></li>
+                <li>
+                    <a href="#426-%e8%ae%a1%e7%ae%97%e5%87%86%e7%a1%ae%e7%8e%87" aria-label="4.2.6 计算准确率">4.2.6 计算准确率</a></li>
+                <li>
+                    <a href="#427-%e5%b0%86%e9%a2%84%e6%b5%8b%e7%bb%93%e6%9e%9c%e5%86%99%e5%85%a5%e6%96%87%e4%bb%b6" aria-label="4.2.7 将预测结果写入文件">4.2.7 将预测结果写入文件</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#5-%e9%80%bb%e8%be%91%e5%9b%9e%e5%bd%92logistic-regression" aria-label="5 逻辑回归（Logistic Regression）">5 逻辑回归（Logistic Regression）</a><ul>
+                        
+                <li>
+                    <a href="#51-%e5%85%ac%e5%bc%8f%e6%8e%a8%e5%af%bc" aria-label="5.1 公式推导">5.1 公式推导</a><ul>
+                        
+                <li>
+                    <a href="#511-logistic-regression-%e7%9a%84%e5%89%8d%e6%8f%90" aria-label="5.1.1 Logistic Regression 的前提">5.1.1 Logistic Regression 的前提</a></li>
+                <li>
+                    <a href="#512-%e6%a8%a1%e5%9e%8b%e5%81%87%e8%ae%be" aria-label="5.1.2 模型假设">5.1.2 模型假设</a></li>
+                <li>
+                    <a href="#513-loss-%e5%87%bd%e6%95%b0%e6%9c%80%e5%a4%a7%e4%bc%bc%e7%84%b6%e4%bc%b0%e8%ae%a1" aria-label="5.1.3 Loss 函数：最大似然估计">5.1.3 Loss 函数：最大似然估计</a></li>
+                <li>
+                    <a href="#514-%e6%a2%af%e5%ba%a6%e4%b8%8b%e9%99%8d%e4%bc%98%e5%8c%96" aria-label="5.1.4 梯度下降优化">5.1.4 梯度下降优化</a></li></ul>
+                </li>
+                <li>
+                    <a href="#52-%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0" aria-label="5.2 代码实现">5.2 代码实现</a><ul>
+                        
+                <li>
+                    <a href="#521-%e6%a0%87%e5%87%86%e5%8c%96-normalize" aria-label="5.2.1 标准化 normalize">5.2.1 标准化 normalize</a></li>
+                <li>
+                    <a href="#522-%e5%af%b9%e8%ae%ad%e7%bb%83%e6%95%b0%e6%8d%ae%e8%bf%9b%e8%a1%8c%e5%88%92%e5%88%86" aria-label="5.2.2 对训练数据进行划分">5.2.2 对训练数据进行划分</a></li>
+                <li>
+                    <a href="#523-%e5%af%b9%e6%95%b0%e6%8d%ae%e8%bf%9b%e8%a1%8c%e6%89%93%e4%b9%b1" aria-label="5.2.3 对数据进行打乱">5.2.3 对数据进行打乱</a></li>
+                <li>
+                    <a href="#524-loss-%e5%87%bd%e6%95%b0" aria-label="5.2.4 Loss 函数">5.2.4 Loss 函数</a></li>
+                <li>
+                    <a href="#525-%e8%ae%a1%e7%ae%97%e6%a2%af%e5%ba%a6" aria-label="5.2.5 计算梯度">5.2.5 计算梯度</a></li>
+                <li>
+                    <a href="#526-%e8%ae%ad%e7%bb%83" aria-label="5.2.6 训练">5.2.6 训练</a></li></ul>
+                </li>
+                <li>
+                    <a href="#53-%e5%ae%9e%e9%aa%8c%e7%bb%93%e6%9e%9c" aria-label="5.3 实验结果">5.3 实验结果</a></li></ul>
+                </li>
+                <li>
+                    <a href="#6-%e5%ae%9e%e9%aa%8c%e8%af%84%e4%bc%b0" aria-label="6 实验评估">6 实验评估</a><ul>
+                        
+                <li>
+                    <a href="#61-accuracy" aria-label="6.1 Accuracy">6.1 Accuracy</a></li>
+                <li>
+                    <a href="#62-%e7%89%b9%e5%be%81%e6%a0%87%e5%87%86%e5%8c%96%e5%af%b9%e5%87%86%e7%a1%ae%e7%8e%87%e7%9a%84%e5%bd%b1%e5%93%8d" aria-label="6.2 特征标准化对准确率的影响">6.2 特征标准化对准确率的影响</a></li>
+                <li>
+                    <a href="#63-logistic-regression-%e7%9a%84%e6%ad%a3%e5%88%99%e5%8c%96%e5%af%b9%e6%a8%a1%e5%9e%8b%e5%87%86%e7%a1%ae%e7%8e%87%e7%9a%84%e5%bd%b1%e5%93%8d" aria-label="6.3 Logistic Regression 的正则化对模型准确率的影响">6.3 Logistic Regression 的正则化对模型准确率的影响</a></li>
+                <li>
+                    <a href="#64-%e6%89%be%e5%88%b0%e5%af%b9%e7%bb%93%e6%9e%9c%e5%bd%b1%e5%93%8d%e6%9c%80%e5%a4%a7%e7%9a%84%e7%89%b9%e5%be%81" aria-label="6.4 找到对结果影响最大的特征">6.4 找到对结果影响最大的特征</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="机器学习-实验2--预测年收入">【机器学习】 实验2  预测年收入<a hidden class="anchor" aria-hidden="true" href="#机器学习-实验2--预测年收入">#</a></h1>
+<blockquote>
+<p>姓名：密语
+学号：202200460104
+班级：网安 1 班</p>
+</blockquote>
+<p>[TOC]</p>
+<h2 id="1-实验目的">1 实验目的<a hidden class="anchor" aria-hidden="true" href="#1-实验目的">#</a></h2>
+<p>使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。</p>
+<h2 id="2-实验环境">2 实验环境<a hidden class="anchor" aria-hidden="true" href="#2-实验环境">#</a></h2>
+<ul>
+<li>操作系统：windows 11</li>
+<li>CPU：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz)</li>
+<li>GPU：NVIDIA GeForce GTX 1650</li>
+<li>运行环境：
+<ul>
+<li>Python 3.10.11</li>
+<li>pandas 2.1.0</li>
+<li>numpy 1.24.2</li>
+<li>matplotlib 3.7.1</li>
+<li>tqdm 4.66.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-数据处理">3 数据处理<a hidden class="anchor" aria-hidden="true" href="#3-数据处理">#</a></h2>
+<h3 id="31-数据文件描述">3.1 数据文件描述<a hidden class="anchor" aria-hidden="true" href="#31-数据文件描述">#</a></h3>
+<ul>
+<li>
+<p>train.csv / test.csv：包含 age, workclass, fnlwgt (总人数), education, education num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, make over 50K a year or not 这些特征。</p>
+</li>
+<li>
+<p>X_train / X_test：包含 106-dim 的特征的数据，是将 train.csv 进行 one-hot Encoding（独热编码）之后的数据，将分类向量转化为了二进制向量。</p>
+</li>
+<li>
+<p>Y_train：包含 1-dim 标签的数据，1 表示 make over 50K a year，0 表示 not make over 50K a year.</p>
+</li>
+</ul>
+<h3 id="32-读取数据">3.2 读取数据<a hidden class="anchor" aria-hidden="true" href="#32-读取数据">#</a></h3>
+<p>在 <code>data_manager</code> 类中有读取数据的函数 <code>read()</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">path</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">newline</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 读取数据,从第二行开始读取</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">))[</span><span class="mi">1</span><span class="p">:]</span> <span class="p">,</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">)</span>   
+</span></span></code></pre></div><h3 id="33-数据预处理">3.3 数据预处理<a hidden class="anchor" aria-hidden="true" href="#33-数据预处理">#</a></h3>
+<h4 id="331-对训练数据进行标准化">3.3.1 对训练数据进行标准化<a hidden class="anchor" aria-hidden="true" href="#331-对训练数据进行标准化">#</a></h4>
+<p>$$
+\sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(x_i-\mu)^2}\
+z_i = \frac{x_i-\mu}{\sigma}
+$$</p>
+<p>这样可以使多组数据的均值为 0，方差为 1，使数据标准统一化。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;X_train&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">rows</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">)</span> <span class="c1">#初始化参数</span>
+</span></span><span class="line"><span class="cl"> 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">		<span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="c1">#标准化</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 注意，testing data要跟training data的normalize方式一致，要用training data的mean和std</span>
+</span></span><span class="line"><span class="cl"><span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;X_test&#39;</span><span class="p">:</span> 
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">		<span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="c1">#标准化</span>
+</span></span></code></pre></div><h2 id="4-概率生成模型generative-model">4 概率生成模型（generative model）<a hidden class="anchor" aria-hidden="true" href="#4-概率生成模型generative-model">#</a></h2>
+<h3 id="41-公式推导">4.1 公式推导<a hidden class="anchor" aria-hidden="true" href="#41-公式推导">#</a></h3>
+<h4 id="411-贝叶斯定理">4.1.1 贝叶斯定理<a hidden class="anchor" aria-hidden="true" href="#411-贝叶斯定理">#</a></h4>
+<p>根据条件概率：
+$$
+P(x,y)=P(x|y)P(y)
+$$
+其中，$P(x|y)$ 是数据 $x$ 在给定标签 $y$ 下的条件概率，而 $P(y)$ 是标签 $y$ 的先验概率。</p>
+<p>贝叶斯定理：
+$$
+P(y|x)=\frac{P(x|y)P(y)}{P(x)}
+$$
+其中 $P(y|x)$ 是后验概率，$P(x)$ 是数据的边际条件。</p>
+<h4 id="412-高斯分布">4.1.2 高斯分布<a hidden class="anchor" aria-hidden="true" href="#412-高斯分布">#</a></h4>
+<p>高斯分布概率密度函数为：
+$$
+P(x) = \frac{1}{(2\pi)^{d/2} |\Sigma|^{1/2}} \exp \left( -\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu) \right)
+$$</p>
+<p>$$
+\ln \left( \frac{P(C_1 | x)}{P(C_0 | x)} \right) = \ln \left( \frac{P(x | C_1) P(C_1)}{P(x | C_0) P(C_0)} \right)= \ln P(x | C_1) - \ln P(x | C_0) + \ln \frac{P(C_1)}{P(C_0)}
+$$</p>
+<p>将上面的判别函数带入高斯分布的密度函数：
+$$
+= -\frac{1}{2} (x - \mu_1)^T \Sigma^{-1} (x - \mu_1) + \frac{1}{2} (x - \mu_0)^T \Sigma^{-1} (x - \mu_0) + \ln \frac{n_1}{n_0}
+$$
+所以我们得到了判别函数：
+$$
+f(x) = x^T \Sigma^{-1} (\mu_1 - \mu_0) - \frac{1}{2} (\mu_1^T \Sigma^{-1} \mu_1 - \mu_0^T \Sigma^{-1} \mu_0) + \ln \frac{n_1}{n_0}
+$$</p>
+<h3 id="42-代码实现">4.2 代码实现<a hidden class="anchor" aria-hidden="true" href="#42-代码实现">#</a></h3>
+<h4 id="421-对数据进行二分类">4.2.1 对数据进行二分类<a hidden class="anchor" aria-hidden="true" href="#421-对数据进行二分类">#</a></h4>
+<p>我们需要先根据 Y_train 中的数据，也就是根据年收入是否大于 5 万元，记录对应的下标。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl">        <span class="n">class_0_id</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">class_1_id</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Y_train&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="c1"># 对数据进行分类</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Y_train&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">class_0_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">class_1_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">class_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">][</span><span class="n">class_0_id</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">class_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">][</span><span class="n">class_1_id</span><span class="p">]</span>
+</span></span></code></pre></div><h4 id="422-计算均值和协方差">4.2.2 计算均值和协方差<a hidden class="anchor" aria-hidden="true" href="#422-计算均值和协方差">#</a></h4>
+<p>$$
+\mu_ = \frac{1}{n}\sum_{i=0}^{n} x_i \
+\sigma = \frac{1}{n} \sum_{i=0}^{n}(x_i -\mu)(x_i-\mu)^T
+$$</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl">        <span class="n">mean_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">class_0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 分别计算两类的均值</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mean_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">class_1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">n</span> <span class="o">=</span> <span class="n">class_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cov_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cov_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">n_0</span> <span class="o">=</span> <span class="n">class_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n_1</span> <span class="o">=</span> <span class="n">class_1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">class_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>  <span class="c1"># 计算协方差矩阵</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># please add code here</span>
+</span></span><span class="line"><span class="cl">            <span class="n">cov_0</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="n">class_0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">mean_0</span><span class="p">]),</span>
+</span></span><span class="line"><span class="cl">                            <span class="p">[</span><span class="n">class_0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">mean_0</span><span class="p">])</span> <span class="o">/</span> <span class="n">n_0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">class_1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">cov_1</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="n">class_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">mean_1</span><span class="p">]),</span>
+</span></span><span class="line"><span class="cl">                            <span class="p">[</span><span class="n">class_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">mean_1</span><span class="p">])</span> <span class="o">/</span> <span class="n">n_1</span>
+</span></span></code></pre></div><p>然后我们需要合并这两个协方差矩阵，采用加权平均的方式。
+$$
+\Sigma = \frac{n_1 \sigma_1+n_2 \sigma_2}{n_1+n_2}
+$$</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl">        <span class="n">cov</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_0</span><span class="o">*</span><span class="n">cov_0</span><span class="o">+</span><span class="n">n_1</span><span class="o">*</span><span class="n">cov_1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n_0</span><span class="o">+</span><span class="n">n_1</span><span class="p">)</span>  <span class="c1"># 计算协方差矩阵，使用加权的方法</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">cov_inv</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="423-计算参数权重向量和偏置项">4.2.3 计算参数权重向量和偏置项<a hidden class="anchor" aria-hidden="true" href="#423-计算参数权重向量和偏置项">#</a></h4>
+<p>根据 Gaussian Distribution，将 Gaussian Distribution 代入 Sigmoid 函数 ，我们可以得到 $P(C_1|x)=\sigma(w \cdot x+b)$ ，我们需要计算出权重向量 w 和偏置项 b。</p>
+<img src="https://s2.loli.net/2024/11/25/n7ZoRtJN5ClH2fz.png" alt="image.png" style="zoom:67%;" />
+<p>化简得到：
+$$
+w= \Sigma ^{-1}(\mu_1 - \mu_0)
+$$
+$$
+b=-\frac{1}{2}(\mu_1^T\Sigma^{-1}\mu_1-\mu_0^T\Sigma^{-1}\mu_0)+ln \frac{n_1}{n_0}
+$$</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="n">mean_0</span><span class="o">-</span><span class="n">mean_1</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">                <span class="n">cov_inv</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>  <span class="c1"># 计算w</span>
+</span></span><span class="line"><span class="cl"><span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">mean_0</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">cov_inv</span><span class="p">),</span> <span class="n">mean_0</span><span class="p">)</span><span class="o">+</span><span class="mf">0.5</span> <span class="o">*</span> \
+</span></span><span class="line"><span class="cl">		<span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">mean_1</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">cov_inv</span><span class="p">),</span><span class="n">mean_1</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n_0</span><span class="p">)</span><span class="o">/</span><span class="n">n_1</span><span class="p">)</span>  <span class="c1"># 计算b</span>
+</span></span></code></pre></div><h4 id="424-sigmoid-函数">4.2.4 Sigmoid 函数<a hidden class="anchor" aria-hidden="true" href="#424-sigmoid-函数">#</a></h4>
+<img src="https://s2.loli.net/2024/11/25/R4AlgtB1GhbV3nY.png" alt="image-20241125145321510" style="zoom:50%;" />
+$$
+\sigma(z)=\frac{1}{1+e^{-z}}
+$$
+将 $z=w \cdot x+b$ 代入 sigmoid 函数，我们可以得到 $C_1$ 的后验概率 $P(C_1|x)=\sigma(w \cdot x+b)$ ，我们就可以根据这个概率来进行分类了，可以发现，Sigmoid函数的值域是 $(0,1)$，根据大于/小于 0.5 进行二分类。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+</span></span><span class="line"><span class="cl">        <span class="n">z</span> <span class="o">*=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="mf">1e-8</span><span class="p">))</span>
+</span></span></code></pre></div><h4 id="425-predict-预测函数">4.2.5 predict 预测函数<a hidden class="anchor" aria-hidden="true" href="#425-predict-预测函数">#</a></h4>
+<p>根据公式 $P(C_1|x)=\sigma(w \cdot x+b)$ 计算出的概率，大于0.5设为 0，小于0.5设为 1。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">ans</span>
+</span></span></code></pre></div><h4 id="426-计算准确率">4.2.6 计算准确率<a hidden class="anchor" aria-hidden="true" href="#426-计算准确率">#</a></h4>
+<p>我们使用 X_train 进行预测，并使用 Y_train 的正确结果进行验证，从而计算出 acc。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>  <span class="c1"># 根据训练数据计算准确率</span>
+</span></span><span class="line"><span class="cl">	<span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">answer</span><span class="o">-</span><span class="n">y</span><span class="p">))</span>
+</span></span></code></pre></div><h4 id="427-将预测结果写入文件">4.2.7 将预测结果写入文件<a hidden class="anchor" aria-hidden="true" href="#427-将预测结果写入文件">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span> <span class="c1">#预测测试数据并将结果写入文件</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">answer</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+</span></span></code></pre></div><p>预测结果：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/11/25/FiJ37Dj1xmbRG6u.png" alt="image-20241125153513615"  />
+</p>
+<h2 id="5-逻辑回归logistic-regression">5 逻辑回归（Logistic Regression）<a hidden class="anchor" aria-hidden="true" href="#5-逻辑回归logistic-regression">#</a></h2>
+<h3 id="51-公式推导">5.1 公式推导<a hidden class="anchor" aria-hidden="true" href="#51-公式推导">#</a></h3>
+<h4 id="511-logistic-regression-的前提">5.1.1 Logistic Regression 的前提<a hidden class="anchor" aria-hidden="true" href="#511-logistic-regression-的前提">#</a></h4>
+<p>假设我们有一组数据集 $(X, Y)$，其中：</p>
+<ul>
+<li>$X \in \mathbb{R}^{m \times n}$：包含 $m$ 个样本，每个样本有 $n$ 个特征。</li>
+<li>$Y \in {0, 1}^m$：对应的分类标签，取值为 $0$ 或 $1$。 目标是学习一个模型，能够预测输入样本属于类 $1$ 的概率 $P(Y=1|X)$。</li>
+</ul>
+<h4 id="512-模型假设">5.1.2 模型假设<a hidden class="anchor" aria-hidden="true" href="#512-模型假设">#</a></h4>
+<p>逻辑回归假设：
+$$
+P(Y=1|X) = \sigma(z) = \frac{1}{1 + e^{-z}}
+$$
+其中：</p>
+<ul>
+<li>
+<p>$z = w^T X + b$：是线性组合，$w \in \mathbb{R}^n$ 是权重向量，$b$ 是偏置。</p>
+</li>
+<li>
+<p>$\sigma(z)$ 是 <strong>sigmoid 函数</strong>，将任意实数映射到区间 $[0, 1]$。 因此，逻辑回归模型可以表示为：
+$$
+P(Y=1|X) = \frac{1}{1 + e^{-(w^T X + b)}}
+$$</p>
+</li>
+</ul>
+<h4 id="513-loss-函数最大似然估计">5.1.3 Loss 函数：最大似然估计<a hidden class="anchor" aria-hidden="true" href="#513-loss-函数最大似然估计">#</a></h4>
+<p>假设所有样本是独立同分布的，联合概率可以表示为：
+$$
+P(Y|X; w, b) = \prod_{i=1}^m \Big(P(y^{(i)}|x^{(i)})\Big)
+$$
+其中 $y^{(i)} \in {0, 1}$ 是第 $i$ 个样本的标签。</p>
+<p>将 $P(y^{(i)}|x^{(i)})$ 写成通式：
+$$
+P(y^{(i)}|x^{(i)}) = \sigma(z^{(i)})^{y^{(i)}} \cdot (1 - \sigma(z^{(i)}))^{1 - y^{(i)}}
+$$
+因此，联合概率的对数似然函数为：
+$$
+\ell(w, b) = \sum_{i=1}^m \Big(y^{(i)} \log(\sigma(z^{(i)})) + (1 - y^{(i)}) \log(1 - \sigma(z^{(i)}))\Big)
+$$
+其中 $z^{(i)} = w^T x^{(i)} + b$。</p>
+<p>为了优化方便，最小化负对数似然，其表达式为：
+$$
+J(w, b) = -\ell(w, b) = -\frac{1}{m} \sum_{i=1}^m \Big(y^{(i)} \log(\sigma(z^{(i)})) + (1 - y^{(i)}) \log(1 - \sigma(z^{(i)}))\Big)
+$$
+这被称为<strong>二分类的交叉熵损失函数</strong>（Cross-Entropy Loss）。</p>
+<h4 id="514-梯度下降优化">5.1.4 梯度下降优化<a hidden class="anchor" aria-hidden="true" href="#514-梯度下降优化">#</a></h4>
+<p>为了最小化损失函数 $J(w, b)$，使用梯度下降法更新参数 $w$ 和 $b$。梯度计算如下：</p>
+<ul>
+<li>对 $w$ 的梯度：</li>
+</ul>
+<p>$$
+\frac{\partial J(w, b)}{\partial w} = \frac{1}{m} \sum_{i=1}^m (h^{(i)} - y^{(i)}) x^{(i)}
+$$</p>
+<p>​		其中 $h^{(i)} = \sigma(w^T x^{(i)} + b)$。</p>
+<ul>
+<li>对 $b$ 的梯度：</li>
+</ul>
+<p>$$
+\frac{\partial J(w, b)}{\partial b} = \frac{1}{m} \sum_{i=1}^m (h^{(i)} - y^{(i)})
+$$</p>
+<ul>
+<li>梯度更新公式：</li>
+</ul>
+<p>$$
+w = w - \alpha \frac{\partial J(w, b)}{\partial w} \
+b = b - \alpha \frac{\partial J(w, b)}{\partial b}
+$$</p>
+<p>​		其中 $\alpha$ 是学习率。</p>
+<h3 id="52-代码实现">5.2 代码实现<a hidden class="anchor" aria-hidden="true" href="#52-代码实现">#</a></h3>
+<h4 id="521-标准化-normalize">5.2.1 标准化 normalize<a hidden class="anchor" aria-hidden="true" href="#521-标准化-normalize">#</a></h4>
+<p>和 generative model 一致。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 将每一行的元素相加求均值，实际上返回的是1行106列的数组</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 将每一行的元素相加求标准差，实际上返回的是1行106列的数组</span>
+</span></span><span class="line"><span class="cl">    <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>  <span class="c1"># 标准化</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">X_train</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>  <span class="c1"># 标准化</span>
+</span></span><span class="line"><span class="cl"><span class="n">X_test</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_test</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>  <span class="c1"># 使用训练集的均值和方差对测试集进行标准化</span>
+</span></span></code></pre></div><h4 id="522-对训练数据进行划分">5.2.2 对训练数据进行划分<a hidden class="anchor" aria-hidden="true" href="#522-对训练数据进行划分">#</a></h4>
+<p>X_train 中 80% 作为训练集，20% 作为验证集。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">train_data_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>  <span class="c1"># 对训练集进行划分</span>
+</span></span><span class="line"><span class="cl">    <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">X</span><span class="p">[:</span><span class="n">size</span><span class="p">],</span> <span class="n">Y</span><span class="p">[:</span><span class="n">size</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">size</span><span class="p">:],</span> <span class="n">Y</span><span class="p">[</span><span class="n">size</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">Y_val</span> <span class="o">=</span> <span class="n">train_data_split</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 输出数据的大小和维度</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Size of X_train: </span><span class="si">{}</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Size of X_val: </span><span class="si">{}</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Size of X_test: </span><span class="si">{}</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Dimension of X_train: </span><span class="si">{}</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</span></span></code></pre></div><img src="https://s2.loli.net/2024/11/25/ftcBF32oU9RaMuv.png" alt="image-20241125224928600" style="zoom:80%;" />
+<h4 id="523-对数据进行打乱">5.2.3 对数据进行打乱<a hidden class="anchor" aria-hidden="true" href="#523-对数据进行打乱">#</a></h4>
+<p>将数据按行打乱，这样可以保证数据的随机性。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>  <span class="c1"># 对数据进行打乱</span>
+</span></span><span class="line"><span class="cl">    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">randomize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">randomize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">X</span><span class="p">[</span><span class="n">randomize</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">randomize</span><span class="p">]</span>
+</span></span></code></pre></div><h4 id="524-loss-函数">5.2.4 Loss 函数<a hidden class="anchor" aria-hidden="true" href="#524-loss-函数">#</a></h4>
+<p>根据交叉熵损失函数的公式：
+$$
+J(w, b) = -\ell(w, b) = -\frac{1}{m} \sum_{i=1}^m \Big(y^{(i)} \log(\sigma(z^{(i)})) + (1 - y^{(i)}) \log(1 - \sigma(z^{(i)}))\Big)
+$$</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">cross_entropy_loss</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">Y_label</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cross_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Y_label</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Y_label</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">cross_entropy</span>
+</span></span></code></pre></div><h4 id="525-计算梯度">5.2.5 计算梯度<a hidden class="anchor" aria-hidden="true" href="#525-计算梯度">#</a></h4>
+<p>根据梯度计算公式：
+$$
+w_{grad}=\frac{\partial J(w, b)}{\partial w} = \frac{1}{m} \sum_{i=1}^m (h^{(i)} - y^{(i)}) x^{(i)} \
+b_{grad}=\frac{\partial J(w, b)}{\partial b} = \frac{1}{m} \sum_{i=1}^m (h^{(i)} - y^{(i)})
+$$</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">gradient</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y_label</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span> <span class="c1"># 计算梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pred_error</span> <span class="o">=</span> <span class="n">Y_label</span> <span class="o">-</span> <span class="n">y_pred</span>
+</span></span><span class="line"><span class="cl">    <span class="n">w_grad</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pred_error</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">b_grad</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pred_error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">w_grad</span><span class="p">,</span> <span class="n">b_grad</span>
+</span></span></code></pre></div><h4 id="526-训练">5.2.6 训练<a hidden class="anchor" aria-hidden="true" href="#526-训练">#</a></h4>
+<p>训练模型时，采用 Mini-Batch Gradient Descent 和 Adagrad  这两种梯度下降法。</p>
+<ul>
+<li>Mini-Batch Gradient Descent：
+<ul>
+<li>结合了随机梯度下降（SGD）和全梯度下降的优点。</li>
+<li>每次更新使用一小部分数据，计算速度较快，具有一定的噪声引入效果，有助于跳出局部极值。</li>
+</ul>
+</li>
+<li>Adagrad :
+<ul>
+<li>可以动态的调整学习率。</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="c1"># 开始训练</span>
+</span></span><span class="line"><span class="cl"><span class="n">Y_train</span> <span class="o">=</span> <span class="n">Y_train</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># 将Y_train展平</span>
+</span></span><span class="line"><span class="cl"><span class="n">Y_val</span> <span class="o">=</span> <span class="n">Y_val</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># 将Y_val展平</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],))</span>  <span class="c1"># 初始化w</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,))</span>  <span class="c1"># 初始化b</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">iter</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># 迭代次数</span>
+</span></span><span class="line"><span class="cl"><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># 批次大小</span>
+</span></span><span class="line"><span class="cl"><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># 学习率</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">train_loss</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">val_loss</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">train_acc</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">val_acc</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 初始化累积梯度</span>
+</span></span><span class="line"><span class="cl"><span class="n">w_accum_grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],))</span>
+</span></span><span class="line"><span class="cl"><span class="n">b_accum_grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">iter</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 每次取batch_size个数据进行训练</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">))):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">X</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[</span><span class="n">idx</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">:(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Y</span> <span class="o">=</span> <span class="n">Y_train</span><span class="p">[</span><span class="n">idx</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">:(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">w_grad</span><span class="p">,</span> <span class="n">b_grad</span> <span class="o">=</span> <span class="n">gradient</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 累积梯度平方和，adagrad</span>
+</span></span><span class="line"><span class="cl">        <span class="n">w_accum_grad</span> <span class="o">+=</span> <span class="n">w_grad</span><span class="o">**</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl">        <span class="n">b_accum_grad</span> <span class="o">+=</span> <span class="n">b_grad</span><span class="o">**</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 更新w和b</span>
+</span></span><span class="line"><span class="cl">        <span class="n">w</span> <span class="o">-=</span> <span class="p">(</span><span class="n">learning_rate</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w_accum_grad</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">))</span> <span class="o">*</span> <span class="n">w_grad</span>
+</span></span><span class="line"><span class="cl">        <span class="n">b</span> <span class="o">-=</span> <span class="p">(</span><span class="n">learning_rate</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">b_accum_grad</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">))</span> <span class="o">*</span> <span class="n">b_grad</span>
+</span></span></code></pre></div><h3 id="53-实验结果">5.3 实验结果<a hidden class="anchor" aria-hidden="true" href="#53-实验结果">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/11/25/3lLTUQyxDVfGqa6.png" alt="image-20241125233351280"  />
+</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/11/25/hXKQlEunPas27bj.png" alt="image-20241125233511999"  />
+</p>
+<h2 id="6-实验评估">6 实验评估<a hidden class="anchor" aria-hidden="true" href="#6-实验评估">#</a></h2>
+<h3 id="61-accuracy">6.1 Accuracy<a hidden class="anchor" aria-hidden="true" href="#61-accuracy">#</a></h3>
+<p>准确率方面，Logistic Regression 要略优于 Generative Model。</p>
+<ul>
+<li>
+<p>Logistic Regression:</p>
+<ul>
+<li>
+<p>逻辑回归是 <strong>判别模型</strong>，直接建模 P(Y∣X)，即条件概率分布。它的目标是通过最大化数据点的对数似然，直接优化分类边界，专注于如何在给定特征 X 下预测 Y。</p>
+</li>
+<li>
+<p>不关心特征 X 的分布，因此对于 X 分布的假设较少，更灵活。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Generative Model:</p>
+<ul>
+<li>
+<p>生成模型通过建模联合概率分布 P(X, Y) 来推导条件概率 P(Y∣X)。它要求对 P(X∣Y) 和 P(Y) 分布做出明确的假设（如高斯分布）。</p>
+</li>
+<li>
+<p>如果数据本身不符合假设（例如 P(X∣Y) 不是高斯分布），生成模型可能产生偏差，影响分类性能。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="62-特征标准化对准确率的影响">6.2 特征标准化对准确率的影响<a hidden class="anchor" aria-hidden="true" href="#62-特征标准化对准确率的影响">#</a></h3>
+<ul>
+<li>未进行标准化：</li>
+</ul>
+<p><img loading="lazy" src="C:/Users/86135/AppData/Roaming/Typora/typora-user-images/image-20241125235131620.png" alt="image-20241125235131620"  />
+</p>
+<p><img loading="lazy" src="C:/Users/86135/AppData/Roaming/Typora/typora-user-images/image-20241125235150035.png" alt="image-20241125235150035"  />
+</p>
+<ul>
+<li>进行标准化：</li>
+</ul>
+<p><img loading="lazy" src="https://s2.loli.net/2024/11/25/3lLTUQyxDVfGqa6.png" alt="image-20241125233351280"  />
+</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/11/25/PWzlD46OqQCjhRE.png" alt="image-20241125233511999"  />
+</p>
+<p>可以发现 acc 和 loss 的波动很大，而且几乎没有收敛的趋势，准确率也大大降低。</p>
+<p>标准化可以统一不同数据的平均值和标准差，提高了数据可比性，削弱了数据解释性。</p>
+<h3 id="63-logistic-regression-的正则化对模型准确率的影响">6.3 Logistic Regression 的正则化对模型准确率的影响<a hidden class="anchor" aria-hidden="true" href="#63-logistic-regression-的正则化对模型准确率的影响">#</a></h3>
+<p>加入正则化后的损失函数：
+$$
+Loss = CrossEntropyLoss+\frac{\lambda}{2}||w||^2
+$$
+其中 $\lambda$ 是正则化系数。</p>
+<p>$\lambda=0.1$ 时：</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center"></th>
+          <th style="text-align: center">使用正则化</th>
+          <th style="text-align: center">未使用正则化</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">train_acc</td>
+          <td style="text-align: center">0.8528101965601965</td>
+          <td style="text-align: center">0.8540770884520885</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">val_acc</td>
+          <td style="text-align: center">0.8483033932135728</td>
+          <td style="text-align: center">0.8515277138031629</td>
+      </tr>
+  </tbody>
+</table>
+<p>可以发现加入了正则化参数后，模型的准确率有些许的下降，这可能与我们选择 adagrad 梯度下降有关。</p>
+<h3 id="64-找到对结果影响最大的特征">6.4 找到对结果影响最大的特征<a hidden class="anchor" aria-hidden="true" href="#64-找到对结果影响最大的特征">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="c1"># 找到影响最大的特征</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;X_train&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">featrues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># 通过表头获取特征名</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">w</span><span class="p">))</span> <span class="c1"># 获取绝对值最大的权重</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="nb">max</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;The most important feature is: &#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">featrues</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&#34;with weight: &#34;</span><span class="p">,</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 找出前五个特征</span>
+</span></span><span class="line"><span class="cl">        <span class="n">top_5_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">w</span><span class="p">))[:</span><span class="mi">5</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Top 5 important features and their weights:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">top_5_indices</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Feature: </span><span class="si">{</span><span class="n">featrues</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">, Weight: </span><span class="si">{</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><img src="C:/Users/86135/AppData/Roaming/Typora/typora-user-images/image-20241126164118592.png" alt="image-20241126164118592" style="zoom:80%;" />
+<img src="https://s2.loli.net/2024/11/26/yvWsoSTdjGIOpJR.png" alt="image-20241126164321346" style="zoom: 40%;" />
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>SEEDlab—跨站脚本（XSS）攻击实验</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

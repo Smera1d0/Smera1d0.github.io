@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>SEEDlab—密码技术应用实验 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="软件安全">
+<meta name="description" content="Task 1：使用不同的加密算法和加密模式加密
+1. AES-128-CBC 模式加密
+
+
+使用 OpenSSL 随机生成 128bit 的 Key 和 IV
+$ openssl rand -hex 16
+
+
+使用OpenSSL对明文进行加密
+
+
+
+
+2. AES-128-CFB 模式加密
+
+
+3. Blowfish-CBC 模式加密
+
+">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eb8f5da85697cd810df09cc87c7f69c1a1690fdc75d0a7bc8bcd70301c4c3cca.css" integrity="sha256-649dqFaXzYEN8JzIfH9pwaFpD9x10Ke8i81wMBxMPMo=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            },
+            "HTML-CSS": {
+                availableFonts: ["Arial", "TeX"],
+                preferredFont: "TeX",
+                webFont: "TeX"
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+<meta property="og:title" content="SEEDlab—密码技术应用实验" />
+<meta property="og:description" content="Task 1：使用不同的加密算法和加密模式加密
+1. AES-128-CBC 模式加密
+
+
+使用 OpenSSL 随机生成 128bit 的 Key 和 IV
+$ openssl rand -hex 16
+
+
+使用OpenSSL对明文进行加密
+
+
+
+
+2. AES-128-CFB 模式加密
+
+
+3. Blowfish-CBC 模式加密
+
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-01-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-01-21T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="SEEDlab—密码技术应用实验"/>
+<meta name="twitter:description" content="Task 1：使用不同的加密算法和加密模式加密
+1. AES-128-CBC 模式加密
+
+
+使用 OpenSSL 随机生成 128bit 的 Key 和 IV
+$ openssl rand -hex 16
+
+
+使用OpenSSL对明文进行加密
+
+
+
+
+2. AES-128-CFB 模式加密
+
+
+3. Blowfish-CBC 模式加密
+
+"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SEEDlab—密码技术应用实验",
+      "item": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SEEDlab—密码技术应用实验",
+  "name": "SEEDlab—密码技术应用实验",
+  "description": "Task 1：使用不同的加密算法和加密模式加密 1. AES-128-CBC 模式加密 使用 OpenSSL 随机生成 128bit 的 Key 和 IV\n$ openssl rand -hex 16 使用OpenSSL对明文进行加密\n2. AES-128-CFB 模式加密 3. Blowfish-CBC 模式加密 ",
+  "keywords": [
+    "软件安全"
+  ],
+  "articleBody": "Task 1：使用不同的加密算法和加密模式加密 1. AES-128-CBC 模式加密 使用 OpenSSL 随机生成 128bit 的 Key 和 IV\n$ openssl rand -hex 16 使用OpenSSL对明文进行加密\n2. AES-128-CFB 模式加密 3. Blowfish-CBC 模式加密 Task 2：加密模式：ECB vs. CBC 1. 首先分别使用 AES-128-CBC 和 AES-128-ECB 模式加密图片 使用 AES-128-CBC 加密得到 p1.bmp 使用 AES-128-ECB 加密得到 p2.bmp 2. 使用图片的图片头进行拼接 3. 查看加密后的图片 左为CBC模式，中间为原始图像，右为ECB模式。\n现象：我们可以发现，使用CBC模式加密的图片已经失去了所有图像特征，但使用ECB模式加密的图片还可以显示出原有的 Apple Logo 的轮廓信息。\n解释：这与CBC和ECB模式的加密方式有关，CBC模式每一个数据块在加密时都依赖于前一个块的密文，因此即使原始数据相同，加密出的密文也会有所不同，因此不会泄露图像的轮廓特征，而ECB加密模式中，每一个数据块都是独立加密的，相同的原始数据加密后得到的密文也相同，因此对于图片这种重复模式较强的文件，相同的部分加密后会产生相同的加密块，从而泄露图片的结构信息。\n4. 对 sample.bmp 进行加密 左为CBC模式，中间为原始图像，右为ECB模式。\n这张图片使用CBC和ECB加密后都没有明显的特征了，原因是这张图片没有大面积的重复的色块，即使使用ECB模式加密也不会泄露图片的结构信息。\nTask 3：错误传播 – 被破坏的密文 答： 能从 CBC 中恢复 $总字节数-17字节$ 的信息，能从ECB中恢复 $总字节数-16字节$ 的信息。\n1. 创建一个至少 1000 字节长的文本文件。 2. 分别使用AES-128-CBC和AES-128-ECB加密 3. 分别修改加密后文件的第55个字节 使用bless修改偏移为0x36位置（偏移从0开始）的字节，分别修改一个比特。\n4. 使用正确的Key和IV进行解密 5. 与原文件进行对比 使用 cmp 命令逐位比较原文件和解密文件的不同的字节数，并使用 wc -l 统计不同的总字节数。\n**现象：**发现 cbc 模式下，密文 1 bit 的错误会导致解密出的明文 17 字节的错误，而 ecb 模式下，密文 1 bit 的错误会导致解密出的明文 16 字节的错误。\n原因：\nECB模式下每个 16 字节的块单独加密，因此该错误比特只会影响自己所在的块的解密，因此会导致解密明文的 16 字节的错误 CBC模式下，每一个块的解密依赖于前一个块的密文，会导致当前的块的 16 个字节解密错误，同时因为密文块有 1 bit的错误，会影响下一个块的首字节的解密，导致下一个块的首字节解密错误，因此一共产生 17 个字节的错误。 Task 4：寻找密钥 使用以下代码可以找到密钥：\nfrom Crypto.Cipher import AES import binascii plaintext = b\"This is a top secret.\" ciphertext_hex = ( \"e29652fd35eb14b222f9a90d97902d2d\" \"eef000978fa0952d7a98bbe0e251286b\" ) iv_hex = \"010203040506070809000a0b0c0d0e0f\" # 转换为字节 ciphertext = binascii.unhexlify(ciphertext_hex) iv = binascii.unhexlify(iv_hex) # 构造密钥并解密 def decrypt_with_key(word): # 不足16字节补`#` key = word.ljust(16, \"#\").encode(\"utf-8\") # 初始化AES解密器 cipher = AES.new(key, AES.MODE_CBC, iv) decrypted = cipher.decrypt(ciphertext) # 检查解密是否成功 if decrypted.strip() == plaintext: return True, word return False, None # 从文件加载单词列表 with open(\"words.txt\", \"r\") as f: words = f.read().splitlines() # 逐一尝试密钥 for word in words: if len(word)\u003c=16: success, key = decrypt_with_key(word) if success: print(f\"找到正确的密钥：{key}\") break else: print(\"未找到正确的密钥。\") 通过对 word.txt 字典文件的遍历，找到了正确的密钥为：snowstorm\nTask 5：生成消息摘要 使用 sha1, sha256, md5, sm3 等算法生成消息摘要，如下所示：\n现象：不同算法生成的消息摘要的长度不同，见下表：\n算法 消息摘要长度 SHA-1 160 位（20 字节） SHA-256 256 位（32 字节） MD5 128 位（16 字节） SM3 256 位（32 字节） Task 6：哈希函数的输出特性 1. 使用 SHA-1 算法生成哈希值 H1 2. 修改 plain.txt 的一个比特，再使用 SHA-1 算法生成哈希值 H2 使用 bless 修改 plain.txt 的第一位，将 49 改为 59 使用 SHA-1 算法生成哈希值 H2 3. 对比 H1 和 H2 发现 H1 和 H2 并不相似，这说明即使文件只有 1 bit 不同，生成的消息摘要值就完全不同。\nTask 7：单向性与抗碰撞性 编写一个 C 程序，通过生成随机字符串寻找与origin.txt前 24 比特相同的文件：\n#include #include #include #include #include // 计算文件的 SHA1 哈希值，并返回前 24 位 void compute_sha1_prefix(const char *filename, unsigned char *sha1_prefix) { FILE *file = fopen(filename, \"rb\"); if (file == NULL) { perror(\"File opening failed\"); exit(1); } // 计算文件的 SHA1 哈希 SHA_CTX sha_ctx; SHA1_Init(\u0026sha_ctx); unsigned char buffer[1024]; size_t bytes_read; while ((bytes_read = fread(buffer, 1, sizeof(buffer), file)) \u003e 0) { SHA1_Update(\u0026sha_ctx, buffer, bytes_read); } fclose(file); unsigned char sha1_hash[SHA_DIGEST_LENGTH]; SHA1_Final(sha1_hash, \u0026sha_ctx); // 只取前 24 位，即前 3 字节 memcpy(sha1_prefix, sha1_hash, 3); } // 计算字符串的 SHA1 哈希值 void compute_sha1_string(const char *str, unsigned char *sha1_hash) { SHA_CTX sha_ctx; SHA1_Init(\u0026sha_ctx); SHA1_Update(\u0026sha_ctx, str, strlen(str)); SHA1_Final(sha1_hash, \u0026sha_ctx); } // 将 SHA1 哈希值的前 24 位转换为十六进制字符串 void sha1_prefix_to_hex(const unsigned char *sha1_prefix, char *output) { for (int i = 0; i \u003c 3; ++i) { sprintf(output + i * 2, \"%02x\", sha1_prefix[i]); } output[6] = '\\0'; // 确保字符串以 '\\0' 结束 } // 将碰撞的随机字符串写入文件 void write_collision_to_file(const char *filename, const char *str) { FILE *file = fopen(filename, \"wb\"); // 使用 'wb' 模式，以二进制模式写入内容 if (file == NULL) { perror(\"Failed to open file for writing\"); exit(1); } // 将随机字符串逐字节写入文件（不添加换行符或其他字符） fwrite(str, 1, strlen(str), file); fclose(file); } int main() { srand(time(NULL)); // 用时间作为随机数种子 // Step 1: 计算 original.txt 文件的 SHA1 哈希值并获取前 24 位 unsigned char original_sha1_prefix[3]; compute_sha1_prefix(\"original.txt\", original_sha1_prefix); // 将前 24 位 SHA1 哈希值转换为十六进制字符串 char original_sha1_hex[7]; sha1_prefix_to_hex(original_sha1_prefix, original_sha1_hex); printf(\"Original file SHA1 prefix (24 bits): %s\\n\", original_sha1_hex); // Step 2: 进行10次实验并记录尝试次数 int total_attempts = 0; int num_experiments = 10; // 实验次数 char last_collision_string[100]; // 保存最后一次实验找到的随机字符串 for (int exp = 0; exp \u003c num_experiments; ++exp) { int attempts = 0; unsigned char test_sha1_hash[SHA_DIGEST_LENGTH]; char test_string[100]; unsigned char test_sha1_prefix[3]; char test_sha1_hex[7]; while (1) { // 生成一个随机字符串 int len = rand() % 50 + 1; // 随机生成字符串长度，1 到 50 字符 for (int i = 0; i \u003c len; ++i) { test_string[i] = 'a' + rand() % 26; // 生成 'a' 到 'z' 的随机字符 } test_string[len] = '\\0'; // 结束符 // 计算该字符串的 SHA1 哈希值 compute_sha1_string(test_string, test_sha1_hash); // 提取前 24 位哈希值 memcpy(test_sha1_prefix, test_sha1_hash, 3); // 转换为十六进制字符串进行比较 sha1_prefix_to_hex(test_sha1_prefix, test_sha1_hex); // 比较前 24 位是否相同 if (strncmp(original_sha1_hex, test_sha1_hex, 6) == 0) { // 找到碰撞，保存随机字符串 strcpy(last_collision_string, test_string); break; // 退出循环 } attempts++; } total_attempts += attempts; printf(\"Experiment %d: Found collision after %d attempts\\n\", exp + 1, attempts); } // Step 3: 计算平均尝试次数 float average_attempts = total_attempts / (float)num_experiments; printf(\"Average number of attempts: %.2f\\n\", average_attempts); // Step 4: 将最后一次实验找到的随机字符串写入文件 write_collision_to_file(\"collision_result.txt\", last_collision_string); printf(\"Last collision string written to collision_result.txt: %s\\n\", last_collision_string); return 0; } 使用以下命令编译这个 C 源码：\ngcc -o sha1_collision sha1_collision.c -lssl -lcrypto 进行 10 次实验，计算爆破所需的平均次数，并将最后一次的结果写入文件，如下所示：\n找到的文本如下：\nzeurmhgukcoxjrbdrzecxweicdfvrmjqsfhgopbatpyfi 验证与 origin.txt 的 sha1 值的前 24 bit 是否一致：\n发现确实是一致的。\n",
+  "wordCount" : "2212",
+  "inLanguage": "zh",
+  "datePublished": "2024-01-21T00:00:00Z",
+  "dateModified": "2024-01-21T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      SEEDlab—密码技术应用实验
+    </h1>
+    <div class="post-meta"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;5 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/%e3%80%90%e8%bd%af%e4%bb%b6%e5%ae%89%e5%85%a8%e3%80%91%e5%ae%9e%e9%aa%8c%207%20%20%e5%af%86%e7%a0%81%e6%8a%80%e6%9c%af%e5%ba%94%e7%94%a8%e5%ae%9e%e9%aa%8c.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#task-1%e4%bd%bf%e7%94%a8%e4%b8%8d%e5%90%8c%e7%9a%84%e5%8a%a0%e5%af%86%e7%ae%97%e6%b3%95%e5%92%8c%e5%8a%a0%e5%af%86%e6%a8%a1%e5%bc%8f%e5%8a%a0%e5%af%86" aria-label="Task 1：使用不同的加密算法和加密模式加密">Task 1：使用不同的加密算法和加密模式加密</a><ul>
+                        
+                <li>
+                    <a href="#1-aes-128-cbc-%e6%a8%a1%e5%bc%8f%e5%8a%a0%e5%af%86" aria-label="1. AES-128-CBC 模式加密">1. AES-128-CBC 模式加密</a></li>
+                <li>
+                    <a href="#2-aes-128-cfb-%e6%a8%a1%e5%bc%8f%e5%8a%a0%e5%af%86" aria-label="2. AES-128-CFB 模式加密">2. AES-128-CFB 模式加密</a></li>
+                <li>
+                    <a href="#3-blowfish-cbc-%e6%a8%a1%e5%bc%8f%e5%8a%a0%e5%af%86" aria-label="3. Blowfish-CBC 模式加密">3. Blowfish-CBC 模式加密</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-2%e5%8a%a0%e5%af%86%e6%a8%a1%e5%bc%8fecb-vs-cbc" aria-label="Task 2：加密模式：ECB vs. CBC">Task 2：加密模式：ECB vs. CBC</a><ul>
+                        
+                <li>
+                    <a href="#1-%e9%a6%96%e5%85%88%e5%88%86%e5%88%ab%e4%bd%bf%e7%94%a8-aes-128-cbc-%e5%92%8c-aes-128-ecb-%e6%a8%a1%e5%bc%8f%e5%8a%a0%e5%af%86%e5%9b%be%e7%89%87" aria-label="1. 首先分别使用 AES-128-CBC 和 AES-128-ECB 模式加密图片">1. 首先分别使用 AES-128-CBC 和 AES-128-ECB 模式加密图片</a></li>
+                <li>
+                    <a href="#2-%e4%bd%bf%e7%94%a8%e5%9b%be%e7%89%87%e7%9a%84%e5%9b%be%e7%89%87%e5%a4%b4%e8%bf%9b%e8%a1%8c%e6%8b%bc%e6%8e%a5" aria-label="2. 使用图片的图片头进行拼接">2. 使用图片的图片头进行拼接</a></li>
+                <li>
+                    <a href="#3-%e6%9f%a5%e7%9c%8b%e5%8a%a0%e5%af%86%e5%90%8e%e7%9a%84%e5%9b%be%e7%89%87" aria-label="3. 查看加密后的图片">3. 查看加密后的图片</a></li>
+                <li>
+                    <a href="#4-%e5%af%b9-samplebmp-%e8%bf%9b%e8%a1%8c%e5%8a%a0%e5%af%86" aria-label="4. 对 sample.bmp 进行加密">4. 对 sample.bmp 进行加密</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-3%e9%94%99%e8%af%af%e4%bc%a0%e6%92%ad--%e8%a2%ab%e7%a0%b4%e5%9d%8f%e7%9a%84%e5%af%86%e6%96%87" aria-label="Task 3：错误传播 – 被破坏的密文">Task 3：错误传播 – 被破坏的密文</a><ul>
+                        
+                <li>
+                    <a href="#%e7%ad%94" aria-label="答：">答：</a></li>
+                <li>
+                    <a href="#1-%e5%88%9b%e5%bb%ba%e4%b8%80%e4%b8%aa%e8%87%b3%e5%b0%91-1000-%e5%ad%97%e8%8a%82%e9%95%bf%e7%9a%84%e6%96%87%e6%9c%ac%e6%96%87%e4%bb%b6" aria-label="1. 创建一个至少 1000 字节长的文本文件。">1. 创建一个至少 1000 字节长的文本文件。</a></li>
+                <li>
+                    <a href="#2-%e5%88%86%e5%88%ab%e4%bd%bf%e7%94%a8aes-128-cbc%e5%92%8caes-128-ecb%e5%8a%a0%e5%af%86" aria-label="2. 分别使用AES-128-CBC和AES-128-ECB加密">2. 分别使用AES-128-CBC和AES-128-ECB加密</a></li>
+                <li>
+                    <a href="#3-%e5%88%86%e5%88%ab%e4%bf%ae%e6%94%b9%e5%8a%a0%e5%af%86%e5%90%8e%e6%96%87%e4%bb%b6%e7%9a%84%e7%ac%ac55%e4%b8%aa%e5%ad%97%e8%8a%82" aria-label="3. 分别修改加密后文件的第55个字节">3. 分别修改加密后文件的第55个字节</a></li>
+                <li>
+                    <a href="#4-%e4%bd%bf%e7%94%a8%e6%ad%a3%e7%a1%ae%e7%9a%84key%e5%92%8civ%e8%bf%9b%e8%a1%8c%e8%a7%a3%e5%af%86" aria-label="4. 使用正确的Key和IV进行解密">4. 使用正确的Key和IV进行解密</a></li>
+                <li>
+                    <a href="#5-%e4%b8%8e%e5%8e%9f%e6%96%87%e4%bb%b6%e8%bf%9b%e8%a1%8c%e5%af%b9%e6%af%94" aria-label="5. 与原文件进行对比">5. 与原文件进行对比</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-4%e5%af%bb%e6%89%be%e5%af%86%e9%92%a5" aria-label="Task 4：寻找密钥">Task 4：寻找密钥</a></li>
+                <li>
+                    <a href="#task-5%e7%94%9f%e6%88%90%e6%b6%88%e6%81%af%e6%91%98%e8%a6%81" aria-label="Task 5：生成消息摘要">Task 5：生成消息摘要</a></li>
+                <li>
+                    <a href="#task-6%e5%93%88%e5%b8%8c%e5%87%bd%e6%95%b0%e7%9a%84%e8%be%93%e5%87%ba%e7%89%b9%e6%80%a7" aria-label="Task 6：哈希函数的输出特性">Task 6：哈希函数的输出特性</a><ul>
+                        
+                <li>
+                    <a href="#1-%e4%bd%bf%e7%94%a8-sha-1-%e7%ae%97%e6%b3%95%e7%94%9f%e6%88%90%e5%93%88%e5%b8%8c%e5%80%bc-h1" aria-label="1. 使用 SHA-1 算法生成哈希值 H1">1. 使用 SHA-1 算法生成哈希值 H1</a></li>
+                <li>
+                    <a href="#2-%e4%bf%ae%e6%94%b9-plaintxt-%e7%9a%84%e4%b8%80%e4%b8%aa%e6%af%94%e7%89%b9%e5%86%8d%e4%bd%bf%e7%94%a8-sha-1-%e7%ae%97%e6%b3%95%e7%94%9f%e6%88%90%e5%93%88%e5%b8%8c%e5%80%bc-h2" aria-label="2. 修改 plain.txt 的一个比特，再使用 SHA-1 算法生成哈希值 H2">2. 修改 plain.txt 的一个比特，再使用 SHA-1 算法生成哈希值 H2</a></li>
+                <li>
+                    <a href="#3-%e5%af%b9%e6%af%94-h1-%e5%92%8c-h2" aria-label="3. 对比 H1 和 H2">3. 对比 H1 和 H2</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-7%e5%8d%95%e5%90%91%e6%80%a7%e4%b8%8e%e6%8a%97%e7%a2%b0%e6%92%9e%e6%80%a7" aria-label="Task 7：单向性与抗碰撞性">Task 7：单向性与抗碰撞性</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="task-1使用不同的加密算法和加密模式加密">Task 1：使用不同的加密算法和加密模式加密<a hidden class="anchor" aria-hidden="true" href="#task-1使用不同的加密算法和加密模式加密">#</a></h2>
+<h3 id="1-aes-128-cbc-模式加密">1. AES-128-CBC 模式加密<a hidden class="anchor" aria-hidden="true" href="#1-aes-128-cbc-模式加密">#</a></h3>
+<ul>
+<li>
+<p>使用 OpenSSL 随机生成 128bit 的 Key 和 IV</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ openssl rand -hex <span class="m">16</span>
+</span></span></code></pre></div></li>
+<li>
+<p>使用OpenSSL对明文进行加密</p>
+</li>
+</ul>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/20/wtZ3X7rSjqy1OJF.png" alt="image-20241220134440418"  />
+</p>
+<h3 id="2-aes-128-cfb-模式加密">2. AES-128-CFB 模式加密<a hidden class="anchor" aria-hidden="true" href="#2-aes-128-cfb-模式加密">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/20/WmK8RNFC6yJQ4Mf.png" alt="image-20241220140959181"  />
+</p>
+<h3 id="3-blowfish-cbc-模式加密">3. Blowfish-CBC 模式加密<a hidden class="anchor" aria-hidden="true" href="#3-blowfish-cbc-模式加密">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/20/Yl5E4mJioyr716T.png" alt="image-20241220141410603"  />
+</p>
+<h2 id="task-2加密模式ecb-vs-cbc">Task 2：加密模式：ECB vs. CBC<a hidden class="anchor" aria-hidden="true" href="#task-2加密模式ecb-vs-cbc">#</a></h2>
+<h3 id="1-首先分别使用-aes-128-cbc-和-aes-128-ecb-模式加密图片">1. 首先分别使用 AES-128-CBC 和 AES-128-ECB 模式加密图片<a hidden class="anchor" aria-hidden="true" href="#1-首先分别使用-aes-128-cbc-和-aes-128-ecb-模式加密图片">#</a></h3>
+<ul>
+<li>使用 AES-128-CBC 加密得到 p1.bmp</li>
+</ul>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/20/x7uHEkie9JgvITK.png" alt="image-20241220142436700"  />
+</p>
+<ul>
+<li>使用 AES-128-ECB 加密得到 p2.bmp</li>
+</ul>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/20/hMVQWqSBLjHDltm.png" alt="image-20241220143429849"  />
+</p>
+<h3 id="2-使用图片的图片头进行拼接">2. 使用图片的图片头进行拼接<a hidden class="anchor" aria-hidden="true" href="#2-使用图片的图片头进行拼接">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2025/01/21/MTr8VUqg3a6xEJn.png" alt="image-20241220143618543"  />
+</p>
+<h3 id="3-查看加密后的图片">3. 查看加密后的图片<a hidden class="anchor" aria-hidden="true" href="#3-查看加密后的图片">#</a></h3>
+<p>左为CBC模式，中间为原始图像，右为ECB模式。</p>
+<p><img loading="lazy" src="https://s2.loli.net/2025/01/21/95QuDOBqFEX3wz4.png" alt="image-20241220144242015"  />
+</p>
+<p><strong>现象</strong>：我们可以发现，使用CBC模式加密的图片已经失去了所有图像特征，但使用ECB模式加密的图片还可以显示出原有的 Apple Logo 的轮廓信息。</p>
+<p><strong>解释</strong>：这与CBC和ECB模式的加密方式有关，CBC模式每一个数据块在加密时都依赖于前一个块的密文，因此即使原始数据相同，加密出的密文也会有所不同，因此不会泄露图像的轮廓特征，而ECB加密模式中，每一个数据块都是独立加密的，相同的原始数据加密后得到的密文也相同，因此对于图片这种重复模式较强的文件，相同的部分加密后会产生相同的加密块，从而泄露图片的结构信息。</p>
+<h3 id="4-对-samplebmp-进行加密">4. 对 sample.bmp 进行加密<a hidden class="anchor" aria-hidden="true" href="#4-对-samplebmp-进行加密">#</a></h3>
+<p>左为CBC模式，中间为原始图像，右为ECB模式。</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/20/YWjo5BFZKwUseJa.png" alt="image-20241220153431113"  />
+</p>
+<p>这张图片使用CBC和ECB加密后都没有明显的特征了，原因是这张图片没有大面积的重复的色块，即使使用ECB模式加密也不会泄露图片的结构信息。</p>
+<h2 id="task-3错误传播--被破坏的密文">Task 3：错误传播 – 被破坏的密文<a hidden class="anchor" aria-hidden="true" href="#task-3错误传播--被破坏的密文">#</a></h2>
+<h3 id="答">答：<a hidden class="anchor" aria-hidden="true" href="#答">#</a></h3>
+<p>能从 CBC 中恢复 $总字节数-17字节$ 的信息，能从ECB中恢复 $总字节数-16字节$ 的信息。</p>
+<h3 id="1-创建一个至少-1000-字节长的文本文件">1. 创建一个至少 1000 字节长的文本文件。<a hidden class="anchor" aria-hidden="true" href="#1-创建一个至少-1000-字节长的文本文件">#</a></h3>
+<img src="https://s2.loli.net/2025/01/21/g5PWc3SdjN1ArpV.png" alt="image-20241220162334090" style="zoom: 50%;" />
+<h3 id="2-分别使用aes-128-cbc和aes-128-ecb加密">2. 分别使用AES-128-CBC和AES-128-ECB加密<a hidden class="anchor" aria-hidden="true" href="#2-分别使用aes-128-cbc和aes-128-ecb加密">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2025/01/21/pr2Z6Tn9qkhJ3Y7.png" alt="image-20241220162721339"  />
+</p>
+<h3 id="3-分别修改加密后文件的第55个字节">3. 分别修改加密后文件的第55个字节<a hidden class="anchor" aria-hidden="true" href="#3-分别修改加密后文件的第55个字节">#</a></h3>
+<img src="https://s2.loli.net/2025/01/21/4ZPFrVLdyfi8mkt.png" alt="image-20241220155424013" style="zoom:67%;" />
+<p>使用bless修改偏移为0x36位置（偏移从0开始）的字节，分别修改一个比特。</p>
+<img src="https://s2.loli.net/2025/01/21/jE9Ra3cJqhTHlBX.png" alt="image-20241220162852324" style="zoom:67%;" />
+<img src="https://s2.loli.net/2025/01/21/PZcQVwOoCDLyKiH.png" alt="image-20241220163040848" style="zoom: 67%;" />
+<h3 id="4-使用正确的key和iv进行解密">4. 使用正确的Key和IV进行解密<a hidden class="anchor" aria-hidden="true" href="#4-使用正确的key和iv进行解密">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2025/01/21/jLtc8ePdk9pKzhs.png" alt="image-20241220163208662"  />
+</p>
+<h3 id="5-与原文件进行对比">5. 与原文件进行对比<a hidden class="anchor" aria-hidden="true" href="#5-与原文件进行对比">#</a></h3>
+<p>使用 <code>cmp</code> 命令逐位比较原文件和解密文件的不同的字节数，并使用 <code>wc -l</code> 统计不同的总字节数。</p>
+<p><img loading="lazy" src="https://s2.loli.net/2025/01/21/6XHYaCGKsQikfNm.png" alt="image-20241220163617370"  />
+</p>
+<p>**现象：**发现 cbc 模式下，密文 1 bit 的错误会导致解密出的明文 17 字节的错误，而 ecb 模式下，密文 1 bit 的错误会导致解密出的明文 16 字节的错误。</p>
+<p><strong>原因：</strong></p>
+<ul>
+<li>ECB模式下每个 16 字节的块单独加密，因此该错误比特只会影响自己所在的块的解密，因此会导致解密明文的 16 字节的错误</li>
+<li>CBC模式下，每一个块的解密依赖于前一个块的密文，会导致当前的块的 16 个字节解密错误，同时因为密文块有 1 bit的错误，会影响下一个块的首字节的解密，导致下一个块的首字节解密错误，因此一共产生 17 个字节的错误。</li>
+</ul>
+<h2 id="task-4寻找密钥">Task 4：寻找密钥<a hidden class="anchor" aria-hidden="true" href="#task-4寻找密钥">#</a></h2>
+<p>使用以下代码可以找到密钥：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">binascii</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plaintext</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&#34;This is a top secret.&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">ciphertext_hex</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;e29652fd35eb14b222f9a90d97902d2d&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;eef000978fa0952d7a98bbe0e251286b&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">iv_hex</span> <span class="o">=</span> <span class="s2">&#34;010203040506070809000a0b0c0d0e0f&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 转换为字节</span>
+</span></span><span class="line"><span class="cl"><span class="n">ciphertext</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">ciphertext_hex</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">iv</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">iv_hex</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 构造密钥并解密</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">decrypt_with_key</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 不足16字节补`#`</span>
+</span></span><span class="line"><span class="cl">    <span class="n">key</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="s2">&#34;#&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&#34;utf-8&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 初始化AES解密器</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_CBC</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">decrypted</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 检查解密是否成功</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">decrypted</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">plaintext</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">word</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 从文件加载单词列表</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&#34;words.txt&#34;</span><span class="p">,</span> <span class="s2">&#34;r&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">words</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 逐一尝试密钥</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span><span class="o">&lt;=</span><span class="mi">16</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">success</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">decrypt_with_key</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;找到正确的密钥：</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;未找到正确的密钥。&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p><img loading="lazy" src="https://s2.loli.net/2025/01/21/gUox3SdaGKYq15N.png" alt="image-20241220171529598"  />
+</p>
+<p>通过对 <code>word.txt</code> 字典文件的遍历，找到了正确的密钥为：<code>snowstorm</code></p>
+<h2 id="task-5生成消息摘要">Task 5：生成消息摘要<a hidden class="anchor" aria-hidden="true" href="#task-5生成消息摘要">#</a></h2>
+<p>使用 sha1, sha256, md5, sm3 等算法生成消息摘要，如下所示：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/20/lJgIa2D1MxLcjG3.png" alt="image-20241220171911004"  />
+</p>
+<p><strong>现象</strong>：不同算法生成的消息摘要的长度不同，见下表：</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">算法</th>
+          <th style="text-align: center">消息摘要长度</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">SHA-1</td>
+          <td style="text-align: center">160 位（20 字节）</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">SHA-256</td>
+          <td style="text-align: center">256 位（32 字节）</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">MD5</td>
+          <td style="text-align: center">128 位（16 字节）</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">SM3</td>
+          <td style="text-align: center">256 位（32 字节）</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="task-6哈希函数的输出特性">Task 6：哈希函数的输出特性<a hidden class="anchor" aria-hidden="true" href="#task-6哈希函数的输出特性">#</a></h2>
+<h3 id="1-使用-sha-1-算法生成哈希值-h1">1. 使用 SHA-1 算法生成哈希值 H1<a hidden class="anchor" aria-hidden="true" href="#1-使用-sha-1-算法生成哈希值-h1">#</a></h3>
+<img src="https://s2.loli.net/2025/01/21/izkymp5s2HwugDM.png" alt="image-20241220172600693" style="zoom:67%;" />
+<h3 id="2-修改-plaintxt-的一个比特再使用-sha-1-算法生成哈希值-h2">2. 修改 plain.txt 的一个比特，再使用 SHA-1 算法生成哈希值 H2<a hidden class="anchor" aria-hidden="true" href="#2-修改-plaintxt-的一个比特再使用-sha-1-算法生成哈希值-h2">#</a></h3>
+<ul>
+<li>使用 bless 修改 plain.txt 的第一位，将 49 改为 59</li>
+</ul>
+<img src="https://s2.loli.net/2024/12/20/7BrkLMXqKOFhHCA.png" alt="image-20241220172840388" style="zoom:67%;" />
+<ul>
+<li>使用 SHA-1 算法生成哈希值 H2</li>
+</ul>
+<img src="https://s2.loli.net/2025/01/21/gGuUsliA39HeTnF.png" alt="image-20241220172922492" style="zoom:67%;" />
+<h3 id="3-对比-h1-和-h2">3. 对比 H1 和 H2<a hidden class="anchor" aria-hidden="true" href="#3-对比-h1-和-h2">#</a></h3>
+<p>发现 H1 和 H2 并不相似，这说明即使文件只有 1 bit 不同，生成的消息摘要值就完全不同。</p>
+<h2 id="task-7单向性与抗碰撞性">Task 7：单向性与抗碰撞性<a hidden class="anchor" aria-hidden="true" href="#task-7单向性与抗碰撞性">#</a></h2>
+<p>编写一个 C 程序，通过生成随机字符串寻找与<code>origin.txt</code>前 24 比特相同的文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;openssl/sha.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算文件的 SHA1 哈希值，并返回前 24 位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">compute_sha1_prefix</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">sha1_prefix</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FILE</span> <span class="o">*</span><span class="n">file</span> <span class="o">=</span> <span class="nf">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#34;rb&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">file</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">perror</span><span class="p">(</span><span class="s">&#34;File opening failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算文件的 SHA1 哈希
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">SHA_CTX</span> <span class="n">sha_ctx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">SHA1_Init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sha_ctx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">size_t</span> <span class="n">bytes_read</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">((</span><span class="n">bytes_read</span> <span class="o">=</span> <span class="nf">fread</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">),</span> <span class="n">file</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">SHA1_Update</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sha_ctx</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">bytes_read</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">fclose</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">sha1_hash</span><span class="p">[</span><span class="n">SHA_DIGEST_LENGTH</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">SHA1_Final</span><span class="p">(</span><span class="n">sha1_hash</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sha_ctx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 只取前 24 位，即前 3 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">memcpy</span><span class="p">(</span><span class="n">sha1_prefix</span><span class="p">,</span> <span class="n">sha1_hash</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算字符串的 SHA1 哈希值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">compute_sha1_string</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">sha1_hash</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SHA_CTX</span> <span class="n">sha_ctx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">SHA1_Init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sha_ctx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">SHA1_Update</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sha_ctx</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span> <span class="nf">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">SHA1_Final</span><span class="p">(</span><span class="n">sha1_hash</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sha_ctx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 将 SHA1 哈希值的前 24 位转换为十六进制字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">sha1_prefix_to_hex</span><span class="p">(</span><span class="k">const</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">sha1_prefix</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">output</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">sprintf</span><span class="p">(</span><span class="n">output</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#34;%02x&#34;</span><span class="p">,</span> <span class="n">sha1_prefix</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">output</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>  <span class="c1">// 确保字符串以 &#39;\0&#39; 结束
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 将碰撞的随机字符串写入文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">write_collision_to_file</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FILE</span> <span class="o">*</span><span class="n">file</span> <span class="o">=</span> <span class="nf">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#34;wb&#34;</span><span class="p">);</span>  <span class="c1">// 使用 &#39;wb&#39; 模式，以二进制模式写入内容
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">file</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">perror</span><span class="p">(</span><span class="s">&#34;Failed to open file for writing&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将随机字符串逐字节写入文件（不添加换行符或其他字符）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">fwrite</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">),</span> <span class="n">file</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">fclose</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">srand</span><span class="p">(</span><span class="nf">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>  <span class="c1">// 用时间作为随机数种子
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Step 1: 计算 original.txt 文件的 SHA1 哈希值并获取前 24 位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">original_sha1_prefix</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">compute_sha1_prefix</span><span class="p">(</span><span class="s">&#34;original.txt&#34;</span><span class="p">,</span> <span class="n">original_sha1_prefix</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将前 24 位 SHA1 哈希值转换为十六进制字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="n">original_sha1_hex</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">sha1_prefix_to_hex</span><span class="p">(</span><span class="n">original_sha1_prefix</span><span class="p">,</span> <span class="n">original_sha1_hex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Original file SHA1 prefix (24 bits): %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">original_sha1_hex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Step 2: 进行10次实验并记录尝试次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">total_attempts</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">num_experiments</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>  <span class="c1">// 实验次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="n">last_collision_string</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>  <span class="c1">// 保存最后一次实验找到的随机字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">exp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">exp</span> <span class="o">&lt;</span> <span class="n">num_experiments</span><span class="p">;</span> <span class="o">++</span><span class="n">exp</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">attempts</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">test_sha1_hash</span><span class="p">[</span><span class="n">SHA_DIGEST_LENGTH</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">char</span> <span class="n">test_string</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">test_sha1_prefix</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">char</span> <span class="n">test_sha1_hex</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 生成一个随机字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="nf">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// 随机生成字符串长度，1 到 50 字符
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">test_string</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;a&#39;</span> <span class="o">+</span> <span class="nf">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">26</span><span class="p">;</span>  <span class="c1">// 生成 &#39;a&#39; 到 &#39;z&#39; 的随机字符
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">test_string</span><span class="p">[</span><span class="n">len</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>  <span class="c1">// 结束符
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 计算该字符串的 SHA1 哈希值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nf">compute_sha1_string</span><span class="p">(</span><span class="n">test_string</span><span class="p">,</span> <span class="n">test_sha1_hash</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 提取前 24 位哈希值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nf">memcpy</span><span class="p">(</span><span class="n">test_sha1_prefix</span><span class="p">,</span> <span class="n">test_sha1_hash</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 转换为十六进制字符串进行比较
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nf">sha1_prefix_to_hex</span><span class="p">(</span><span class="n">test_sha1_prefix</span><span class="p">,</span> <span class="n">test_sha1_hex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 比较前 24 位是否相同
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="nf">strncmp</span><span class="p">(</span><span class="n">original_sha1_hex</span><span class="p">,</span> <span class="n">test_sha1_hex</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 找到碰撞，保存随机字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">strcpy</span><span class="p">(</span><span class="n">last_collision_string</span><span class="p">,</span> <span class="n">test_string</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>  <span class="c1">// 退出循环
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">attempts</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">total_attempts</span> <span class="o">+=</span> <span class="n">attempts</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Experiment %d: Found collision after %d attempts</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">exp</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">attempts</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Step 3: 计算平均尝试次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">float</span> <span class="n">average_attempts</span> <span class="o">=</span> <span class="n">total_attempts</span> <span class="o">/</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">num_experiments</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Average number of attempts: %.2f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">average_attempts</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Step 4: 将最后一次实验找到的随机字符串写入文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">write_collision_to_file</span><span class="p">(</span><span class="s">&#34;collision_result.txt&#34;</span><span class="p">,</span> <span class="n">last_collision_string</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Last collision string written to collision_result.txt: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">last_collision_string</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>使用以下命令编译这个 C 源码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gcc -o sha1_collision sha1_collision.c -lssl -lcrypto
+</span></span></code></pre></div><p>进行 10 次实验，计算爆破所需的平均次数，并将最后一次的结果写入文件，如下所示：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/24/R7MZScteDaF5LlP.png" alt="image-20241224175344721"  />
+</p>
+<p>找到的文本如下：</p>
+<pre tabindex="0"><code>zeurmhgukcoxjrbdrzecxweicdfvrmjqsfhgopbatpyfi
+</code></pre><p>验证与 <code>origin.txt</code> 的 sha1 值的前 24 bit 是否一致：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/24/goesMr5VP3IROBw.png" alt="image-20241224175642057"  />
+</p>
+<p>发现确实是一致的。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/">软件安全</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>SEEDlab—竞争条件漏洞</span>
+  </a>
+  <a class="next" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>SEEDlab—伪随机数生成实验</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
