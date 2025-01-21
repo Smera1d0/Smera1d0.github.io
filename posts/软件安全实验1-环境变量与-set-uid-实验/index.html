@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>SEEDlab—环境变量与 Set-UID 实验 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="软件安全">
+<meta name="description" content="Task 1：配置环境变量
+
+使用printenv或env指令来打印环境变量：
+
+
+
+​	如果只想打印特定的环境变量，如PWD变量，可以使用printenv PWD或者env | grep PWD">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.c9cbbbc76aa9d1a7b2aae0ded0f3c40bed7459082df7601ab1a59f234f7e0ccc.css" integrity="sha256-ycu7x2qp0aeyquDe0PPEC&#43;10WQgt92AasaWfI09&#43;DMw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="SEEDlab—环境变量与 Set-UID 实验" />
+<meta property="og:description" content="Task 1：配置环境变量
+
+使用printenv或env指令来打印环境变量：
+
+
+
+​	如果只想打印特定的环境变量，如PWD变量，可以使用printenv PWD或者env | grep PWD" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-01-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-01-12T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="SEEDlab—环境变量与 Set-UID 实验"/>
+<meta name="twitter:description" content="Task 1：配置环境变量
+
+使用printenv或env指令来打印环境变量：
+
+
+
+​	如果只想打印特定的环境变量，如PWD变量，可以使用printenv PWD或者env | grep PWD"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SEEDlab—环境变量与 Set-UID 实验",
+      "item": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SEEDlab—环境变量与 Set-UID 实验",
+  "name": "SEEDlab—环境变量与 Set-UID 实验",
+  "description": "Task 1：配置环境变量 使用printenv或env指令来打印环境变量： ​\t如果只想打印特定的环境变量，如PWD变量，可以使用printenv PWD或者env | grep PWD\n",
+  "keywords": [
+    "软件安全"
+  ],
+  "articleBody": "Task 1：配置环境变量 使用printenv或env指令来打印环境变量： ​\t如果只想打印特定的环境变量，如PWD变量，可以使用printenv PWD或者env | grep PWD\n使用export和unset来设置或者取消环境变量 使用export设置环境变量： ​\t比如现在我使用export设置一个环境变量MY_VAR的值为softwaresecurity\n​\t可以使用echo $MY_VAR打印出这个环境变量的值。\n使用unset取消环境变量： ​\t取消变量MY_VAR。\nTask 2：从父进程向子进程传递环境变量 编译myprintenv.c并运行，将输出结果打印到文件output1.txt中。 注释掉子进程中的printenv()，并取消注释父进程的printenv()，再次编译并打印输出到文件output2.txt。 使用diff命令比较两个文件的差异。 ​\t结论：由于我在不同的窗口下运行的a.out和b.out，因此父子进程只有编译成的可执行文件名称和命令行窗口这两个环境变量不同，其余的环境变量都是相同的。结论是子进程在继承父进程的环境变量时，除了文件名和输出窗口存在差异以外，其他的环境变量都是相同的。\nTask 3：环境变量和execve() 编译并运行myenv.c 发现输出为空。\n修改execve()函数为execve(\"/usr/bin/env\",argv,environ); 发现打印出了当前进程的环境变量。\n结论：\nexecve()函数的原型是：\nint execve(const char *pathname, char *const argv[], char *const envp[]); pathname: 要执行的程序的路径。 argv: 参数数组，以 NULL 结尾，包含传递给程序的命令行参数。 envp: 环境变量数组，也以 NULL 结尾。 新程序通过execve()函数的第三个参数传递的environ变量来获取环境变量。\nTask 4：环境变量和system() 编译并运行如下代码：\n#include #include int main() { system(\"/usr/bin/env\"); return 0; } 我们使用man system查看函数的手册：\n可以看到system()函数是通过创建一个子进程，执行execl(\"/bin/sh\", \"sh\", \"-c\", command, (char *) NULL);，调用进程的环境变量会传递给新程序/bin/sh。\nTask 5：环境变量和Set-UID程序 编写以下程序打印该进程所有的环境变量： #include #include extern char **environ; void main() { int i = 0; while (environ[i] != NULL) { printf(\"%s\\n\", environ[i]); i++; } } 编译上述程序得到 foo，将其所有者更改为 root，并使其成为一个 Set-UID 程序 // Asssume the program’s name is foo $ sudo chown root foo $ sudo chmod 4755 foo 查看一下foo的权限，发现所有者更改为了root。\n设置以下环境变量： PATH LD_LIBRARY_PATH MY_NAME 然后运行foo并查看这些环境变量的值\n发现只有在父进程中设置的PATH和MY_NAME的环境变量进入子进程，而LD_LIBRARY_PATH这个环境变量没有进入子进程。\n原因： LD_LIBRARY_PATH这个环境变量设置的是动态链接器的地址，由于动态链接器的保护机制，虽然在一个root权限的程序下创建子进程并继承父进程的环境变量，但由于我们是在普通用户下修改的LD_LIBRARY_PATH这个环境变量，所以是无法在子进程中生效的，而PATH和MY_NAME则没有这种保护机制，因此可以被成功设置。\nTask 6：PATH环境变量和Set-UID程序 先使用以下命令将bin/sh链接到bin/zsh，以规避bin/dash阻止Set-UID程序使用特权执行的策略。\nsudo ln -sf /bin/zsh /bin/sh 然后编写LS.c文件，如下所示：\n#include #include int main(){ system(\"ls\"); return 0; } 然后编译，并设置为Set-UID程序：\n可以看出，编译出来的LS文件确实执行了system(\"ls\")的操作，更改后的文件所有者确实变成了root\n现在我们在普通用户下设置PATH环境变量，使用export PATH=/home/seed:$PATH将/home/seed 添加到环境变量的开头：\n然后我们在/home/seed下编写我们的恶意代码。\n// hack.c #include #include #include extern char **environ; int main(){ uid_t euid = geteuid(); //获取执行恶意代码的进程的euid printf(\"euid=%d\\n\", euid); printf(\"You have been hacked!!!!\\n\"); return 0; } 然后编译并命名成ls：\ngcc hack.c -o ls 然后再执行我们的LS文件：\n发现可以使用Set-UID程序运行我们的恶意代码，并且根据system(\"id\")的结果来看：euid=0表示当前进程具有root权限，表明恶意代码是以root权限运行的。\nTask 7：LD_PRELOAD环境变量和Set-UID程序 观察环境变量在运行普通程序时如何影响动态加载器/链接器的行为，首先要进行如下配置： 构建一个动态链接库，命名为mylib.c，里面基本上覆盖了libc里的sleep()函数： #include void sleep (int s) { /* If this is invoked by a privileged program , you can do damages here! */ printf(\"I am not sleeping!\\n\"); } 编译该程序： gcc -fPIC -g -c mylib.c gcc -shared -o libmylib.so.1.0.1 mylib.o -lc 设置LD_PRELOAD环境变量的值： export LD_PRELOAD=./libmylib.so.1.0.1 编译下面的程序myprog.c /* myprog.c */ #include int main() { sleep(1); return 0; } 完成上述操作后，请在以下条件下运行 myprog，观察会发生什么。 使 myprog 为一个普通程序，以普通用户身份执行它。 发现执行的是我们编写的sleep函数。\n使 myprog 为一个 Set-UID 特权程序，以普通用户身份执行它。 发现等待了一秒后，没有输出，说明执行的是libc中的sleep()函数。\n使 myprog 为一个 Set-UID 特权程序，在 root 下重新设置 LD_PRELOAD 环境变量，并执行它。 发现执行的是我们编写的sleep函数。\n使myprog成为一个Set_UID user1程序，在另一个用户帐户（非root用户）中再次改变LD_PRELOAD环境变量并运行它 发现等待了一秒后，没有输出，说明执行的是libc中的sleep()函数。\n设计一个实验来找出导致这些差异的原因，并解释为什么第二步的行为不同。 修改一下myprog.c，打印这个程序运行时的进程的uid、euid以及LD_PRELOAD环境变量的值，如下所示：\n/* myprog.c */ #include #include #include extern char **environ; int main() { sleep(1); uid_t uid = getuid(); printf(\"uid=%d(%s) \", uid, getenv(\"USER\")); uid_t euid = geteuid(); printf(\"euid=%d\\n\", euid); char *preload = getenv(\"LD_PRELOAD\"); printf(\"LD_PRELOAD: %s\\n\", preload); return 0; } 然后编写一个shell脚本，用于测试四种情况的输出以及当前进程的id，如下所示：\n#test.sh echo \"seed,run in seed:\" sudo chown seed myprog sudo chmod 4755 myprog export LD_PRELOAD=./libmylib.so.1.0.1 ./myprog echo \"root,run in seed:\" sudo chown root myprog sudo chmod 4755 myprog ./myprog echo \"root,run in root:\" sudo su \u003c",
+  "wordCount" : "4724",
+  "inLanguage": "zh",
+  "datePublished": "2024-01-12T00:00:00Z",
+  "dateModified": "2024-01-12T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      SEEDlab—环境变量与 Set-UID 实验
+    </h1>
+    <div class="post-meta"><span title='2024-01-12 00:00:00 +0000 UTC'>一月 12, 2024</span>&nbsp;·&nbsp;10 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/%e3%80%90%e8%bd%af%e4%bb%b6%e5%ae%89%e5%85%a8%e3%80%91%e5%ae%9e%e9%aa%8c1%20%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e4%b8%8e%20Set-UID%20%e5%ae%9e%e9%aa%8c.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#task-1%e9%85%8d%e7%bd%ae%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f" aria-label="Task 1：配置环境变量">Task 1：配置环境变量</a></li>
+                <li>
+                    <a href="#task-2%e4%bb%8e%e7%88%b6%e8%bf%9b%e7%a8%8b%e5%90%91%e5%ad%90%e8%bf%9b%e7%a8%8b%e4%bc%a0%e9%80%92%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f" aria-label="Task 2：从父进程向子进程传递环境变量">Task 2：从父进程向子进程传递环境变量</a></li>
+                <li>
+                    <a href="#task-3%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e5%92%8cexecve" aria-label="Task 3：环境变量和execve()">Task 3：环境变量和execve()</a></li>
+                <li>
+                    <a href="#task-4%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e5%92%8csystem" aria-label="Task 4：环境变量和system()">Task 4：环境变量和system()</a></li>
+                <li>
+                    <a href="#task-5%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e5%92%8cset-uid%e7%a8%8b%e5%ba%8f" aria-label="Task 5：环境变量和Set-UID程序">Task 5：环境变量和Set-UID程序</a></li>
+                <li>
+                    <a href="#task-6path%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e5%92%8cset-uid%e7%a8%8b%e5%ba%8f" aria-label="Task 6：PATH环境变量和Set-UID程序">Task 6：PATH环境变量和Set-UID程序</a></li>
+                <li>
+                    <a href="#task-7ld_preload%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e5%92%8cset-uid%e7%a8%8b%e5%ba%8f" aria-label="Task 7：LD_PRELOAD环境变量和Set-UID程序">Task 7：LD_PRELOAD环境变量和Set-UID程序</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e8%a7%82%e5%af%9f%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e5%9c%a8%e8%bf%90%e8%a1%8c%e6%99%ae%e9%80%9a%e7%a8%8b%e5%ba%8f%e6%97%b6%e5%a6%82%e4%bd%95%e5%bd%b1%e5%93%8d%e5%8a%a8%e6%80%81%e5%8a%a0%e8%bd%bd%e5%99%a8%e9%93%be%e6%8e%a5%e5%99%a8%e7%9a%84%e8%a1%8c%e4%b8%ba%e9%a6%96%e5%85%88%e8%a6%81%e8%bf%9b%e8%a1%8c%e5%a6%82%e4%b8%8b%e9%85%8d%e7%bd%ae" aria-label="观察环境变量在运行普通程序时如何影响动态加载器/链接器的行为，首先要进行如下配置：">观察环境变量在运行普通程序时如何影响动态加载器/链接器的行为，首先要进行如下配置：</a></li>
+                <li>
+                    <a href="#%e5%ae%8c%e6%88%90%e4%b8%8a%e8%bf%b0%e6%93%8d%e4%bd%9c%e5%90%8e%e8%af%b7%e5%9c%a8%e4%bb%a5%e4%b8%8b%e6%9d%a1%e4%bb%b6%e4%b8%8b%e8%bf%90%e8%a1%8c-myprog%e8%a7%82%e5%af%9f%e4%bc%9a%e5%8f%91%e7%94%9f%e4%bb%80%e4%b9%88" aria-label="完成上述操作后，请在以下条件下运行 myprog，观察会发生什么。">完成上述操作后，请在以下条件下运行 myprog，观察会发生什么。</a></li>
+                <li>
+                    <a href="#%e8%ae%be%e8%ae%a1%e4%b8%80%e4%b8%aa%e5%ae%9e%e9%aa%8c%e6%9d%a5%e6%89%be%e5%87%ba%e5%af%bc%e8%87%b4%e8%bf%99%e4%ba%9b%e5%b7%ae%e5%bc%82%e7%9a%84%e5%8e%9f%e5%9b%a0%e5%b9%b6%e8%a7%a3%e9%87%8a%e4%b8%ba%e4%bb%80%e4%b9%88%e7%ac%ac%e4%ba%8c%e6%ad%a5%e7%9a%84%e8%a1%8c%e4%b8%ba%e4%b8%8d%e5%90%8c" aria-label="设计一个实验来找出导致这些差异的原因，并解释为什么第二步的行为不同。">设计一个实验来找出导致这些差异的原因，并解释为什么第二步的行为不同。</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#task-8%e4%bd%bf%e7%94%a8-system-%e4%b8%8e-execve-%e8%b0%83%e7%94%a8%e5%a4%96%e9%83%a8%e7%a8%8b%e5%ba%8f%e7%9a%84%e5%af%b9%e6%af%94" aria-label="Task 8：使用 system() 与 execve() 调用外部程序的对比">Task 8：使用 system() 与 execve() 调用外部程序的对比</a></li>
+                <li>
+                    <a href="#task-9%e6%9d%83%e9%99%90%e6%b3%84%e6%bc%8f" aria-label="Task 9：权限泄漏">Task 9：权限泄漏</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="task-1配置环境变量">Task 1：配置环境变量<a hidden class="anchor" aria-hidden="true" href="#task-1配置环境变量">#</a></h2>
+<ol>
+<li>使用<code>printenv</code>或<code>env</code>指令来打印环境变量：</li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/g6ZbY3wNelFK9EV.png" alt="image-20240925085104482" style="zoom:50%;" />
+<img src="https://s2.loli.net/2024/12/07/k6b389YmWV5TSfM.png" alt="image-20240925085246669" style="zoom:50%;" />
+<p>​	如果只想打印特定的环境变量，如<code>PWD</code>变量，可以使用<code>printenv PWD</code>或者<code>env | grep PWD</code></p>
+<img src="https://s2.loli.net/2024/12/07/JXqGx5nfr89LFAo.png" alt="image-20240925085533581" style="zoom:50%;" />
+<ol start="2">
+<li>使用<code>export</code>和<code>unset</code>来设置或者取消环境变量</li>
+</ol>
+<ul>
+<li>使用<code>export</code>设置环境变量：</li>
+</ul>
+<p>​		比如现在我使用<code>export</code>设置一个环境变量<code>MY_VAR</code>的值为<code>softwaresecurity</code></p>
+<img src="https://s2.loli.net/2024/12/07/8ghxsCVWXL9idIn.png" alt="image-20240925090946612" style="zoom: 67%;" />
+<p>​		可以使用<code>echo $MY_VAR</code>打印出这个环境变量的值。</p>
+<ul>
+<li>使用<code>unset</code>取消环境变量：</li>
+</ul>
+<p>​		取消变量<code>MY_VAR</code>。</p>
+<img src="https://s2.loli.net/2024/12/07/zbFfACvWU5YTOyN.png" alt="image-20240925091213705" style="zoom:80%;" />
+<h2 id="task-2从父进程向子进程传递环境变量">Task 2：从父进程向子进程传递环境变量<a hidden class="anchor" aria-hidden="true" href="#task-2从父进程向子进程传递环境变量">#</a></h2>
+<ol>
+<li>编译<code>myprintenv.c</code>并运行，将输出结果打印到文件<code>output1.txt</code>中。</li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/Dh5w1GWSjKEzkrR.png" alt="image-20240925091905373" style="zoom:80%;" />
+<ol start="2">
+<li>注释掉子进程中的<code>printenv()</code>，并取消注释父进程的<code>printenv()</code>，再次编译并打印输出到文件<code>output2.txt</code>。</li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/UyiQXMRlN3nVJTF.png" alt="image-20240925093523967" style="zoom:80%;" />
+<ol start="3">
+<li>使用<code>diff</code>命令比较两个文件的差异。</li>
+</ol>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/07/73jhEXs1uk9eSMF.png" alt="image-20240925093608802"  />
+</p>
+<p>​		<strong>结论</strong>：由于我在不同的窗口下运行的<code>a.out</code>和<code>b.out</code>，因此父子进程只有编译成的<strong>可执行文件名称</strong>和<strong>命令行窗口</strong>这两个环境变量不同，其余的环境变量都是相同的。结论是子进程在继承父进程的环境变量时，除了文件名和输出窗口存在差异以外，其他的环境变量都是相同的。</p>
+<h2 id="task-3环境变量和execve">Task 3：环境变量和<code>execve()</code><a hidden class="anchor" aria-hidden="true" href="#task-3环境变量和execve">#</a></h2>
+<ol>
+<li>编译并运行<code>myenv.c</code></li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/lOve7UbHAVhFrwj.png" alt="image-20240925095029968" style="zoom:80%;" />
+<p>发现输出为空。</p>
+<ol start="2">
+<li>修改<code>execve()</code>函数为<code>execve(&quot;/usr/bin/env&quot;,argv,environ);</code></li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/ghp8OynebYNKEkj.png" alt="image-20240925101911467" style="zoom: 67%;" />
+<p>发现打印出了当前进程的环境变量。</p>
+<ol start="3">
+<li>
+<p>结论：</p>
+<p><code>execve()</code>函数的原型是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">execve</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">pathname</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="k">const</span> <span class="n">argv</span><span class="p">[],</span> <span class="kt">char</span> <span class="o">*</span><span class="k">const</span> <span class="n">envp</span><span class="p">[]);</span>
+</span></span></code></pre></div><ul>
+<li><strong><code>pathname</code></strong>: 要执行的程序的路径。</li>
+<li><strong><code>argv</code></strong>: 参数数组，以 <code>NULL</code> 结尾，包含传递给程序的命令行参数。</li>
+<li><strong><code>envp</code></strong>: 环境变量数组，也以 <code>NULL</code> 结尾。</li>
+</ul>
+<p><strong>新程序通过<code>execve()</code>函数的第三个参数传递的<code>environ</code>变量来获取环境变量。</strong></p>
+</li>
+</ol>
+<h2 id="task-4环境变量和system">Task 4：环境变量和<code>system()</code><a hidden class="anchor" aria-hidden="true" href="#task-4环境变量和system">#</a></h2>
+<p>编译并运行如下代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nf">system</span><span class="p">(</span><span class="s">&#34;/usr/bin/env&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><img src="https://s2.loli.net/2024/12/07/xjDAPBy8d3KIerc.png" alt="image-20240925110330803" style="zoom:67%;" />
+<p>我们使用<code>man system</code>查看函数的手册：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/07/SjDaybcH6C29diU.png" alt="image-20240925110655775"  />
+</p>
+<p>可以看到<code>system()</code>函数是通过创建一个子进程，执行<code>execl(&quot;/bin/sh&quot;, &quot;sh&quot;, &quot;-c&quot;, command, (char *) NULL);</code>，调用进程的环境变量会传递给新程序<code>/bin/sh</code>。</p>
+<h2 id="task-5环境变量和set-uid程序">Task 5：环境变量和<code>Set-UID</code>程序<a hidden class="anchor" aria-hidden="true" href="#task-5环境变量和set-uid程序">#</a></h2>
+<ol>
+<li>编写以下程序打印该进程所有的环境变量：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">char</span> <span class="o">**</span><span class="n">environ</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="n">environ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">environ</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol start="2">
+<li>编译上述程序得到 foo，将其所有者更改为 root，并使其成为一个 Set-UID 程序</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">// Asssume the program’s name is foo
+</span></span><span class="line"><span class="cl">$ sudo chown root foo
+</span></span><span class="line"><span class="cl">$ sudo chmod <span class="m">4755</span> foo
+</span></span></code></pre></div><p>查看一下<code>foo</code>的权限，发现所有者更改为了root。</p>
+<img src="https://s2.loli.net/2024/12/07/qxUhCerYSJ8gRXf.png" alt="image-20240926141026903" style="zoom:80%;" />
+<ol start="3">
+<li>设置以下环境变量：</li>
+</ol>
+<ul>
+<li>PATH</li>
+<li>LD_LIBRARY_PATH</li>
+<li>MY_NAME</li>
+</ul>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/07/4OKCn8rgh53xPGY.png" alt="image-20240925114140972"  />
+</p>
+<p>然后运行<code>foo</code>并查看这些环境变量的值</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/07/YxtKiZP1SBRMov7.png" alt="image-20240925115029191"  />
+</p>
+<p>发现只有在父进程中设置的<code>PATH</code>和<code>MY_NAME</code>的环境变量进入子进程，而<code>LD_LIBRARY_PATH</code>这个环境变量没有进入子进程。</p>
+<ol start="4">
+<li>原因：</li>
+</ol>
+<p><code>LD_LIBRARY_PATH</code>这个环境变量设置的是动态链接器的地址，由于<strong>动态链接器的保护机制</strong>，虽然在一个root权限的程序下创建子进程并继承父进程的环境变量，但由于我们是在<strong>普通用户</strong>下修改的<code>LD_LIBRARY_PATH</code>这个环境变量，所以是无法在子进程中生效的，而<code>PATH</code>和<code>MY_NAME</code>则没有这种保护机制，因此可以被成功设置。</p>
+<h2 id="task-6path环境变量和set-uid程序">Task 6：<code>PATH</code>环境变量和<code>Set-UID</code>程序<a hidden class="anchor" aria-hidden="true" href="#task-6path环境变量和set-uid程序">#</a></h2>
+<p>先使用以下命令将<code>bin/sh</code>链接到<code>bin/zsh</code>，以规避<code>bin/dash</code>阻止Set-UID程序使用特权执行的策略。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo ln -sf /bin/zsh /bin/sh
+</span></span></code></pre></div><p>然后编写<code>LS.c</code>文件，如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span><span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">system</span><span class="p">(</span><span class="s">&#34;ls&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>然后编译，并设置为<code>Set-UID</code>程序：</p>
+<img src="https://s2.loli.net/2024/12/07/EuhjyAmsbFOlJWC.png" alt="image-20240926144129959" style="zoom:80%;" />
+<p>可以看出，编译出来的<code>LS</code>文件确实执行了<code>system(&quot;ls&quot;)</code>的操作，更改后的文件所有者确实变成了<code>root</code></p>
+<p>现在我们在普通用户下设置<code>PATH</code>环境变量，使用<code>export PATH=/home/seed:$PATH</code>将<code>/home/seed </code>添加到环境变量的开头：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/12/07/uE6LUD12bdWATk5.png" alt="image-20240926145925741"  />
+</p>
+<p>然后我们在<code>/home/seed</code>下编写我们的恶意代码。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// hack.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span><span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">extern</span> <span class="kt">char</span> <span class="o">**</span><span class="n">environ</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uid_t</span> <span class="n">euid</span> <span class="o">=</span> <span class="nf">geteuid</span><span class="p">();</span> <span class="c1">//获取执行恶意代码的进程的euid
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;euid=%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">euid</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;You have been hacked!!!!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>然后编译并命名成<code>ls</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcc hack.c -o ls
+</span></span></code></pre></div><p>然后再执行我们的<code>LS</code>文件：</p>
+<img src="https://s2.loli.net/2024/12/07/xGIlHF9t6Jys3qk.png" alt="image-20240928091157480" style="zoom:80%;" />
+<p>发现可以使用<code>Set-UID</code>程序运行我们的恶意代码，并且根据<code>system(&quot;id&quot;)</code>的结果来看：<code>euid=0</code>表示当前进程具有root权限，表明恶意代码是以root权限运行的。</p>
+<h2 id="task-7ld_preload环境变量和set-uid程序">Task 7：<code>LD_PRELOAD</code>环境变量和<code>Set-UID</code>程序<a hidden class="anchor" aria-hidden="true" href="#task-7ld_preload环境变量和set-uid程序">#</a></h2>
+<ol>
+<li>
+<h4 id="观察环境变量在运行普通程序时如何影响动态加载器链接器的行为首先要进行如下配置">观察环境变量在运行普通程序时如何影响动态加载器/链接器的行为，首先要进行如下配置：<a hidden class="anchor" aria-hidden="true" href="#观察环境变量在运行普通程序时如何影响动态加载器链接器的行为首先要进行如下配置">#</a></h4>
+<ol>
+<li>构建一个动态链接库，命名为<code>mylib.c</code>，里面基本上覆盖了libc里的<code>sleep()</code>函数：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">void</span> <span class="nf">sleep</span> <span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* If this is invoked by a privileged program ,
+</span></span></span><span class="line"><span class="cl"><span class="cm">you can do damages here! */</span>
+</span></span><span class="line"><span class="cl"><span class="nf">printf</span><span class="p">(</span><span class="s">&#34;I am not sleeping!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol start="2">
+<li>编译该程序：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcc -fPIC -g -c mylib.c
+</span></span><span class="line"><span class="cl">gcc -shared -o libmylib.so.1.0.1 mylib.o -lc
+</span></span></code></pre></div><ol start="3">
+<li>设置<code>LD_PRELOAD</code>环境变量的值：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">LD_PRELOAD</span><span class="o">=</span>./libmylib.so.1.0.1
+</span></span></code></pre></div><ol start="4">
+<li>编译下面的程序<code>myprog.c</code></li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/* myprog.c */</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nf">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></li>
+<li>
+<h4 id="完成上述操作后请在以下条件下运行-myprog观察会发生什么">完成上述操作后，请在以下条件下运行 myprog，观察会发生什么。<a hidden class="anchor" aria-hidden="true" href="#完成上述操作后请在以下条件下运行-myprog观察会发生什么">#</a></h4>
+<ul>
+<li>使 myprog 为一个普通程序，以普通用户身份执行它。</li>
+</ul>
+<img src="https://s2.loli.net/2024/12/07/rHmDW3AE8jPRoIT.png" alt="image-20240926155532626" style="zoom:80%;" />
+<p>发现执行的是我们编写的<code>sleep</code>函数。</p>
+<ul>
+<li>使 myprog 为一个 Set-UID 特权程序，以普通用户身份执行它。</li>
+</ul>
+<img src="https://s2.loli.net/2024/12/07/trK6bjYhxDEP4CT.png" alt="image-20240926160631925" style="zoom:80%;" />
+<p>发现等待了一秒后，没有输出，说明执行的是libc中的<code>sleep()</code>函数。</p>
+<ul>
+<li>使 myprog 为一个 Set-UID 特权程序，在 root 下重新设置 LD_PRELOAD 环境变量，并执行它。</li>
+</ul>
+<img src="C:\Users\86135\AppData\Roaming\Typora\typora-user-images\image-20240926161005509.png" alt="image-20240926161005509" style="zoom:80%;" />
+<p>发现执行的是我们编写的<code>sleep</code>函数。</p>
+<ul>
+<li>使myprog成为一个Set_UID user1程序，在另一个用户帐户（非root用户）中再次改变LD_PRELOAD环境变量并运行它</li>
+</ul>
+<img src="https://s2.loli.net/2024/12/07/yJAIpjDtxYlrZNq.png" alt="image-20240926162005224" style="zoom:80%;" />
+<p>发现等待了一秒后，没有输出，说明执行的是libc中的<code>sleep()</code>函数。</p>
+</li>
+<li>
+<h4 id="设计一个实验来找出导致这些差异的原因并解释为什么第二步的行为不同">设计一个实验来找出导致这些差异的原因，并解释为什么第二步的行为不同。<a hidden class="anchor" aria-hidden="true" href="#设计一个实验来找出导致这些差异的原因并解释为什么第二步的行为不同">#</a></h4>
+</li>
+</ol>
+<p>修改一下<code>myprog.c</code>，打印这个程序运行时的进程的<code>uid</code>、<code>euid</code>以及<code>LD_PRELOAD</code>环境变量的值，如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/* myprog.c */</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">extern</span> <span class="kt">char</span> <span class="o">**</span><span class="n">environ</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nf">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">uid_t</span> <span class="n">uid</span> <span class="o">=</span> <span class="nf">getuid</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="nf">printf</span><span class="p">(</span><span class="s">&#34;uid=%d(%s) &#34;</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="nf">getenv</span><span class="p">(</span><span class="s">&#34;USER&#34;</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="kt">uid_t</span> <span class="n">euid</span> <span class="o">=</span> <span class="nf">geteuid</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="nf">printf</span><span class="p">(</span><span class="s">&#34;euid=%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">euid</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="o">*</span><span class="n">preload</span> <span class="o">=</span> <span class="nf">getenv</span><span class="p">(</span><span class="s">&#34;LD_PRELOAD&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nf">printf</span><span class="p">(</span><span class="s">&#34;LD_PRELOAD: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">preload</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>然后编写一个shell脚本，用于测试四种情况的输出以及当前进程的id，如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1">#test.sh</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;seed,run in seed:&#34;</span>
+</span></span><span class="line"><span class="cl">sudo chown seed myprog
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">4755</span> myprog
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">LD_PRELOAD</span><span class="o">=</span>./libmylib.so.1.0.1
+</span></span><span class="line"><span class="cl">./myprog
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;root,run in seed:&#34;</span>
+</span></span><span class="line"><span class="cl">sudo chown root myprog
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">4755</span> myprog
+</span></span><span class="line"><span class="cl">./myprog
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;root,run in root:&#34;</span>
+</span></span><span class="line"><span class="cl">sudo su <span class="s">&lt;&lt;EOF
+</span></span></span><span class="line"><span class="cl"><span class="s">export LD_PRELOAD=./libmylib.so.1.0.1
+</span></span></span><span class="line"><span class="cl"><span class="s">./myprog
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;user1,run in seed:&#34;</span>
+</span></span><span class="line"><span class="cl">sudo chown user1 myprog
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">4755</span> myprog
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">LD_PRELOAD</span><span class="o">=</span>./libmylib.so.1.0.1
+</span></span><span class="line"><span class="cl">./myprog
+</span></span></code></pre></div><p>这个脚本可以自动化测试四种情况下的<code>sleep()</code>函数的执行情况以及打印当前进程的id，运行结果如下：</p>
+<img src="https://s2.loli.net/2024/12/07/CJyFqZ83TVm4OfB.png" alt="image-20240928090101443" style="zoom:80%;" />
+<p>我们发现：</p>
+<ul>
+<li>
+<p>当<code>myprog</code>为一个普通程序，以普通用户身份执行它时，其uid为seed，euid也为seed，LD_PRELOAD环境变量继承了父进程的，并且执行的是我们编写的sleep函数。</p>
+</li>
+<li>
+<p>当<code>myprog</code>为一个Set-UID程序时，以普通用户身份执行它时，其uid为seed，euid为root，LD_PRELOAD环境变量没有继承父进程的，并且执行的是libc的sleep函数。</p>
+</li>
+<li>
+<p>当<code>myprog</code>为一个Set-UID程序时，以root用户身份执行它时，其uid为root，euid为root，LD_PRELOAD环境变量继承了父进程的，并且执行的是我们编写的sleep函数。</p>
+</li>
+<li>
+<p>当<code>myprog</code>为一个Set-UID user1程序时，以普通用户身份执行它时，其uid为seed，euid为user1，LD_PRELOAD环境变量没有继承父进程的，并且执行的是libc的sleep函数。</p>
+</li>
+</ul>
+<p>如下表所示：</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">程序类型</th>
+          <th style="text-align: center">执行用户</th>
+          <th style="text-align: center">uid</th>
+          <th style="text-align: center">euid</th>
+          <th style="text-align: center">LD_PRELOAD环境变量</th>
+          <th style="text-align: center">执行的sleep函数</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">普通程序</td>
+          <td style="text-align: center">seed</td>
+          <td style="text-align: center">seed</td>
+          <td style="text-align: center">seed</td>
+          <td style="text-align: center">继承父进程</td>
+          <td style="text-align: center">我们编写的</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Set-UID程序</td>
+          <td style="text-align: center">seed</td>
+          <td style="text-align: center">seed</td>
+          <td style="text-align: center">root</td>
+          <td style="text-align: center">没有继承父进程</td>
+          <td style="text-align: center">libc的</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Set-UID程序</td>
+          <td style="text-align: center">root</td>
+          <td style="text-align: center">root</td>
+          <td style="text-align: center">root</td>
+          <td style="text-align: center">继承父进程</td>
+          <td style="text-align: center">我们编写的</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Set-UID user1程序</td>
+          <td style="text-align: center">seed</td>
+          <td style="text-align: center">seed</td>
+          <td style="text-align: center">user1</td>
+          <td style="text-align: center">没有继承父进程</td>
+          <td style="text-align: center">libc的</td>
+      </tr>
+  </tbody>
+</table>
+<p>结论：</p>
+<p>当一个进程的<code>uid</code>和<code>euid</code>一致时，子进程才会继承父进程的环境变量，才会执行我们编写的<code>sleep()</code>函数，第二步行为不同的原因是因为它们的<code>uid</code>和<code>euid</code>的一致/不一致会导致子进程继承/不继承<code>LD_PRELOAD</code>环境变量，从而导致了<code>sleep()</code>函数的不同。</p>
+<h2 id="task-8使用-system-与-execve-调用外部程序的对比">Task 8：使用 system() 与 execve() 调用外部程序的对比<a hidden class="anchor" aria-hidden="true" href="#task-8使用-system-与-execve-调用外部程序的对比">#</a></h2>
+<p>编写并编译<code>catcall.c</code>，如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="o">*</span><span class="n">command</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Please type a file name.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;/bin/cat&#34;</span><span class="p">;</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">command</span> <span class="o">=</span> <span class="nf">malloc</span><span class="p">(</span><span class="nf">strlen</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nf">strlen</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nf">sprintf</span><span class="p">(</span><span class="n">command</span> <span class="p">,</span> <span class="s">&#34;%s %s&#34;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">system</span><span class="p">(</span><span class="n">command</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// execve(v[0], v, NULL);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span> <span class="mi">0</span> <span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这个程序调用了<code>system()</code>函数执行了<code>/bin/cat [filename]</code>，可以打印指定文件的内容。</p>
+<ol>
+<li>
+<p>编译上述程序，使其成为 root 所有的 Set-UID 程序。该程序将使用 system() 来调用该命令。如果你是 Bob，你能损害系统的完整性吗？例如，你可以删除对你没有写权限的文件吗？</p>
+<ol>
+<li>首先使其成为root所有的 Set-UID 程序：</li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/dvlkSOBRN6uGzfY.png" alt="image-20240928093318801" style="zoom:80%;" />
+<ol start="2">
+<li>
+<p>尝试删除没有写权限的文件：</p>
+<ul>
+<li>首先创建一个seed没有写权限的文件，我们首先要将文件夹权限改为seed不可写，再将test.txt的属性设为seed不可写：</li>
+</ul>
+<img src="https://s2.loli.net/2024/12/07/lfR2oCdSbcVrQX1.png" alt="image-20240928172847966" style="zoom:80%;" />
+<ul>
+<li>发现<code>catcall</code>有命令注入漏洞，可以调用<code>system()</code>执行其他系统命令：</li>
+</ul>
+<img src="https://s2.loli.net/2024/12/07/UoxnaNzS5yu1sXd.png" alt="image-20240928173223367" style="zoom:80%;" />
+<p>​	使用命令<code>catcall &quot;test.txt;rm test.txt&quot;</code>成功将没有写权限的<code>test.txt</code>删除。</p>
+</li>
+</ol>
+</li>
+<li>
+<p>注释掉 system(command) 语句，取消注释 execve() 语句；程序将使用 execve() 来调用命令。 编译程序，并使其成为 root 拥有的 Set-UID 程序。你在第一步中的攻击仍然有效吗？请描述并解释你的观察结果。</p>
+<ol>
+<li>首先创建一个seed没有写权限的文件：</li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/lfR2oCdSbcVrQX1.png" alt="image-20240928172847966" style="zoom:80%;" />
+<ol start="2">
+<li>然后再使用命令<code>catcall &quot;test.txt;rm test.txt&quot;</code></li>
+</ol>
+<img src="https://s2.loli.net/2024/12/07/P4UmIAfeMRH1YFq.png" alt="image-20240928173712409" style="zoom:80%;" />
+<p>​	发现无法删除<code>test.txt</code>，攻击失效。</p>
+</li>
+</ol>
+<p><strong>原理</strong>：</p>
+<p>使用<code>system()</code>函数能成功删除的原因是<code>system()</code>函数会创建一个子进程，并调用<code>bin/bash</code>来执行函数的参数，因此执行<code>catcall &quot;test.txt;rm test.txt&quot;</code>就相当于父进程创建了一个子进程，子进程使用<code>bin/bash</code>执行<code>bin/cat test.txt;rm test.txt </code>，由于<strong>bash的特性</strong>，分号后面会作为下一个命令并执行，而且父进程是一个<code>Set-UID</code>程序，因此相当于在 root 下执行了<code>rm test.txt</code>，所以可以删除文件。</p>
+<p>而使用<code>execve()</code>函数删除不了文件的原因是<code>execve()</code>函数并不是调用<code>bin/bash</code>来执行函数的参数的，而是通过系统调用的方式执行<code>bin/cat test.txt;rm test.txt</code>，它会把 <code>test.txt;rm test.txt</code> 当作一个文件名，而我们这个目录下并不存在这个文件，因此会报错<code>/bin/cat: 'test.txt;rm test.txt': No such file or directory</code></p>
+<h2 id="task-9权限泄漏">Task 9：权限泄漏<a hidden class="anchor" aria-hidden="true" href="#task-9权限泄漏">#</a></h2>
+<p>编译以下程序，将其所有者更改为 root，并使其成为 Set-UID 程序。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">fd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/* Assume that /etc/zzz is an important system file,
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * and it is owned by root with permission 0644.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Before running this program, you should create
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * the file /etc/zzz first. */</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fd</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="s">&#34;/etc/zzz&#34;</span><span class="p">,</span> <span class="n">O_RDWR</span> <span class="o">|</span> <span class="n">O_APPEND</span><span class="p">);</span>        
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">     <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Cannot open /etc/zzz</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">     <span class="nf">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// Print out the file descriptor value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;fd is %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">fd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// Permanently disable the privilege by making the
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// effective uid the same as the real uid
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nf">setuid</span><span class="p">(</span><span class="nf">getuid</span><span class="p">());</span>                                
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// Execute /bin/sh
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;/bin/sh&#34;</span><span class="p">;</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">execve</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>                             
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>我们在<code>/etc</code>下创建文件<code>zzz</code>，并运行<code>cap_leak</code></p>
+<blockquote>
+<p><strong>文件描述符</strong>（File Descriptor，简称 fd）是操作系统中用于管理和操作文件或其他输入/输出资源（如网络连接、管道等）的一个重要概念。当打开一个文件时，操作系统会返回一个文件描述符，后续的读写操作都通过这个描述符进行。</p>
+</blockquote>
+<p>此时输出了<code>zzz</code>文件的文件描述符fd（File Descriptor），并且执行了<code>setuid(getuid())</code>操作，将进程的uid改为了当前用户的，也就是将uid设为seed，然后调用<code>execve()</code>函数执行了<code>bin/sh</code>开启了一个shell。</p>
+<img src="https://s2.loli.net/2024/12/07/EF9tJkPKrRg7q4z.png" alt="image-20240928233806262" style="zoom:80%;" />
+<p>我们使用<code>whoami</code>命令查看shell的拥有者：</p>
+<img src="https://s2.loli.net/2024/12/07/2gmWtGKwox69khi.png" alt="image-20240928233936581" style="zoom:80%;" />
+<p>发现拥有者确实是<code>seed</code>，但是虽然这个进程的有效用户ID是 seed ，但是该进程仍然拥有特权，我们可以以普通用户的身份将恶意代码写入<code>/etc/zzz</code>文件中，这个过程需要利用文件描述符fd。</p>
+<p>我们可以使用<code>echo &quot;You have been hacked!!&quot; &gt;&amp; 3</code>，将这段话通过文件描述符写入<code>/etc/zzz</code>：</p>
+<img src="https://s2.loli.net/2024/12/07/TdYKp3aN2Dck1LF.png" alt="image-20240928235100876" style="zoom:80%;" />
+<p>可以发现成功写入了文件。</p>
+<p><strong>原理</strong>：</p>
+<p>虽然代码中执行了<code>setuid(getuid())</code>操作，将进程的uid改为了seed，但是在执行<code>execve(v[0], v, 0) </code>打开一个shell时，由于在放弃特权时没有关闭<code>/etc/zzz</code>这个文件，创建的子进程会继承<code>/etc/zzz</code>这个文件的文件描述符，造成特权泄露，子进程可以利用这个文件描述符向文件中写入内容。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/">软件安全</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>SEEDlab—SQL注入攻击实验</span>
+  </a>
+  <a class="next" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>SEEDlab—缓冲区溢出漏洞</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

