@@ -15,34 +15,6 @@
     <lastBuildDate>Sun, 21 Jan 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://smera1d0.github.io/categories/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>【机器学习】使用 generative model 和 logistic regression 预测年收入</title>
-      <link>https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/</link>
-      <pubDate>Sun, 21 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/</guid>
-      <description>&lt;h2 id=&#34;1-实验目的&#34;&gt;1 实验目的&lt;/h2&gt;
-&lt;p&gt;使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。&lt;/p&gt;
-&lt;h2 id=&#34;2-实验环境&#34;&gt;2 实验环境&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;操作系统：windows 11&lt;/li&gt;
-&lt;li&gt;CPU：AMD Ryzen 7 5800H with Radeon Graphics (3.20 GHz)&lt;/li&gt;
-&lt;li&gt;GPU：NVIDIA GeForce GTX 1650&lt;/li&gt;
-&lt;li&gt;运行环境：
-&lt;ul&gt;
-&lt;li&gt;Python 3.10.11&lt;/li&gt;
-&lt;li&gt;pandas 2.1.0&lt;/li&gt;
-&lt;li&gt;numpy 1.24.2&lt;/li&gt;
-&lt;li&gt;matplotlib 3.7.1&lt;/li&gt;
-&lt;li&gt;tqdm 4.66.1&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;3-数据处理&#34;&gt;3 数据处理&lt;/h2&gt;
-&lt;h3 id=&#34;31-数据文件描述&#34;&gt;3.1 数据文件描述&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;train.csv / test.csv：包含 age, workclass, fnlwgt (总人数), education, education num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, make over 50K a year or not 这些特征。&lt;/p&gt;</description>
-    </item>
-    <item>
       <title>SEEDlab—竞争条件漏洞</title>
       <link>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/</link>
       <pubDate>Sun, 21 Jan 2024 00:00:00 +0000</pubDate>
