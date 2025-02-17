@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Crypto on Smera1d0&#39;s Blog</title>
+    <link>https://smera1d0.github.io/categories/crypto/</link>
+    <description>Recent content in Crypto on Smera1d0&#39;s Blog</description>
+    <image>
+      <title>Smera1d0&#39;s Blog</title>
+      <url>https://smera1d0.github.io/images/papermod-cover.png</url>
+      <link>https://smera1d0.github.io/images/papermod-cover.png</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
+    <lastBuildDate>Sat, 17 Feb 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://smera1d0.github.io/categories/crypto/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【密码工程】AES 侧信道攻击</title>
+      <link>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8Baes-%E4%BE%A7%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB/</link>
+      <pubDate>Sat, 17 Feb 2024 00:00:00 +0000</pubDate>
+      <guid>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8Baes-%E4%BE%A7%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB/</guid>
+      <description>&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;遇到的问题&lt;/strong&gt;：一开始编写的攻击脚本运行效率太低。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;解决方法&lt;/strong&gt;：更换了使用的统计函数，使得运行速度大幅提升。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;实验亮点：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用 &lt;code&gt;python&lt;/code&gt; 的 &lt;code&gt;matplotlib&lt;/code&gt; 库绘制了功耗曲线。&lt;/li&gt;
+&lt;li&gt;使用数学公式分析了 DPA 方法和 CPA 方法。&lt;/li&gt;
+&lt;li&gt;对实验代码进行了清晰的说明，并使用 tqdm 库显示了攻击的进度。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;实验前置说明&#34;&gt;实验前置说明&lt;/h2&gt;
+&lt;p&gt;实验给出了三个 &lt;code&gt;npy&lt;/code&gt; 文件：&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>【密码工程】硬件实现 Grain128 流密码算法</title>
+      <link>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8B%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0-grain-128-%E6%B5%81%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Sat, 17 Feb 2024 00:00:00 +0000</pubDate>
+      <guid>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8B%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0-grain-128-%E6%B5%81%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;遇到的问题&lt;/strong&gt;：verilog 语言在设计循环时不能采用类似 C 语言中的 for 循环的设计思想&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;解决方法&lt;/strong&gt;：通过设置计数器和标志位来解决，当计数器到达设定的值时，改变标志位，检测到标志位改变时，退出循环。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

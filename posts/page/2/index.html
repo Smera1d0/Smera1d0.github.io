@@ -218,6 +218,33 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">SEEDlab—伪随机数生成实验
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Task 1：用错误的方式生成加密密钥 #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;time.h&gt; #define KEYSIZE 16 void main() { int i; char key[KEYSIZE]; printf(&#34;%lld\n&#34;, (long long) time(NULL)); srand (time(NULL)); //➀ for (i = 0; i&lt; KEYSIZE; i&#43;&#43;){ key[i] = rand()%256; printf(&#34;%.2x&#34;, (unsigned char)key[i]); } printf(&#34;\n&#34;); } 编译并运行上述代码，结果如下：
+第一行输出的是从纪元 1970-01-01 00:00:00 &#43;0000 (UTC) 到现在的秒数，第二行输出的是以当前时间作为随机数种子产生的加密密钥，可以发现，当初始化随机数生成器的随机数种子不一样时，产生的加密密钥也不同。
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;4 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to SEEDlab—伪随机数生成实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">SEEDlab—SQL注入攻击实验
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>环境设置 修改映射 将以下条目添加到 etc/hosts 目录下，其中 www.seed-server.com 是Web程序的域名，10.9.0.5 是容器的IP
+10.9.0.5	www.seed-server.com 构建并启动docker 在Labsetup下使用命令 docker-compose build 构建docker 使用命令 docker-compose up 拉起容器，容器中的 /var/lib/mysql 挂载在 Labsetup 目录下。 Task 1：熟悉 SQL 语句 进入容器shell并使用mysql客户端与数据库进行交互 docker ps docksh a3 mysql -u root -pdees ...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-01-12 00:00:00 +0000 UTC'>一月 12, 2024</span>&nbsp;·&nbsp;6 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to SEEDlab—SQL注入攻击实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">SEEDlab—环境变量与 Set-UID 实验
     </h2>
   </header>

@@ -258,6 +258,36 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">【密码工程】AES 侧信道攻击
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 遇到的问题：一开始编写的攻击脚本运行效率太低。
+解决方法：更换了使用的统计函数，使得运行速度大幅提升。
+实验亮点：
+使用 python 的 matplotlib 库绘制了功耗曲线。 使用数学公式分析了 DPA 方法和 CPA 方法。 对实验代码进行了清晰的说明，并使用 tqdm 库显示了攻击的进度。 实验前置说明 实验给出了三个 npy 文件：
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-02-17 00:00:00 +0000 UTC'>二月 17, 2024</span>&nbsp;·&nbsp;7 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to 【密码工程】AES 侧信道攻击" href="https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8Baes-%E4%BE%A7%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">【密码工程】硬件实现 Grain128 流密码算法
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>遇到的问题：verilog 语言在设计循环时不能采用类似 C 语言中的 for 循环的设计思想
+解决方法：通过设置计数器和标志位来解决，当计数器到达设定的值时，改变标志位，检测到标志位改变时，退出循环。
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-02-17 00:00:00 +0000 UTC'>二月 17, 2024</span>&nbsp;·&nbsp;5 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to 【密码工程】硬件实现 Grain128 流密码算法" href="https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8B%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0-grain-128-%E6%B5%81%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">【机器学习】使用 generative model 和 logistic regression 预测年收入
     </h2>
   </header>
@@ -310,33 +340,6 @@ $ openssl rand -hex 16 使用OpenSSL对明文进行加密
   </div>
   <footer class="entry-footer"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;5 分钟&nbsp;·&nbsp;Mi Yu</footer>
   <a class="entry-link" aria-label="post link to SEEDlab—密码技术应用实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">SEEDlab—伪随机数生成实验
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Task 1：用错误的方式生成加密密钥 #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;time.h&gt; #define KEYSIZE 16 void main() { int i; char key[KEYSIZE]; printf(&#34;%lld\n&#34;, (long long) time(NULL)); srand (time(NULL)); //➀ for (i = 0; i&lt; KEYSIZE; i&#43;&#43;){ key[i] = rand()%256; printf(&#34;%.2x&#34;, (unsigned char)key[i]); } printf(&#34;\n&#34;); } 编译并运行上述代码，结果如下：
-第一行输出的是从纪元 1970-01-01 00:00:00 &#43;0000 (UTC) 到现在的秒数，第二行输出的是以当前时间作为随机数种子产生的加密密钥，可以发现，当初始化随机数生成器的随机数种子不一样时，产生的加密密钥也不同。
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;4 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to SEEDlab—伪随机数生成实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">SEEDlab—SQL注入攻击实验
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>环境设置 修改映射 将以下条目添加到 etc/hosts 目录下，其中 www.seed-server.com 是Web程序的域名，10.9.0.5 是容器的IP
-10.9.0.5	www.seed-server.com 构建并启动docker 在Labsetup下使用命令 docker-compose build 构建docker 使用命令 docker-compose up 拉起容器，容器中的 /var/lib/mysql 挂载在 Labsetup 目录下。 Task 1：熟悉 SQL 语句 进入容器shell并使用mysql客户端与数据库进行交互 docker ps docksh a3 mysql -u root -pdees ...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-01-12 00:00:00 +0000 UTC'>一月 12, 2024</span>&nbsp;·&nbsp;6 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to SEEDlab—SQL注入攻击实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
