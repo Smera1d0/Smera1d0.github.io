@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Simple PIR 算法原理解析 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="Crypto">
+<meta name="description" content="该算法来自 USENIX 2023 One Server for the Price of Two:  Simple and Fast Single-Server Private Information Retrieval
+1. 将 Database 转换为矩阵
+服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eb8f5da85697cd810df09cc87c7f69c1a1690fdc75d0a7bc8bcd70301c4c3cca.css" integrity="sha256-649dqFaXzYEN8JzIfH9pwaFpD9x10Ke8i81wMBxMPMo=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            },
+            "HTML-CSS": {
+                availableFonts: ["Arial", "TeX"],
+                preferredFont: "TeX",
+                webFont: "TeX"
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+<meta property="og:title" content="Simple PIR 算法原理解析" />
+<meta property="og:description" content="该算法来自 USENIX 2023 One Server for the Price of Two:  Simple and Fast Single-Server Private Information Retrieval
+1. 将 Database 转换为矩阵
+服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-02-25T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-02-25T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="Simple PIR 算法原理解析"/>
+<meta name="twitter:description" content="该算法来自 USENIX 2023 One Server for the Price of Two:  Simple and Fast Single-Server Private Information Retrieval
+1. 将 Database 转换为矩阵
+服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Simple PIR 算法原理解析",
+      "item": "https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Simple PIR 算法原理解析",
+  "name": "Simple PIR 算法原理解析",
+  "description": "该算法来自 USENIX 2023 One Server for the Price of Two: Simple and Fast Single-Server Private Information Retrieval\n1. 将 Database 转换为矩阵 服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。\n",
+  "keywords": [
+    "Crypto"
+  ],
+  "articleBody": "该算法来自 USENIX 2023 One Server for the Price of Two: Simple and Fast Single-Server Private Information Retrieval\n1. 将 Database 转换为矩阵 服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。\n2. 使用 LWE 方案进行加密 2.1 LWE 问题 已知一个矩阵 $A$ 和一个秘密向量 $s$，以及一个随机噪音向量 $e$，并且知道 $\\hat{b}$ ，$\\hat{b}$ 满足： $$ \\hat{b}=As+e $$ 如何根据矩阵 $A$ 和 $\\hat{b}$ 还原 $s$，这类的问题统称 LWE（Learning With Error）问题。\nSearch LWE 问题 $$ LWE(n,m,q,x_B): SearchVersion\\ LetA \\leftarrow \\mathbb{Z}_q^{m \\times n},s \\leftarrow \\mathbb{Z}q,e\\leftarrow x_B^m,x_B是最大值为B的随机分布\\ Given(A,As+e),find~ s’ \\in \\mathbb{Z}^n_qs.t.||As’-(As+e)||{\\infty} \\leq B $$\nDecisional LWE 问题 $$ LWE(n,m,q,x_B): DecisionalVersion\\ LetA \\leftarrow \\mathbb{Z}_q^{m \\times n},s \\leftarrow \\mathbb{Z}_q,e\\leftarrow x_B^m,v\\leftarrow \\mathbb{Z}_q^m\\ Distinguish(A,As+e)from(A,v) $$\n2.2 LWE 的加解密 $KeyGen(1^{\\lambda})$\n随机选取 LWE 所需的矩阵 $A \\leftarrow \\mathbb{Z}_q^{m \\times n},s \\leftarrow \\mathbb{Z}_q,e\\leftarrow x_B^m$ ，并计算出 $b=As+e$ 输出 $sk=s,pk=(A,b)$ 加密\n首先随机的选取一个向量 $r \\leftarrow \\mathbb{Z}_2^m \\in {0,1}^m$ ，计算 $c_0\\leftarrow r^TA$\n然后计算 $c_1 \\leftarrow r^Tb+ \\lfloor q/2\\rfloor x$\n输出密文 $(c_0,c_1)$\n解密\n计算 $\\hat{x}=c_1-c_0\\cdot s$ 检查 $|\\hat{x}|",
+  "wordCount" : "553",
+  "inLanguage": "zh",
+  "datePublished": "2024-02-25T00:00:00Z",
+  "dateModified": "2024-02-25T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Simple PIR 算法原理解析
+    </h1>
+    <div class="post-meta"><span title='2024-02-25 00:00:00 +0000 UTC'>二月 25, 2024</span>&nbsp;·&nbsp;2 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/Simple%20PIR%20%e7%ae%97%e6%b3%95%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#1-%e5%b0%86-database-%e8%bd%ac%e6%8d%a2%e4%b8%ba%e7%9f%a9%e9%98%b5" aria-label="1. 将 Database 转换为矩阵">1. 将 Database 转换为矩阵</a></li>
+                <li>
+                    <a href="#2-%e4%bd%bf%e7%94%a8-lwe-%e6%96%b9%e6%a1%88%e8%bf%9b%e8%a1%8c%e5%8a%a0%e5%af%86" aria-label="2. 使用 LWE 方案进行加密">2. 使用 LWE 方案进行加密</a><ul>
+                        
+                <li>
+                    <a href="#21-lwe-%e9%97%ae%e9%a2%98" aria-label="2.1 LWE 问题">2.1 LWE 问题</a></li>
+                <li>
+                    <a href="#22-lwe-%e7%9a%84%e5%8a%a0%e8%a7%a3%e5%af%86" aria-label="2.2 LWE 的加解密">2.2 LWE 的加解密</a></li></ul>
+                </li>
+                <li>
+                    <a href="#3-simplepir-%e7%ae%97%e6%b3%95%e6%b5%81%e7%a8%8b%e8%a7%a3%e6%9e%90" aria-label="3. SimplePIR 算法流程解析">3. SimplePIR 算法流程解析</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>该算法来自 USENIX 2023 <a href="https://eprint.iacr.org/2022/949">One Server for the Price of Two:  Simple and Fast Single-Server Private Information Retrieval</a></p>
+<h3 id="1-将-database-转换为矩阵">1. 将 Database 转换为矩阵<a hidden class="anchor" aria-hidden="true" href="#1-将-database-转换为矩阵">#</a></h3>
+<p>服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。</p>
+<img src="https://s2.loli.net/2025/02/24/Tn3UAfSM2146Nt7.png" style="zoom: 80%;" />
+<h3 id="2-使用-lwe-方案进行加密">2. 使用 LWE 方案进行加密<a hidden class="anchor" aria-hidden="true" href="#2-使用-lwe-方案进行加密">#</a></h3>
+<h4 id="21-lwe-问题">2.1 LWE 问题<a hidden class="anchor" aria-hidden="true" href="#21-lwe-问题">#</a></h4>
+<p>已知一个矩阵 $A$ 和一个秘密向量 $s$，以及一个随机噪音向量 $e$，并且知道 $\hat{b}$ ，$\hat{b}$ 满足：
+$$
+\hat{b}=As+e
+$$
+如何根据矩阵 $A$ 和 $\hat{b}$ 还原 $s$，这类的问题统称 LWE（Learning With Error）问题。</p>
+<ul>
+<li>Search LWE 问题</li>
+</ul>
+<p>$$
+LWE(n,m,q,x_B): Search<del>Version\
+Let</del>A \leftarrow \mathbb{Z}_q^{m \times n},s \leftarrow \mathbb{Z}<em>q,e\leftarrow x_B^m,x_B是最大值为B的随机分布\
+Given(A,As+e),find~ s&rsquo; \in \mathbb{Z}^n_q<del>s.t.</del>||As&rsquo;-(As+e)||</em>{\infty} \leq B
+$$</p>
+<ul>
+<li>Decisional LWE 问题</li>
+</ul>
+<p>$$
+LWE(n,m,q,x_B): Decisional<del>Version\
+Let</del>A \leftarrow \mathbb{Z}_q^{m \times n},s \leftarrow \mathbb{Z}_q,e\leftarrow x_B^m,v\leftarrow \mathbb{Z}_q^m\
+Distinguish(A,As+e)<del>from</del>(A,v)
+$$</p>
+<h4 id="22-lwe-的加解密">2.2 LWE 的加解密<a hidden class="anchor" aria-hidden="true" href="#22-lwe-的加解密">#</a></h4>
+<ul>
+<li>
+<p>$KeyGen(1^{\lambda})$</p>
+<ul>
+<li>随机选取 LWE 所需的矩阵 $A \leftarrow \mathbb{Z}_q^{m \times n},s \leftarrow \mathbb{Z}_q,e\leftarrow x_B^m$ ，并计算出 $b=As+e$</li>
+<li>输出 $sk=s,pk=(A,b)$</li>
+</ul>
+</li>
+<li>
+<p>加密</p>
+<ul>
+<li>
+<p>首先随机的选取一个向量 $r \leftarrow \mathbb{Z}_2^m \in {0,1}^m$ ，计算 $c_0\leftarrow r^TA$</p>
+</li>
+<li>
+<p>然后计算 $c_1 \leftarrow r^Tb+ \lfloor q/2\rfloor x$</p>
+</li>
+<li>
+<p>输出密文 $(c_0,c_1)$</p>
+</li>
+</ul>
+</li>
+<li>
+<p>解密</p>
+<ul>
+<li>计算 $\hat{x}=c_1-c_0\cdot s$</li>
+<li>检查 $|\hat{x}|&lt;q/4$ ，如果符合输出1，不符合输出0</li>
+</ul>
+</li>
+</ul>
+<p><img loading="lazy" src="https://s2.loli.net/2025/02/24/Q6gFmuBaOHrL2WU.png" alt=""  />
+</p>
+<h3 id="3-simplepir-算法流程解析">3. SimplePIR 算法流程解析<a hidden class="anchor" aria-hidden="true" href="#3-simplepir-算法流程解析">#</a></h3>
+<ol>
+<li>$Setup(db \in \mathbb{Z}_p^{\sqrt{N}\times \sqrt{N}})\rightarrow (hint_s,hint_c)$</li>
+</ol>
+<p>$$
+hint_c=db \cdot A\in \mathbb{Z}_q^{\sqrt{N}\times n}\
+\Delta=\lfloor q/p \rfloor
+$$</p>
+<ol start="2">
+<li>
+<p>$Query(i\in [N])\rightarrow (st,qu)$</p>
+<ul>
+<li>
+<p>设查询的index为i，转换为坐标$(i_{row},i_{col})$</p>
+</li>
+<li>
+<p>随机生成 $s$ 和 $e$</p>
+</li>
+<li>
+<p>计算 $qu \leftarrow (As+e+\Delta \cdot u_{i_{col}})\in \mathbb{Z}<em>q^{\sqrt{N}}$，其中 $u</em>{i_{col}}$ 是只有 $i_{row}$ 为 1 的列向量</p>
+</li>
+<li>
+<p>返回 $(st,qu) \leftarrow ((i_{row},s),qu)$</p>
+</li>
+</ul>
+</li>
+<li>
+<p>$Answer(db,hint_s,qu)\rightarrow ans$</p>
+<ul>
+<li>计算 $ans \leftarrow db \cdot qu$</li>
+</ul>
+</li>
+<li>
+<p>$Recover(st,hint_c,ans)\rightarrow d$</p>
+<ul>
+<li>
+<p>计算 $\hat{d}\leftarrow (ans[i_{row}]-hint_c[i_{row}:] \cdot s )$</p>
+</li>
+<li>
+<p>$d \leftarrow Round_{\Delta}(\hat{d})/\Delta \in \mathbb{Z}_p$</p>
+</li>
+</ul>
+</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/crypto/">Crypto</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8Baes-%E4%BE%A7%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>【密码工程】AES 侧信道攻击</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

@@ -12,8 +12,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
-    <lastBuildDate>Sat, 17 Feb 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 25 Feb 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://smera1d0.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Simple PIR 算法原理解析</title>
+      <link>https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Sun, 25 Feb 2024 00:00:00 +0000</pubDate>
+      <guid>https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;该算法来自 USENIX 2023 &lt;a href=&#34;https://eprint.iacr.org/2022/949&#34;&gt;One Server for the Price of Two:  Simple and Fast Single-Server Private Information Retrieval&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;1-将-database-转换为矩阵&#34;&gt;1. 将 Database 转换为矩阵&lt;/h3&gt;
+&lt;p&gt;服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>【密码工程】AES 侧信道攻击</title>
       <link>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8Baes-%E4%BE%A7%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB/</link>
