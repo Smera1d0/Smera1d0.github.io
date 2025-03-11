@@ -66,49 +66,23 @@
         }
 
     </style>
-</noscript>
-<script type="text/javascript" async
-    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-        MathJax.Hub.Config({
-            tex2jax: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
-                processEscapes: true,
-                processEnvironments: true,
-                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-                TeX: {
-                    equationNumbers: { autoNumber: "AMS" },
-                    extensions: ["AMSmath.js", "AMSsymbols.js"]
-                }
-            },
-            "HTML-CSS": {
-                availableFonts: ["Arial", "TeX"],
-                preferredFont: "TeX",
-                webFont: "TeX"
-            }
-        });
-
-        MathJax.Hub.Queue(function () {
-            
-            
-            
-            var all = MathJax.Hub.getAllJax(), i;
-            for (i = 0; i < all.length; i += 1) {
-                all[i].SourceElement().parentNode.className += ' has-jax';
-            }
-        });
-    </script>
-
-<style>
-    code.has-jax {
-        font: inherit;
-        font-size: 100%;
-        background: inherit;
-        border: inherit;
-        color: #515151;
-    }
-</style>
-<meta property="og:title" content="【密码工程】AES 侧信道攻击" />
+</noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          
+          
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+          ],
+          
+          throwOnError : false
+        });
+    });
+</script><meta property="og:title" content="【密码工程】AES 侧信道攻击" />
 <meta property="og:description" content="
 遇到的问题：一开始编写的攻击脚本运行效率太低。
 解决方法：更换了使用的统计函数，使得运行速度大幅提升。

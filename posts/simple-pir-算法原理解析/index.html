@@ -57,49 +57,23 @@
         }
 
     </style>
-</noscript>
-<script type="text/javascript" async
-    src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-        MathJax.Hub.Config({
-            tex2jax: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
-                processEscapes: true,
-                processEnvironments: true,
-                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-                TeX: {
-                    equationNumbers: { autoNumber: "AMS" },
-                    extensions: ["AMSmath.js", "AMSsymbols.js"]
-                }
-            },
-            "HTML-CSS": {
-                availableFonts: ["Arial", "TeX"],
-                preferredFont: "TeX",
-                webFont: "TeX"
-            }
-        });
-
-        MathJax.Hub.Queue(function () {
-            
-            
-            
-            var all = MathJax.Hub.getAllJax(), i;
-            for (i = 0; i < all.length; i += 1) {
-                all[i].SourceElement().parentNode.className += ' has-jax';
-            }
-        });
-    </script>
-
-<style>
-    code.has-jax {
-        font: inherit;
-        font-size: 100%;
-        background: inherit;
-        border: inherit;
-        color: #515151;
-    }
-</style>
-<meta property="og:title" content="Simple PIR 算法原理解析" />
+</noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          
+          
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+          ],
+          
+          throwOnError : false
+        });
+    });
+</script><meta property="og:title" content="Simple PIR 算法原理解析" />
 <meta property="og:description" content="该算法来自 USENIX 2023 One Server for the Price of Two:  Simple and Fast Single-Server Private Information Retrieval
 1. 将 Database 转换为矩阵
 服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。" />
