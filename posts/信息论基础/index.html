@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>信息论基础 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="信息论">
+<meta name="description" content="熵、相对熵与互信息
+熵
+定义：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为：
+$$
+H(X)=-\sum_{x \in X}p(x) \log p(x)
+$$
+注释：$X$ 的熵又可以理解为随机变量 $\log \frac{1}{p(X)}$ 的期望值
+引理
+
+$H(X) \geq 0$
+$H_b(X)=(\log_ba)H_a(X)$
+
+二元熵：
+$$
+H(X)= -p\log p-(1-p)\log (1-p) \rightarrow H(p)
+$$
+$H(p)$ 为上凸函数，在 $p= \frac{1}{2}$ 时取得最大值 1">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5ebf8c5c6b02cc02da8ad99d66b150c74e7ca78b72811411012f00f65036afde.css" integrity="sha256-Xr&#43;MXGsCzALaitmdZrFQx058p4tygRQRAS8A9lA2r94=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          
+          
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+          ],
+          
+          throwOnError : false
+        });
+    });
+</script><meta property="og:title" content="信息论基础" />
+<meta property="og:description" content="熵、相对熵与互信息
+熵
+定义：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为：
+$$
+H(X)=-\sum_{x \in X}p(x) \log p(x)
+$$
+注释：$X$ 的熵又可以理解为随机变量 $\log \frac{1}{p(X)}$ 的期望值
+引理
+
+$H(X) \geq 0$
+$H_b(X)=(\log_ba)H_a(X)$
+
+二元熵：
+$$
+H(X)= -p\log p-(1-p)\log (1-p) \rightarrow H(p)
+$$
+$H(p)$ 为上凸函数，在 $p= \frac{1}{2}$ 时取得最大值 1" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-03-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-03-16T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="信息论基础"/>
+<meta name="twitter:description" content="熵、相对熵与互信息
+熵
+定义：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为：
+$$
+H(X)=-\sum_{x \in X}p(x) \log p(x)
+$$
+注释：$X$ 的熵又可以理解为随机变量 $\log \frac{1}{p(X)}$ 的期望值
+引理
+
+$H(X) \geq 0$
+$H_b(X)=(\log_ba)H_a(X)$
+
+二元熵：
+$$
+H(X)= -p\log p-(1-p)\log (1-p) \rightarrow H(p)
+$$
+$H(p)$ 为上凸函数，在 $p= \frac{1}{2}$ 时取得最大值 1"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "信息论基础",
+      "item": "https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "信息论基础",
+  "name": "信息论基础",
+  "description": "熵、相对熵与互信息 熵 定义：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为： $$ H(X)=-\\sum_{x \\in X}p(x) \\log p(x) $$ 注释：$X$ 的熵又可以理解为随机变量 $\\log \\frac{1}{p(X)}$ 的期望值\n引理\n$H(X) \\geq 0$ $H_b(X)=(\\log_ba)H_a(X)$ 二元熵： $$ H(X)= -p\\log p-(1-p)\\log (1-p) \\rightarrow H(p) $$ $H(p)$ 为上凸函数，在 $p= \\frac{1}{2}$ 时取得最大值 1\n",
+  "keywords": [
+    "信息论"
+  ],
+  "articleBody": "熵、相对熵与互信息 熵 定义：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为： $$ H(X)=-\\sum_{x \\in X}p(x) \\log p(x) $$ 注释：$X$ 的熵又可以理解为随机变量 $\\log \\frac{1}{p(X)}$ 的期望值\n引理\n$H(X) \\geq 0$ $H_b(X)=(\\log_ba)H_a(X)$ 二元熵： $$ H(X)= -p\\log p-(1-p)\\log (1-p) \\rightarrow H(p) $$ $H(p)$ 为上凸函数，在 $p= \\frac{1}{2}$ 时取得最大值 1\n联合熵与条件熵 定义：对于服从联合分布为 $p(x,y)$ 的一对离散随机变量 $(x,y)$ ，其联合熵 $H(X,Y)$ 定义为： $$ \\begin{aligned} H(X,Y)=\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x,y)\\\\ =\u0026-E \\log p(X,Y) \\end{aligned} $$ 定义：条件熵 $H(Y|X)$ 定义为： $$ \\begin{aligned} H(Y|X)=\u0026\\sum_{x \\in X}p(x)H(Y|X=x)\\\\ =\u0026-\\sum_{x \\in X}p(x)\\sum_{y \\in Y}p(y|x)\\log p(y|x)\\\\ =\u0026-\\sum_{x \\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026-E \\log p(Y|X) \\end{aligned} $$ 定理：链式法则 $$ H(X,Y)=H(X)+H(Y|X) $$ 证明： $$ \\begin{aligned} H(X,Y)=\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x,y)\\\\ =\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x) p(y|x)\\\\ =\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x) -\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026-\\sum_{x \\in X}p(x) \\log p(x)-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026H(X)-H(Y|X) \\end{aligned} $$ 等价于： $$ \\log p(X,Y)=\\log p(X)+\\log p(Y|X) $$ 推论： $$ H(X,Y|Z)=H(X|Z)+H(Y|X,Z) $$\n相对熵和互信息 相对熵（relative entropy） 是两个随机分布之间距离的度量。相对熵 $D(p||q)$ 度量当真实分布为 $p$ 而假定分布为 $q$ 时的无效性。\n定义：两个概率密度函数为 $p(x)$ 和 $q(x)$ 之间的相对熵或 $\\text{Kullback-Leibler}$ 距离定义为 $$ \\begin{aligned} D(p||q)=\u0026\\sum_{x \\in X}p(x)\\log \\frac{p(x)}{q(x)}\\\\ =\u0026E_p \\log \\frac{p(x)}{q(x)} \\end{aligned} $$ 互信息（mutual information） 是一个随机变量包含另一个随机变量信息量的度量。互信息也是给定另一个随机变量知识的条件下，原随机变量不确定度的缩减量。\n定义：考虑两个随机变量 $X$ 和 $Y$，它们的联合概率密度函数为 $p(x,y)$，其边际概率密度函数为 $p(x)$ 和 $p(y)$。互信息 $I(X;Y)$ 为联合概率分布 $p(x,y)$ 和乘积分布 $p(x)p(y)$ 之间的相对熵 $$ \\begin{aligned} I(X;Y)=\u0026\\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x,y)}{p(x)p(y)}\\\\ =\u0026 D(p(x,y)||p(x)p(y)) \\end{aligned} $$ 注：一般情况下 $D(p||q) \\neq D(q||p)$\n熵和互信息的关系 互信息 $I(X;Y)$ 可重写为： $$ \\begin{aligned} I(X;Y)=\u0026\\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x,y)}{p(x)p(y)}\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x|y)}{p(x)}\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x|y)-\\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x)\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x|y)-\\sum_{x \\in X}p(x) \\log p(x)\\\\ =\u0026 H(X)-H(X|Y) \\end{aligned} $$ 由此可表明互信息 $I(X;Y)$ 是给定 $Y$ 的情况下 $X$ 的不确定度的缩减量。\n由对称性，可得： $$ I(X;Y)=H(Y)-H(Y|X) $$ 由 $H(X,Y)=H(X)+H(Y|X)$ 可得： $$ I(X;Y)=H(X)+H(Y)-H(X,Y) $$ 最后注意到： $$ I(X;X)=H(X)-H(X|X)=H(X) $$ 因此，随机变量和自身的互信息为该随机变量的熵，因此将熵称为自信息（self-information）\n定理：互信息与熵的关系 $$ \\begin{aligned} I(X;Y)=\u0026H(X)-H(X|Y)\\\\ I(X;Y)=\u0026H(Y)-H(Y|X)\\\\ I(X;Y)=\u0026H(X)+H(Y)-H(X;Y)\\\\ I(X;Y)=\u0026I(Y;X)\\\\ I(X;X)=\u0026H(X)\\\\ \\end{aligned} $$ Venn 图：互信息和熵的关系可由文氏图给出\n熵、相对熵与互信息的链式法则 定理（熵的链式法则）： $$ H(X_1,X_2, \\cdots ,X_n)=\\sum_{i=1}^{n}H(X_i|X_{i-1},\\cdots,X_1) $$ 证明： $$ \\begin{aligned} H(X_1,X_2)=\u0026H(X_1)+H(X_2|X_1)\\\\ H(X_1,X_2,X_3)=\u0026H(X_1)+H(X_2,X_3|X_1)\\\\ =\u0026H(X_1)+H(X_2|X_1)+H(X_3|X_2,X_1)\\\\ \\cdots\\\\ H(X_1,X_2, \\cdots ,X_n)=\u0026\\sum_{i=1}^{n}H(X_i|X_{i-1},\\cdots,X_1) \\end{aligned} $$ 定义（条件互信息）：随机变量 $X$ 和 $Y$ 在给定随机变量 $Z$ 时的条件互信息定义为 $$ \\begin{aligned} I(X;Y|Z)=\u0026H(X|Z)-H(X|Y,Z)\\\\ =\u0026E_{p(x,y,z)} \\log \\frac{p(X,Y|Z)}{p(X|Z)p(Y|Z)} \\end{aligned} $$ 定理（互信息的链式法则）： $$ I(X_1,X_2,\\cdots ,X_n;Y)=\\sum^n_{i=1}I(X_i;Y|X_{i-1},X_{i-2},\\cdots ,X_1) $$ 证明： $$ \\begin{aligned} I(X_1,X_2,\\cdots ,X_n;Y)=\u0026H(X_1,X_2,\\cdots ,X_n)-H(X_1,X_2,\\cdots ,X_n|Y)\\\\ =\u0026 \\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1)-\\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1,Y)\\\\ =\u0026 \\sum_{i=1}^n I(X_i;Y|X_{i-1},\\cdots,X_1) \\end{aligned} $$\nJensen 不等式及其结果 定义（下凸函数）：若对于任意的 $x_1,x_2 \\in (a.b)$ 及 $0 \\leq \\lambda \\leq 1$，满足 $$ f(\\lambda x_1+(1-\\lambda)x_2) \\leq \\lambda f(x_1)+(1-\\lambda)f(x_2) $$ 则称函数 $f(x)$ 在区间 $(a,b)$ 上是严格下凸的。\n定理：如果函数 $f$ 在某个区间存在非负的二阶导数，则 $f$ 为该区间的凸函数。\n定理（Jessen 不等式）：若给定一个下凸函数 $f$ 和一个随机变量 $X$ ，则 $$ Ef(X)\\geq f(EX) $$ 证明：利用数学归纳法进行证明，对于一个两点分布，我们有 $$ p_1f(x_1)+p_2f(x_2)\\geq f(p_1x_1+p_2x_2) $$ 设分布点个数为 $k-1$ 的时候定理成立，此时记 $p_i’=\\frac{p_i}{1-p_k}(i=1,2,\\dots k-1)$，则有 $$ \\begin{aligned} \\sum_{i=1}^k p_if(x_1) =\u0026 p_kf(x_k)+(1-p_k)\\sum_{i=1}^{k-1}p_i’f(x_i)\\\\ \\geq \u0026 p_kf(x_k)+(1-p_k)f(\\sum_{i=1}^{k-1}p_i’x_i)\\\\ \\geq \u0026 f(p_kx_k+(1-p_k)\\sum_{i=1}^{k-1}p_i’x_i)\\\\ \\geq \u0026 f(\\sum_{i=1}^k p_ix_i) \\end{aligned} $$ 定理（信息不等式）：设 $p(x)$，$q(x)$ 为两个概率密度函数，则 $$ D(p(x)||q(x)) \\geq 0 $$ 当且仅当对任意的 $x$ ，$p(x)=q(x)$ 时等号成立。\n证明： $$ \\begin{aligned} -D(p||q)=\u0026-\\sum_{x \\in X}p(x)\\log \\frac{p(x)}{q(x)}\\\\ =\u0026\\sum_{x \\in X}p(x)\\log \\frac{q(x)}{p(x)}\\\\ \\leq \u0026 \\log \\sum_{x \\in X} p(x)\\frac{q(x)}{p(x)}\\\\ =\u0026 \\log \\sum_{x \\in X} q(x)\\\\ =\u0026 \\log 1\\\\ =\u0026 0 \\end{aligned} $$ 当且仅当 $\\frac{q(x)}{p(x)}=c$ 时等号成立，$\\sum_{x \\in X}c p(x)=1 \\rightarrow c=1 \\rightarrow p(x)=q(x)$\n推论（互信息的非负性）：对于任意两个随机变量 $X$，$Y$， $$ I(X;Y) \\geq 0 $$ 证明：$I(X;Y)=D(p(x,y)||p(x)p(y)) \\geq 0$，当且仅当 $p(x,y)=p(x)p(y)$ ，即 $X$ 和 $Y$ 相互独立时取等号。\n定理：$H(X) \\leq \\log |\\chi|$，其中 $\\chi$ 为 $X$ 的字母表 $\\chi$ 的元素个数，当且仅当 $X$ 服从 $\\chi$ 上的均匀分布时，等号成立。\n证明：设 $u(x)=\\frac{1}{|\\chi|}$ ，$p(x)$ 是随机变量 $X$ 的概率密度函数，有 $$ D(p||u)=\\sum p(x)\\log \\frac{p(x)}{u(x)}= \\log |\\chi | -H(X) \\geq 0 $$ 定理（条件作用使熵减小）： $$ H(X|Y) \\leq H(X) $$ 当 $X$ 和 $Y$ 相互独立时，等号成立。\n定理（熵的独立界）： $$ H(X_1,X_2, \\cdots ,X_n) \\leq \\sum_{i=1}^n H(X_i) $$ 当且仅当 $X_i$ 相互独立时等号成立。\n证明：根据熵的链式法则 $$ \\begin{aligned} H(X_1,X_2, \\cdots ,X_n) = \u0026 \\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1)\\\\ \\leq \u0026 \\sum_{i=1}^n H(X_i) \\end{aligned} $$\n",
+  "wordCount" : "1482",
+  "inLanguage": "zh",
+  "datePublished": "2024-03-16T00:00:00Z",
+  "dateModified": "2024-03-16T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="WiKi">
+                    <span>WiKi</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      信息论基础
+    </h1>
+    <div class="post-meta"><span title='2024-03-16 00:00:00 +0000 UTC'>三月 16, 2024</span>&nbsp;·&nbsp;3 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/%e4%bf%a1%e6%81%af%e8%ae%ba%e5%9f%ba%e7%a1%80.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e7%86%b5%e7%9b%b8%e5%af%b9%e7%86%b5%e4%b8%8e%e4%ba%92%e4%bf%a1%e6%81%af" aria-label="熵、相对熵与互信息">熵、相对熵与互信息</a><ul>
+                        
+                <li>
+                    <a href="#%e7%86%b5" aria-label="熵">熵</a></li>
+                <li>
+                    <a href="#%e8%81%94%e5%90%88%e7%86%b5%e4%b8%8e%e6%9d%a1%e4%bb%b6%e7%86%b5" aria-label="联合熵与条件熵">联合熵与条件熵</a></li>
+                <li>
+                    <a href="#%e7%9b%b8%e5%af%b9%e7%86%b5%e5%92%8c%e4%ba%92%e4%bf%a1%e6%81%af" aria-label="相对熵和互信息">相对熵和互信息</a></li>
+                <li>
+                    <a href="#%e7%86%b5%e5%92%8c%e4%ba%92%e4%bf%a1%e6%81%af%e7%9a%84%e5%85%b3%e7%b3%bb" aria-label="熵和互信息的关系">熵和互信息的关系</a></li>
+                <li>
+                    <a href="#%e7%86%b5%e7%9b%b8%e5%af%b9%e7%86%b5%e4%b8%8e%e4%ba%92%e4%bf%a1%e6%81%af%e7%9a%84%e9%93%be%e5%bc%8f%e6%b3%95%e5%88%99" aria-label="熵、相对熵与互信息的链式法则">熵、相对熵与互信息的链式法则</a></li>
+                <li>
+                    <a href="#jensen-%e4%b8%8d%e7%ad%89%e5%bc%8f%e5%8f%8a%e5%85%b6%e7%bb%93%e6%9e%9c" aria-label="Jensen 不等式及其结果">Jensen 不等式及其结果</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="熵相对熵与互信息">熵、相对熵与互信息<a hidden class="anchor" aria-hidden="true" href="#熵相对熵与互信息">#</a></h2>
+<h3 id="熵">熵<a hidden class="anchor" aria-hidden="true" href="#熵">#</a></h3>
+<p><strong>定义</strong>：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为：
+$$
+H(X)=-\sum_{x \in X}p(x) \log p(x)
+$$
+<strong>注释</strong>：$X$ 的熵又可以理解为随机变量 $\log \frac{1}{p(X)}$ 的期望值</p>
+<p><strong>引理</strong></p>
+<ol>
+<li>$H(X) \geq 0$</li>
+<li>$H_b(X)=(\log_ba)H_a(X)$</li>
+</ol>
+<p><strong>二元熵</strong>：
+$$
+H(X)= -p\log p-(1-p)\log (1-p) \rightarrow H(p)
+$$
+$H(p)$ 为上凸函数，在 $p= \frac{1}{2}$ 时取得最大值 1</p>
+<img src="https://s2.loli.net/2025/03/16/3yMZUgrhtHx5m2j.png" style="zoom:80%;" />
+<h3 id="联合熵与条件熵">联合熵与条件熵<a hidden class="anchor" aria-hidden="true" href="#联合熵与条件熵">#</a></h3>
+<p><strong>定义</strong>：对于服从联合分布为 $p(x,y)$ 的一对离散随机变量 $(x,y)$ ，其联合熵 $H(X,Y)$ 定义为：
+$$
+\begin{aligned}
+H(X,Y)=&amp;-\sum_{x\in X} \sum_{y \in Y}p(x,y)\log p(x,y)\\
+=&amp;-E \log p(X,Y)
+\end{aligned}
+$$
+<strong>定义</strong>：条件熵 $H(Y|X)$ 定义为：
+$$
+\begin{aligned}
+H(Y|X)=&amp;\sum_{x \in X}p(x)H(Y|X=x)\\
+=&amp;-\sum_{x \in X}p(x)\sum_{y \in Y}p(y|x)\log p(y|x)\\
+=&amp;-\sum_{x \in X} \sum_{y \in Y}p(x,y)\log p(y|x)\\
+=&amp;-E \log p(Y|X)
+\end{aligned}
+$$
+<strong>定理</strong>：链式法则
+$$
+H(X,Y)=H(X)+H(Y|X)
+$$
+<strong>证明</strong>：
+$$
+\begin{aligned}
+H(X,Y)=&amp;-\sum_{x\in X} \sum_{y \in Y}p(x,y)\log p(x,y)\\
+=&amp;-\sum_{x\in X} \sum_{y \in Y}p(x,y)\log p(x) p(y|x)\\
+=&amp;-\sum_{x\in X} \sum_{y \in Y}p(x,y)\log p(x) -\sum_{x\in X} \sum_{y \in Y}p(x,y)\log p(y|x)\\
+=&amp;-\sum_{x \in X}p(x) \log p(x)-\sum_{x\in X} \sum_{y \in Y}p(x,y)\log p(y|x)\\
+=&amp;H(X)-H(Y|X)
+\end{aligned}
+$$
+等价于：
+$$
+\log p(X,Y)=\log p(X)+\log p(Y|X)
+$$
+<strong>推论</strong>：
+$$
+H(X,Y|Z)=H(X|Z)+H(Y|X,Z)
+$$</p>
+<h3 id="相对熵和互信息">相对熵和互信息<a hidden class="anchor" aria-hidden="true" href="#相对熵和互信息">#</a></h3>
+<p><strong>相对熵（relative entropy）</strong> 是两个随机分布之间距离的度量。相对熵 $D(p||q)$ 度量当真实分布为 $p$ 而假定分布为 $q$ 时的无效性。</p>
+<p><strong>定义</strong>：两个概率密度函数为 $p(x)$ 和 $q(x)$ 之间的相对熵或 $\text{Kullback-Leibler}$ 距离定义为
+$$
+\begin{aligned}
+D(p||q)=&amp;\sum_{x \in X}p(x)\log \frac{p(x)}{q(x)}\\
+=&amp;E_p \log \frac{p(x)}{q(x)}
+\end{aligned}
+$$
+<strong>互信息（mutual information）</strong> 是一个随机变量包含另一个随机变量信息量的度量。互信息也是给定另一个随机变量知识的条件下，原随机变量不确定度的缩减量。</p>
+<p><strong>定义</strong>：考虑两个随机变量 $X$ 和 $Y$，它们的联合概率密度函数为 $p(x,y)$，其边际概率密度函数为 $p(x)$ 和 $p(y)$。互信息 $I(X;Y)$ 为联合概率分布 $p(x,y)$ 和乘积分布 $p(x)p(y)$ 之间的相对熵
+$$
+\begin{aligned}
+I(X;Y)=&amp;\sum_{x \in X,y \in Y}p(x,y) \log \frac{p(x,y)}{p(x)p(y)}\\
+=&amp; D(p(x,y)||p(x)p(y))
+\end{aligned}
+$$
+注：一般情况下 $D(p||q) \neq D(q||p)$</p>
+<h3 id="熵和互信息的关系">熵和互信息的关系<a hidden class="anchor" aria-hidden="true" href="#熵和互信息的关系">#</a></h3>
+<p>互信息 $I(X;Y)$ 可重写为：
+$$
+\begin{aligned}
+I(X;Y)=&amp;\sum_{x \in X,y \in Y}p(x,y) \log \frac{p(x,y)}{p(x)p(y)}\\
+=&amp; \sum_{x \in X,y \in Y}p(x,y) \log \frac{p(x|y)}{p(x)}\\
+=&amp; \sum_{x \in X,y \in Y}p(x,y) \log p(x|y)-\sum_{x \in X,y \in Y}p(x,y) \log p(x)\\
+=&amp; \sum_{x \in X,y \in Y}p(x,y) \log p(x|y)-\sum_{x \in X}p(x) \log p(x)\\
+=&amp; H(X)-H(X|Y)
+\end{aligned}
+$$
+由此可表明互信息 $I(X;Y)$ 是给定 $Y$ 的情况下 $X$ 的不确定度的缩减量。</p>
+<p>由对称性，可得：
+$$
+I(X;Y)=H(Y)-H(Y|X)
+$$
+由 $H(X,Y)=H(X)+H(Y|X)$ 可得：
+$$
+I(X;Y)=H(X)+H(Y)-H(X,Y)
+$$
+最后注意到：
+$$
+I(X;X)=H(X)-H(X|X)=H(X)
+$$
+因此，随机变量和自身的互信息为该随机变量的熵，因此将熵称为自信息（self-information）</p>
+<p><strong>定理</strong>：互信息与熵的关系
+$$
+\begin{aligned}
+I(X;Y)=&amp;H(X)-H(X|Y)\\
+I(X;Y)=&amp;H(Y)-H(Y|X)\\
+I(X;Y)=&amp;H(X)+H(Y)-H(X;Y)\\
+I(X;Y)=&amp;I(Y;X)\\
+I(X;X)=&amp;H(X)\\
+\end{aligned}
+$$
+<strong>Venn 图</strong>：互信息和熵的关系可由文氏图给出</p>
+<p><img loading="lazy" src="https://s2.loli.net/2025/03/16/Gs7z8NYdtbaqOAm.png" alt=""  />
+</p>
+<h3 id="熵相对熵与互信息的链式法则">熵、相对熵与互信息的链式法则<a hidden class="anchor" aria-hidden="true" href="#熵相对熵与互信息的链式法则">#</a></h3>
+<p><strong>定理（熵的链式法则）</strong>：
+$$
+H(X_1,X_2, \cdots ,X_n)=\sum_{i=1}^{n}H(X_i|X_{i-1},\cdots,X_1)
+$$
+<strong>证明</strong>：
+$$
+\begin{aligned}
+H(X_1,X_2)=&amp;H(X_1)+H(X_2|X_1)\\
+H(X_1,X_2,X_3)=&amp;H(X_1)+H(X_2,X_3|X_1)\\
+=&amp;H(X_1)+H(X_2|X_1)+H(X_3|X_2,X_1)\\
+\cdots\\
+H(X_1,X_2, \cdots ,X_n)=&amp;\sum_{i=1}^{n}H(X_i|X_{i-1},\cdots,X_1)
+\end{aligned}
+$$
+<strong>定义（条件互信息）</strong>：随机变量 $X$ 和 $Y$ 在给定随机变量 $Z$ 时的条件互信息定义为
+$$
+\begin{aligned}
+I(X;Y|Z)=&amp;H(X|Z)-H(X|Y,Z)\\
+=&amp;E_{p(x,y,z)} \log \frac{p(X,Y|Z)}{p(X|Z)p(Y|Z)}
+\end{aligned}
+$$
+<strong>定理（互信息的链式法则）</strong>：
+$$
+I(X_1,X_2,\cdots ,X_n;Y)=\sum^n_{i=1}I(X_i;Y|X_{i-1},X_{i-2},\cdots ,X_1)
+$$
+<strong>证明</strong>：
+$$
+\begin{aligned}
+I(X_1,X_2,\cdots ,X_n;Y)=&amp;H(X_1,X_2,\cdots ,X_n)-H(X_1,X_2,\cdots ,X_n|Y)\\
+=&amp; \sum_{i=1}^n H(X_i|X_{i-1},\cdots,X_1)-\sum_{i=1}^n H(X_i|X_{i-1},\cdots,X_1,Y)\\
+=&amp; \sum_{i=1}^n I(X_i;Y|X_{i-1},\cdots,X_1)
+\end{aligned}
+$$</p>
+<h3 id="jensen-不等式及其结果">Jensen 不等式及其结果<a hidden class="anchor" aria-hidden="true" href="#jensen-不等式及其结果">#</a></h3>
+<p><strong>定义（下凸函数）</strong>：若对于任意的 $x_1,x_2 \in (a.b)$ 及 $0 \leq \lambda \leq 1$，满足
+$$
+f(\lambda x_1+(1-\lambda)x_2) \leq \lambda f(x_1)+(1-\lambda)f(x_2)
+$$
+则称函数 $f(x)$ 在区间 $(a,b)$ 上是严格下凸的。</p>
+<p><img loading="lazy" src="https://s2.loli.net/2025/03/16/CJFg6zbY3QEDqkM.png" alt=""  />
+</p>
+<p><strong>定理</strong>：如果函数 $f$ 在某个区间存在非负的二阶导数，则 $f$ 为该区间的凸函数。</p>
+<p><strong>定理（Jessen 不等式）</strong>：若给定一个下凸函数 $f$ 和一个随机变量 $X$ ，则
+$$
+Ef(X)\geq f(EX)
+$$
+<strong>证明</strong>：利用数学归纳法进行证明，对于一个两点分布，我们有
+$$
+p_1f(x_1)+p_2f(x_2)\geq f(p_1x_1+p_2x_2)
+$$
+设分布点个数为 $k-1$ 的时候定理成立，此时记 $p_i&rsquo;=\frac{p_i}{1-p_k}(i=1,2,\dots k-1)$，则有
+$$
+\begin{aligned}
+\sum_{i=1}^k p_if(x_1) =&amp; p_kf(x_k)+(1-p_k)\sum_{i=1}^{k-1}p_i&rsquo;f(x_i)\\
+\geq &amp; p_kf(x_k)+(1-p_k)f(\sum_{i=1}^{k-1}p_i&rsquo;x_i)\\
+\geq &amp; f(p_kx_k+(1-p_k)\sum_{i=1}^{k-1}p_i&rsquo;x_i)\\
+\geq &amp; f(\sum_{i=1}^k p_ix_i)
+\end{aligned}
+$$
+<strong>定理（信息不等式）</strong>：设 $p(x)$，$q(x)$ 为两个概率密度函数，则
+$$
+D(p(x)||q(x)) \geq 0
+$$
+当且仅当对任意的 $x$ ，$p(x)=q(x)$ 时等号成立。</p>
+<p><strong>证明</strong>：
+$$
+\begin{aligned}
+-D(p||q)=&amp;-\sum_{x \in X}p(x)\log \frac{p(x)}{q(x)}\\
+=&amp;\sum_{x \in X}p(x)\log \frac{q(x)}{p(x)}\\
+\leq &amp;  \log \sum_{x \in X} p(x)\frac{q(x)}{p(x)}\\
+=&amp; \log \sum_{x \in X} q(x)\\
+=&amp; \log 1\\
+=&amp; 0
+\end{aligned}
+$$
+当且仅当 $\frac{q(x)}{p(x)}=c$ 时等号成立，$\sum_{x \in X}c p(x)=1 \rightarrow c=1 \rightarrow p(x)=q(x)$</p>
+<p><strong>推论（互信息的非负性）</strong>：对于任意两个随机变量 $X$，$Y$，
+$$
+I(X;Y) \geq 0
+$$
+<strong>证明</strong>：$I(X;Y)=D(p(x,y)||p(x)p(y)) \geq 0$，当且仅当 $p(x,y)=p(x)p(y)$ ，即 $X$ 和 $Y$ 相互独立时取等号。</p>
+<p><strong>定理</strong>：$H(X) \leq \log |\chi|$，其中 $\chi$ 为 $X$ 的字母表 $\chi$ 的元素个数，当且仅当 $X$ 服从 $\chi$ 上的均匀分布时，等号成立。</p>
+<p><strong>证明</strong>：设 $u(x)=\frac{1}{|\chi|}$ ，$p(x)$ 是随机变量 $X$ 的概率密度函数，有
+$$
+D(p||u)=\sum p(x)\log \frac{p(x)}{u(x)}= \log |\chi | -H(X) \geq 0
+$$
+<strong>定理（条件作用使熵减小）</strong>：
+$$
+H(X|Y) \leq H(X)
+$$
+当 $X$ 和 $Y$ 相互独立时，等号成立。</p>
+<p><strong>定理（熵的独立界）</strong>：
+$$
+H(X_1,X_2, \cdots ,X_n) \leq \sum_{i=1}^n H(X_i)
+$$
+当且仅当 $X_i$ 相互独立时等号成立。</p>
+<p><strong>证明</strong>：根据熵的链式法则
+$$
+\begin{aligned}
+H(X_1,X_2, \cdots ,X_n) = &amp; \sum_{i=1}^n H(X_i|X_{i-1},\cdots,X_1)\\
+\leq &amp; \sum_{i=1}^n H(X_i)
+\end{aligned}
+$$</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/%E4%BF%A1%E6%81%AF%E8%AE%BA/">信息论</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>Simple PIR 算法原理解析</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

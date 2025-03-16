@@ -12,8 +12,31 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
-    <lastBuildDate>Sun, 25 Feb 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 16 Mar 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://smera1d0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>信息论基础</title>
+      <link>https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Sat, 16 Mar 2024 00:00:00 +0000</pubDate>
+      <guid>https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/</guid>
+      <description>&lt;h2 id=&#34;熵相对熵与互信息&#34;&gt;熵、相对熵与互信息&lt;/h2&gt;
+&lt;h3 id=&#34;熵&#34;&gt;熵&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;定义&lt;/strong&gt;：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为：
+$$
+H(X)=-\sum_{x \in X}p(x) \log p(x)
+$$
+&lt;strong&gt;注释&lt;/strong&gt;：$X$ 的熵又可以理解为随机变量 $\log \frac{1}{p(X)}$ 的期望值&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;引理&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;$H(X) \geq 0$&lt;/li&gt;
+&lt;li&gt;$H_b(X)=(\log_ba)H_a(X)$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;二元熵&lt;/strong&gt;：
+$$
+H(X)= -p\log p-(1-p)\log (1-p) \rightarrow H(p)
+$$
+$H(p)$ 为上凸函数，在 $p= \frac{1}{2}$ 时取得最大值 1&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Simple PIR 算法原理解析</title>
       <link>https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/</link>
