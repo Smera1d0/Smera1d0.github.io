@@ -2,23 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>信息论 on Smera1d0&#39;s Blog</title>
-    <link>http://localhost:1313/tags/%E4%BF%A1%E6%81%AF%E8%AE%BA/</link>
+    <link>https://smera1d0.github.io/tags/%E4%BF%A1%E6%81%AF%E8%AE%BA/</link>
     <description>Recent content in 信息论 on Smera1d0&#39;s Blog</description>
     <image>
       <title>Smera1d0&#39;s Blog</title>
-      <url>http://localhost:1313/images/papermod-cover.png</url>
-      <link>http://localhost:1313/images/papermod-cover.png</link>
+      <url>https://smera1d0.github.io/images/papermod-cover.png</url>
+      <link>https://smera1d0.github.io/images/papermod-cover.png</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
     <lastBuildDate>Sat, 16 Mar 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/%E4%BF%A1%E6%81%AF%E8%AE%BA/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://smera1d0.github.io/tags/%E4%BF%A1%E6%81%AF%E8%AE%BA/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>信息论基础</title>
-      <link>http://localhost:1313/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/</link>
+      <link>https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Sat, 16 Mar 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/</guid>
+      <guid>https://smera1d0.github.io/posts/%E4%BF%A1%E6%81%AF%E8%AE%BA%E5%9F%BA%E7%A1%80/</guid>
       <description>&lt;h2 id=&#34;熵相对熵与互信息&#34;&gt;熵、相对熵与互信息&lt;/h2&gt;
 &lt;h3 id=&#34;熵&#34;&gt;熵&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;定义&lt;/strong&gt;：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为：
