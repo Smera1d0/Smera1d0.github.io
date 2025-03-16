@@ -2,23 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>软件安全 on Smera1d0&#39;s Blog</title>
-    <link>https://smera1d0.github.io/categories/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/</link>
+    <link>http://localhost:1313/categories/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/</link>
     <description>Recent content in 软件安全 on Smera1d0&#39;s Blog</description>
     <image>
       <title>Smera1d0&#39;s Blog</title>
-      <url>https://smera1d0.github.io/images/papermod-cover.png</url>
-      <link>https://smera1d0.github.io/images/papermod-cover.png</link>
+      <url>http://localhost:1313/images/papermod-cover.png</url>
+      <link>http://localhost:1313/images/papermod-cover.png</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
     <lastBuildDate>Sun, 21 Jan 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://smera1d0.github.io/categories/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/categories/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>SEEDlab—竞争条件漏洞</title>
-      <link>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/</link>
+      <link>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/</link>
       <pubDate>Sun, 21 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/</guid>
+      <guid>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-5-%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%BC%8F%E6%B4%9E/</guid>
       <description>&lt;h2 id=&#34;1-环境设置&#34;&gt;1. 环境设置&lt;/h2&gt;
 &lt;h3 id=&#34;11-关闭反制措施&#34;&gt;1.1 关闭反制措施&lt;/h3&gt;
 &lt;p&gt;使用 neofetch 查看 Ubuntu 版本信息，如下所示：&lt;/p&gt;
@@ -27,9 +27,9 @@
     </item>
     <item>
       <title>SEEDlab—密码技术应用实验</title>
-      <link>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/</link>
+      <link>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/</link>
       <pubDate>Sun, 21 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/</guid>
+      <guid>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-7--%E5%AF%86%E7%A0%81%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8%E5%AE%9E%E9%AA%8C/</guid>
       <description>&lt;h2 id=&#34;task-1使用不同的加密算法和加密模式加密&#34;&gt;Task 1：使用不同的加密算法和加密模式加密&lt;/h2&gt;
 &lt;h3 id=&#34;1-aes-128-cbc-模式加密&#34;&gt;1. AES-128-CBC 模式加密&lt;/h3&gt;
 &lt;ul&gt;
@@ -52,9 +52,9 @@
     </item>
     <item>
       <title>SEEDlab—伪随机数生成实验</title>
-      <link>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/</link>
+      <link>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/</link>
       <pubDate>Sun, 21 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/</guid>
+      <guid>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/</guid>
       <description>&lt;h2 id=&#34;task-1用错误的方式生成加密密钥&#34;&gt;Task 1：用错误的方式生成加密密钥&lt;/h2&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdlib.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
@@ -82,9 +82,9 @@
     </item>
     <item>
       <title>SEEDlab—SQL注入攻击实验</title>
-      <link>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</link>
+      <link>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</link>
       <pubDate>Fri, 12 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</guid>
+      <guid>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C3-sql-%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</guid>
       <description>&lt;h2 id=&#34;环境设置&#34;&gt;环境设置&lt;/h2&gt;
 &lt;h3 id=&#34;修改映射&#34;&gt;修改映射&lt;/h3&gt;
 &lt;p&gt;将以下条目添加到 &lt;code&gt;etc/hosts&lt;/code&gt; 目录下，其中 &lt;code&gt;www.seed-server.com&lt;/code&gt; 是Web程序的域名，&lt;code&gt;10.9.0.5&lt;/code&gt; 是容器的IP&lt;/p&gt;
@@ -108,9 +108,9 @@
     </item>
     <item>
       <title>SEEDlab—环境变量与 Set-UID 实验</title>
-      <link>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/</link>
+      <link>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/</link>
       <pubDate>Fri, 12 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/</guid>
+      <guid>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/</guid>
       <description>&lt;h2 id=&#34;task-1配置环境变量&#34;&gt;Task 1：配置环境变量&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;使用&lt;code&gt;printenv&lt;/code&gt;或&lt;code&gt;env&lt;/code&gt;指令来打印环境变量：&lt;/li&gt;
@@ -121,9 +121,9 @@
     </item>
     <item>
       <title>SEEDlab—缓冲区溢出漏洞</title>
-      <link>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/</link>
+      <link>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/</link>
       <pubDate>Fri, 12 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/</guid>
+      <guid>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/</guid>
       <description>&lt;h2 id=&#34;环境设置&#34;&gt;环境设置&lt;/h2&gt;
 &lt;h3 id=&#34;关闭反制措施&#34;&gt;关闭反制措施&lt;/h3&gt;
 &lt;h4 id=&#34;地址空间布局随机化&#34;&gt;地址空间布局随机化&lt;/h4&gt;
@@ -134,9 +134,9 @@
     </item>
     <item>
       <title>SEEDlab—跨站脚本（XSS）攻击实验</title>
-      <link>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</link>
+      <link>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</link>
       <pubDate>Fri, 12 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</guid>
+      <guid>http://localhost:1313/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</guid>
       <description>&lt;h2 id=&#34;task-1-上传恶意消息以显示警告窗口&#34;&gt;Task 1: 上传恶意消息以显示警告窗口&lt;/h2&gt;
 &lt;blockquote&gt;
 &lt;p&gt;此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。&lt;/p&gt;

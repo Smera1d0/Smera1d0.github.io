@@ -2,23 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>机器学习 on Smera1d0&#39;s Blog</title>
-    <link>https://smera1d0.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
+    <link>http://localhost:1313/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
     <description>Recent content in 机器学习 on Smera1d0&#39;s Blog</description>
     <image>
       <title>Smera1d0&#39;s Blog</title>
-      <url>https://smera1d0.github.io/images/papermod-cover.png</url>
-      <link>https://smera1d0.github.io/images/papermod-cover.png</link>
+      <url>http://localhost:1313/images/papermod-cover.png</url>
+      <link>http://localhost:1313/images/papermod-cover.png</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
     <lastBuildDate>Sun, 21 Jan 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://smera1d0.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>【机器学习】使用 generative model 和 logistic regression 预测年收入</title>
-      <link>https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/</link>
+      <link>http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/</link>
       <pubDate>Sun, 21 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/</guid>
+      <guid>http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C2-%E9%A2%84%E6%B5%8B%E5%B9%B4%E6%94%B6%E5%85%A5/</guid>
       <description>&lt;h2 id=&#34;1-实验目的&#34;&gt;1 实验目的&lt;/h2&gt;
 &lt;p&gt;使用 Classification 中的 generative model 和 logistic regression，解决二分类问题。根据已有数据，判断该人年收入是否大于 50K。&lt;/p&gt;
 &lt;h2 id=&#34;2-实验环境&#34;&gt;2 实验环境&lt;/h2&gt;
@@ -44,9 +44,9 @@
     </item>
     <item>
       <title>【机器学习】使用 Linear Regression 预测 PM2.5 数值</title>
-      <link>https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/</link>
+      <link>http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/</link>
       <pubDate>Sun, 21 Jan 2024 00:00:00 +0000</pubDate>
-      <guid>https://smera1d0.github.io/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/</guid>
+      <guid>http://localhost:1313/posts/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BD%BF%E7%94%A8-linear-regression-%E9%A2%84%E6%B5%8B-pm2.5-%E6%95%B0%E5%80%BC/</guid>
       <description>&lt;h2 id=&#34;一实验目的&#34;&gt;一、实验目的&lt;/h2&gt;
 &lt;p&gt;利用即墨站的空气质量监测数据，使用线性回归（Linear Regression）预测 PM2.5 的数值。&lt;/p&gt;
 &lt;h2 id=&#34;二实验环境&#34;&gt;二、实验环境&lt;/h2&gt;
