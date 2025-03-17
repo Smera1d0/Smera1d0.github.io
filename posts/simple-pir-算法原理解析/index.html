@@ -121,8 +121,8 @@
   "keywords": [
     "Crypto"
   ],
-  "articleBody": "该算法来自 USENIX 2023 One Server for the Price of Two: Simple and Fast Single-Server Private Information Retrieval\n1. 将 Database 转换为矩阵 服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。\n2. 使用 LWE 方案进行加密 2.1 LWE 问题 已知一个矩阵 $A$ 和一个秘密向量 $s$，以及一个随机噪音向量 $e$，并且知道 $\\hat{b}$ ，$\\hat{b}$ 满足： $$ \\hat{b}=As+e $$ 如何根据矩阵 $A$ 和 $\\hat{b}$ 还原 $s$，这类的问题统称 LWE（Learning With Error）问题。\nSearch LWE 问题 $$ \\text{LWE}(n,m,q,x_B): \\text{Search Version}\\ \\text{Let A} \\leftarrow \\mathbb{Z}_q^{m \\times n},s \\leftarrow \\mathbb{Z}q,e\\leftarrow x_B^m,x_B\\text{是最大值为B的随机分布}\\ \\text{Given}(A,As+e),\\text{find s’} \\in \\mathbb{Z}^n_q \\text{ s.t. }||As’-(As+e)||{\\infty} \\leq B $$\nDecisional LWE 问题 $$ \\text{LWE}(n,m,q,x_B): \\text{Decisional Version}\\ \\text{Let A }\\leftarrow \\mathbb{Z}_q^{m \\times n},s \\leftarrow \\mathbb{Z}_q,e\\leftarrow x_B^m,v\\leftarrow \\mathbb{Z}_q^m\\ \\text{Distinguish}(A,As+e)\\text{ from }(A,v) $$\n2.2 LWE 的加解密 $KeyGen(1^{\\lambda})$\n随机选取 LWE 所需的矩阵 $A \\leftarrow \\mathbb{Z}_q^{m \\times n},s \\leftarrow \\mathbb{Z}_q,e\\leftarrow x_B^m$ ，并计算出 $b=As+e$ 输出 $sk=s,pk=(A,b)$ 加密\n首先随机的选取一个向量 $r \\leftarrow \\mathbb{Z}_2^m \\in {0,1}^m$ ，计算 $c_0\\leftarrow r^TA$\n然后计算 $c_1 \\leftarrow r^Tb+ \\lfloor q/2\\rfloor x$\n输出密文 $(c_0,c_1)$\n解密\n计算 $\\hat{x}=c_1-c_0\\cdot s$ 检查 $|\\hat{x}|",
-  "wordCount" : "550",
+  "articleBody": "该算法来自 USENIX 2023 One Server for the Price of Two: Simple and Fast Single-Server Private Information Retrieval\n1. 将 Database 转换为矩阵 服务器原有的 Database 的规模为 N，将 Database 转换为边长为 $\\sqrt{N}$ 的矩阵的形式，这样客户端发起的查询只需要 $\\sqrt{N}$ 规模，由于查询被加密，因此服务端无法得知查询的信息，而客户端只能得到查询向量的 1 对应的位置（查询位置）的信息，因此也无法知晓除了查询外的其他信息。\n2. 使用 LWE 方案进行加密 2.1 LWE 问题 已知一个矩阵 $A$ 和一个秘密向量 $s$，以及一个随机噪音向量 $e$，并且知道 $\\hat{b}$ ，$\\hat{b}$ 满足： $$ \\hat{b}=As+e $$ 如何根据矩阵 $A$ 和 $\\hat{b}$ 还原 $s$，这类的问题统称 LWE（Learning With Error）问题。\nSearch LWE 问题\nDecisional LWE 问题\n$$ \\text{LWE}(n,m,q,x_B): \\text{Decisional Version}\\\\ \\text{Let A }\\leftarrow \\mathbb{Z}_q^{m \\times n},s \\leftarrow \\mathbb{Z}_q,e\\leftarrow x_B^m,v\\leftarrow \\mathbb{Z}_q^m\\\\ \\text{Distinguish}(A,As+e)\\text{ from }(A,v) $$\n2.2 LWE 的加解密 $KeyGen(1^{\\lambda})$\n随机选取 LWE 所需的矩阵 $A \\leftarrow \\mathbb{Z}_q^{m \\times n},s \\leftarrow \\mathbb{Z}_q,e\\leftarrow x_B^m$ ，并计算出 $b=As+e$ 输出 $sk=s,pk=(A,b)$ 加密\n首先随机的选取一个向量 $r \\leftarrow \\mathbb{Z}_2^m \\in {0,1}^m$ ，计算 $c_0\\leftarrow r^TA$\n然后计算 $c_1 \\leftarrow r^Tb+ \\lfloor q/2\\rfloor x$\n输出密文 $(c_0,c_1)$\n解密\n计算 $\\hat{x}=c_1-c_0\\cdot s$ 检查 $|\\hat{x}|",
+  "wordCount" : "500",
   "inLanguage": "zh",
   "datePublished": "2024-02-25T00:00:00Z",
   "dateModified": "2024-02-25T00:00:00Z",
@@ -229,7 +229,7 @@
     <h1 class="post-title entry-hint-parent">
       Simple PIR 算法原理解析
     </h1>
-    <div class="post-meta"><span title='2024-02-25 00:00:00 +0000 UTC'>二月 25, 2024</span>&nbsp;·&nbsp;2 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/Simple%20PIR%20%e7%ae%97%e6%b3%95%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+    <div class="post-meta"><span title='2024-02-25 00:00:00 +0000 UTC'>二月 25, 2024</span>&nbsp;·&nbsp;1 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/smera1d0/smera1d0.github.io/tree/main/posts/posts/Simple%20PIR%20%e7%ae%97%e6%b3%95%e5%8e%9f%e7%90%86%e8%a7%a3%e6%9e%90.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
 
 </div>
   </header> <div class="toc">
@@ -269,19 +269,16 @@ $$
 $$
 如何根据矩阵 $A$ 和 $\hat{b}$ 还原 $s$，这类的问题统称 LWE（Learning With Error）问题。</p>
 <ul>
-<li>Search LWE 问题</li>
+<li>
+<p>Search LWE 问题</p>
+</li>
+<li>
+<p>Decisional LWE 问题</p>
+</li>
 </ul>
 <p>$$
-\text{LWE}(n,m,q,x_B): \text{Search Version}\
-\text{Let A} \leftarrow \mathbb{Z}_q^{m \times n},s \leftarrow \mathbb{Z}<em>q,e\leftarrow x_B^m,x_B\text{是最大值为B的随机分布}\
-\text{Given}(A,As+e),\text{find s&rsquo;} \in \mathbb{Z}^n_q \text{ s.t. }||As&rsquo;-(As+e)||</em>{\infty} \leq B
-$$</p>
-<ul>
-<li>Decisional LWE 问题</li>
-</ul>
-<p>$$
-\text{LWE}(n,m,q,x_B): \text{Decisional Version}\
-\text{Let A }\leftarrow \mathbb{Z}_q^{m \times n},s \leftarrow \mathbb{Z}_q,e\leftarrow x_B^m,v\leftarrow \mathbb{Z}_q^m\
+\text{LWE}(n,m,q,x_B): \text{Decisional Version}\\
+\text{Let A }\leftarrow \mathbb{Z}_q^{m \times n},s \leftarrow \mathbb{Z}_q,e\leftarrow x_B^m,v\leftarrow \mathbb{Z}_q^m\\
 \text{Distinguish}(A,As+e)\text{ from }(A,v)
 $$</p>
 <h4 id="22-lwe-的加解密">2.2 LWE 的加解密<a hidden class="anchor" aria-hidden="true" href="#22-lwe-的加解密">#</a></h4>
