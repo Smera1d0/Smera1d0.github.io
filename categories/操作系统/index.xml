@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>操作系统 on Smera1d0&#39;s Blog</title>
+    <link>https://smera1d0.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+    <description>Recent content in 操作系统 on Smera1d0&#39;s Blog</description>
+    <image>
+      <title>Smera1d0&#39;s Blog</title>
+      <url>https://smera1d0.github.io/images/papermod-cover.png</url>
+      <link>https://smera1d0.github.io/images/papermod-cover.png</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
+    <lastBuildDate>Tue, 04 Jun 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://smera1d0.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>操作系统基础</title>
+      <link>https://smera1d0.github.io/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Tue, 04 Jun 2024 00:00:00 +0000</pubDate>
+      <guid>https://smera1d0.github.io/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/</guid>
+      <description>&lt;h1 id=&#34;进程&#34;&gt;进程&lt;/h1&gt;
+&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;
+&lt;p&gt;动态的，程序的一次执行过程，同一个程序多次执行会对应多个进程&lt;/p&gt;
+&lt;p&gt;当进程被创建时，操作系统会为该进程分配一个唯一的不重复的PID号&lt;/p&gt;
+&lt;h2 id=&#34;进程的组成&#34;&gt;进程的组成&lt;/h2&gt;
+&lt;h3 id=&#34;进程控制块pcb&#34;&gt;进程控制块PCB&lt;/h3&gt;
+&lt;p&gt;操作系统会记录PID、进程所属用户、分配资源的情况、进程的运行情况，保存在PCB（进程控制块）中。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

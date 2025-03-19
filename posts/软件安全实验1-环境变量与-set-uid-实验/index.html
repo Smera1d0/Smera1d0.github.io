@@ -88,8 +88,8 @@
 ​	如果只想打印特定的环境变量，如PWD变量，可以使用printenv PWD或者env | grep PWD" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2024-01-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2024-01-12T00:00:00+00:00" />
+<meta property="article:published_time" content="2025-01-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-01-12T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
@@ -137,8 +137,8 @@
   "articleBody": "Task 1：配置环境变量 使用printenv或env指令来打印环境变量： ​\t如果只想打印特定的环境变量，如PWD变量，可以使用printenv PWD或者env | grep PWD\n使用export和unset来设置或者取消环境变量 使用export设置环境变量： ​\t比如现在我使用export设置一个环境变量MY_VAR的值为softwaresecurity\n​\t可以使用echo $MY_VAR打印出这个环境变量的值。\n使用unset取消环境变量： ​\t取消变量MY_VAR。\nTask 2：从父进程向子进程传递环境变量 编译myprintenv.c并运行，将输出结果打印到文件output1.txt中。 注释掉子进程中的printenv()，并取消注释父进程的printenv()，再次编译并打印输出到文件output2.txt。 使用diff命令比较两个文件的差异。 ​\t结论：由于我在不同的窗口下运行的a.out和b.out，因此父子进程只有编译成的可执行文件名称和命令行窗口这两个环境变量不同，其余的环境变量都是相同的。结论是子进程在继承父进程的环境变量时，除了文件名和输出窗口存在差异以外，其他的环境变量都是相同的。\nTask 3：环境变量和execve() 编译并运行myenv.c 发现输出为空。\n修改execve()函数为execve(\"/usr/bin/env\",argv,environ); 发现打印出了当前进程的环境变量。\n结论：\nexecve()函数的原型是：\nint execve(const char *pathname, char *const argv[], char *const envp[]); pathname: 要执行的程序的路径。 argv: 参数数组，以 NULL 结尾，包含传递给程序的命令行参数。 envp: 环境变量数组，也以 NULL 结尾。 新程序通过execve()函数的第三个参数传递的environ变量来获取环境变量。\nTask 4：环境变量和system() 编译并运行如下代码：\n#include #include int main() { system(\"/usr/bin/env\"); return 0; } 我们使用man system查看函数的手册：\n可以看到system()函数是通过创建一个子进程，执行execl(\"/bin/sh\", \"sh\", \"-c\", command, (char *) NULL);，调用进程的环境变量会传递给新程序/bin/sh。\nTask 5：环境变量和Set-UID程序 编写以下程序打印该进程所有的环境变量： #include #include extern char **environ; void main() { int i = 0; while (environ[i] != NULL) { printf(\"%s\\n\", environ[i]); i++; } } 编译上述程序得到 foo，将其所有者更改为 root，并使其成为一个 Set-UID 程序 // Asssume the program’s name is foo $ sudo chown root foo $ sudo chmod 4755 foo 查看一下foo的权限，发现所有者更改为了root。\n设置以下环境变量： PATH LD_LIBRARY_PATH MY_NAME 然后运行foo并查看这些环境变量的值\n发现只有在父进程中设置的PATH和MY_NAME的环境变量进入子进程，而LD_LIBRARY_PATH这个环境变量没有进入子进程。\n原因： LD_LIBRARY_PATH这个环境变量设置的是动态链接器的地址，由于动态链接器的保护机制，虽然在一个root权限的程序下创建子进程并继承父进程的环境变量，但由于我们是在普通用户下修改的LD_LIBRARY_PATH这个环境变量，所以是无法在子进程中生效的，而PATH和MY_NAME则没有这种保护机制，因此可以被成功设置。\nTask 6：PATH环境变量和Set-UID程序 先使用以下命令将bin/sh链接到bin/zsh，以规避bin/dash阻止Set-UID程序使用特权执行的策略。\nsudo ln -sf /bin/zsh /bin/sh 然后编写LS.c文件，如下所示：\n#include #include int main(){ system(\"ls\"); return 0; } 然后编译，并设置为Set-UID程序：\n可以看出，编译出来的LS文件确实执行了system(\"ls\")的操作，更改后的文件所有者确实变成了root\n现在我们在普通用户下设置PATH环境变量，使用export PATH=/home/seed:$PATH将/home/seed 添加到环境变量的开头：\n然后我们在/home/seed下编写我们的恶意代码。\n// hack.c #include #include #include extern char **environ; int main(){ uid_t euid = geteuid(); //获取执行恶意代码的进程的euid printf(\"euid=%d\\n\", euid); printf(\"You have been hacked!!!!\\n\"); return 0; } 然后编译并命名成ls：\ngcc hack.c -o ls 然后再执行我们的LS文件：\n发现可以使用Set-UID程序运行我们的恶意代码，并且根据system(\"id\")的结果来看：euid=0表示当前进程具有root权限，表明恶意代码是以root权限运行的。\nTask 7：LD_PRELOAD环境变量和Set-UID程序 观察环境变量在运行普通程序时如何影响动态加载器/链接器的行为，首先要进行如下配置： 构建一个动态链接库，命名为mylib.c，里面基本上覆盖了libc里的sleep()函数： #include void sleep (int s) { /* If this is invoked by a privileged program , you can do damages here! */ printf(\"I am not sleeping!\\n\"); } 编译该程序： gcc -fPIC -g -c mylib.c gcc -shared -o libmylib.so.1.0.1 mylib.o -lc 设置LD_PRELOAD环境变量的值： export LD_PRELOAD=./libmylib.so.1.0.1 编译下面的程序myprog.c /* myprog.c */ #include int main() { sleep(1); return 0; } 完成上述操作后，请在以下条件下运行 myprog，观察会发生什么。 使 myprog 为一个普通程序，以普通用户身份执行它。 发现执行的是我们编写的sleep函数。\n使 myprog 为一个 Set-UID 特权程序，以普通用户身份执行它。 发现等待了一秒后，没有输出，说明执行的是libc中的sleep()函数。\n使 myprog 为一个 Set-UID 特权程序，在 root 下重新设置 LD_PRELOAD 环境变量，并执行它。 发现执行的是我们编写的sleep函数。\n使myprog成为一个Set_UID user1程序，在另一个用户帐户（非root用户）中再次改变LD_PRELOAD环境变量并运行它 发现等待了一秒后，没有输出，说明执行的是libc中的sleep()函数。\n设计一个实验来找出导致这些差异的原因，并解释为什么第二步的行为不同。 修改一下myprog.c，打印这个程序运行时的进程的uid、euid以及LD_PRELOAD环境变量的值，如下所示：\n/* myprog.c */ #include #include #include extern char **environ; int main() { sleep(1); uid_t uid = getuid(); printf(\"uid=%d(%s) \", uid, getenv(\"USER\")); uid_t euid = geteuid(); printf(\"euid=%d\\n\", euid); char *preload = getenv(\"LD_PRELOAD\"); printf(\"LD_PRELOAD: %s\\n\", preload); return 0; } 然后编写一个shell脚本，用于测试四种情况的输出以及当前进程的id，如下所示：\n#test.sh echo \"seed,run in seed:\" sudo chown seed myprog sudo chmod 4755 myprog export LD_PRELOAD=./libmylib.so.1.0.1 ./myprog echo \"root,run in seed:\" sudo chown root myprog sudo chmod 4755 myprog ./myprog echo \"root,run in root:\" sudo su \u003c",
   "wordCount" : "4724",
   "inLanguage": "zh",
-  "datePublished": "2024-01-12T00:00:00Z",
-  "dateModified": "2024-01-12T00:00:00Z",
+  "datePublished": "2025-01-12T00:00:00Z",
+  "dateModified": "2025-01-12T00:00:00Z",
   "author":{
     "@type": "Person",
     "name": "Mi Yu"
@@ -247,7 +247,7 @@
     <h1 class="post-title entry-hint-parent">
       SEEDlab—环境变量与 Set-UID 实验
     </h1>
-    <div class="post-meta"><span title='2024-01-12 00:00:00 +0000 UTC'>一月 12, 2024</span>&nbsp;·&nbsp;10 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+    <div class="post-meta"><span title='2025-01-12 00:00:00 +0000 UTC'>一月 12, 2025</span>&nbsp;·&nbsp;10 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
 
 </div>
   </header> <div class="toc">

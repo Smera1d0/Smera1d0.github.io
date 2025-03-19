@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>操作系统基础 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="操作系统">
+<meta name="description" content="进程
+概念
+动态的，程序的一次执行过程，同一个程序多次执行会对应多个进程
+当进程被创建时，操作系统会为该进程分配一个唯一的不重复的PID号
+进程的组成
+进程控制块PCB
+操作系统会记录PID、进程所属用户、分配资源的情况、进程的运行情况，保存在PCB（进程控制块）中。">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/">
+<meta name="google-site-verification" content="JEK1eXuLRduZRvpZ01WxuqtEwCBXrfSU3TuSjv3xrTI">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.02238dc96288a65dfaca39b68daacacd93ec4a054c36ef271e4004953dbb23e7.css" integrity="sha256-AiONyWKIpl36yjm2jarKzZPsSgVMNu8nHkAElT27I&#43;c=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/images/favicon.svg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          
+          
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+          ],
+          
+          throwOnError : false
+        });
+    });
+</script><meta property="og:title" content="操作系统基础" />
+<meta property="og:description" content="进程
+概念
+动态的，程序的一次执行过程，同一个程序多次执行会对应多个进程
+当进程被创建时，操作系统会为该进程分配一个唯一的不重复的PID号
+进程的组成
+进程控制块PCB
+操作系统会记录PID、进程所属用户、分配资源的情况、进程的运行情况，保存在PCB（进程控制块）中。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-06-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-06-04T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="操作系统基础"/>
+<meta name="twitter:description" content="进程
+概念
+动态的，程序的一次执行过程，同一个程序多次执行会对应多个进程
+当进程被创建时，操作系统会为该进程分配一个唯一的不重复的PID号
+进程的组成
+进程控制块PCB
+操作系统会记录PID、进程所属用户、分配资源的情况、进程的运行情况，保存在PCB（进程控制块）中。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "操作系统基础",
+      "item": "https://smera1d0.github.io/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "操作系统基础",
+  "name": "操作系统基础",
+  "description": "进程 概念 动态的，程序的一次执行过程，同一个程序多次执行会对应多个进程\n当进程被创建时，操作系统会为该进程分配一个唯一的不重复的PID号\n进程的组成 进程控制块PCB 操作系统会记录PID、进程所属用户、分配资源的情况、进程的运行情况，保存在PCB（进程控制块）中。\n",
+  "keywords": [
+    "操作系统"
+  ],
+  "articleBody": "进程 概念 动态的，程序的一次执行过程，同一个程序多次执行会对应多个进程\n当进程被创建时，操作系统会为该进程分配一个唯一的不重复的PID号\n进程的组成 进程控制块PCB 操作系统会记录PID、进程所属用户、分配资源的情况、进程的运行情况，保存在PCB（进程控制块）中。\n程序段和数据段 进程是进程实体的运行过程，是系统进行资源分配和调度的一个独立单位。 PCB是进程存在的唯一标志！\n进程的特征 动态性：是程序的一次执行过程，是动态产生和消失的 并发性：各进程可以并发执行 独立性：进程能够独立运行，独立获得资源，独立接收调度 异步性：各进程按各自独立、不可预知的速度向前推进 结构性：进程由PCB、程序段、数据段组成 进程的状态与转换 进程的状态 创建态：进程被创建时 就绪态：进程创建完毕，CPU忙 运行态：进程正在CPU上运行 阻塞态：请求等待某个时间的发生（等待某种系统资源的分配、等待其他进程的响应） 进程的转换 运行态$\\rightarrow$阻塞态：是进程自身做出的主动行为\n阻塞态$\\rightarrow$就绪态：是一种被动行为\n不能从阻塞态直接转换为运行态，也不能直接从就绪态直接转换为阻塞态\n运行态$\\rightarrow$就绪态：时间片耗尽\n进程的组织 链接方式（大部分） 使用队列（链表）\n索引方式 进程控制 创建新进程、撤销已有进程、实现进程转换等，就是实现进程的状态转换。\n进程控制的实现 用原语实现，具有原子性，一气呵成，期间不允许被中断。\n可以用关中断指令和开中断指令这两个特权指令实现原子性。\n关中断指令：CPU执行了关中断指令之后，就不再例行检查中断信号 关中断和开中断之间的指令序列是不可中断的，这样就实现了原子性 进程控制相关的原语 进程创建原语：申请空白PCB，将调用者参数添加进PCB，将新进程设置为就绪态 进程阻塞原语：将进程由运行态变为阻塞态，同时将进程插入等待队列，修改PCB中响应的表项 进程唤醒原语：将进程从阻塞态变成就绪态，将进程从阻塞队列中移出，加入就绪队列，修改PCB中相应的表项 进程终止原语：回收进程资源，消去资源描述块和PCB 进程创建原语 申请空白PCB\n为新进程分配所需资源\n初始化PCB\n将PCB插入就绪队列（ 创建态$\\rightarrow$就绪态）\n引起进程创建的事件 用户登录 作业调度 提供服务 应用请求 进程撤销原语 从PCB种找到终止进程的PCB 若程序正在运行，立即剥夺CPU，将CPU分配给其他进程 终止所有子进程（树形结构） 将该进程拥有的资源归还给父进程或者操作系统 删除PCB 引起进程终止的事件 正常结束（exit系统调用） 异常结束 外界干预（手动kill） 进程的阻塞和唤醒 进程的切换 进程通信 共享存储 多个进程间存在共享存储区\n可以通过增加页表项和段表项将同一片共享内存区映射到各个进程的地址空间内\n各个进程对共享存储的访问是互斥的（进程自己负责实现互斥）\n基于存储区的共享：灵活性好，速度快，是高级通信方式\n基于数据结构的共享：灵活性差，速度慢，低级通信方式\n消息传递 进程间的数据交换以格式化的消息为单位。\n直接通信：要指明接收进程的ID，发送原语send(Q,msg)放入内核中Q的消息队列，接收原语recv(P,\u0026msg)，从消息队列复制消息到进程Q 间接通信：send(A,msg)发送消息体到A信箱，recv(A,\u0026msg)从A信箱接收消息 管道通信 在内存中开辟一个大小固定的内存缓冲区，数据先进先出（FIFO）先写入的先读出\n管道只能采用半双工通信\n各进程要互斥的访问管道（由操作系统实现）\n当多个进程读同一个管道时，会发生错乱，解决方案：一个管道允许多个写进程，一个读进程；或者多个写进程，多个读进程，但读进程会轮流读取。\n线程 基本概念 引入线程，来增加并发度\n线程是一个基本的CPU执行单元，也是程序执行流的最小单位\n进程是资源分配的基本单位，线程是调度的基本单位 如果是同一个进程内的不同线程，则不需要切换进程环境，系统开销小 线程的属性 线程是处理机调度的单位 不同的线程可以占用不同的CPU 每个线程都有一个线程ID，线程控制块TCB 也有就绪、阻塞、运行三种状态 同一进程的不同线程共享进程的资源 同一进程中的线程间通信不需要系统干预 同一进程中的线程切换，不会影响进程切换，且开销很小 线程的实现方式 用户级线程 线程的管理是由应用程序完成的，线程切换不需要从用户态转换为内核态，操作系统不能意识到用户级线程的存在\n优点：线程管理的系统开销小，效率高 缺点：当用户级线程被阻塞时，整个进程都会被阻塞，并发度不高，线程不可以在多核处理机上使用 内核级线程 线程的管理由操作系统完成，线程切换需要变态，操作系统可以意识到内核级线程的存在\n优点：线程的并发性强 缺点：线程管理的成本高，开销大 多线程模型 一对一模型：一个用户级线程映射到一个内核级线程\n优点：当线程被阻塞，其他线程还能继续执行，并发能力强 缺点：线程管理的成本高 多对一模型：\n优点：线程管理的系统开销小，效率高 缺点：当用户级线程被阻塞时，整个进程都会被阻塞，并发度不高，线程不可以在多核处理机上使用 多对多模型：\n克服多对一模型并发度不高的缺点 克服了一对一模型系统开销太大的缺点 线程的状态与转换 线程的组织与控制 TCB 线程标识符TID 程序计数器PC（线程目前执行到哪） 其他寄存器（线程运行的中间结果） 堆栈指针（保存函数调用信息、局部变量等） 线程运行状态（运行、阻塞、就绪） 优先级（线程调度、资源分配的参考） 线程表（Thread Table) 处理机调度 高级调度（作业调度） 按照一定的规则从外存的作业后备队列里挑选一个作业调入内存，并创建进程。\n每个作业只调入一次，调出一次。作业调入时会建立PCB，调出时撤销PCB\n低级调度（进程调度） 进程调度是操作系统中最基本的调度，进程调度的频率很高。\n选择一个进程为其分配处理机\n中级调度（内存调度） 将某些进程的数据调出外存，暂时调到外存等待的进程状态为挂起状态。\n从挂起队列里选择合适的进程将其数据调回内存\n被挂起的PCB会被组织成挂起队列。\n进程调度的时机 需要进行进程调度与切换的情况 当前运行的进程主动放弃处理机 进程正常终止 运行中发生异常而终止 进程主动请求阻塞（等待I/O） 当前运行的进程被动放弃处理机 分给进程的时间片用完 由更紧急的事需要处理（如I/O中断） 有更高优先级的进程进入就绪队列 不能进行进程调度与切换的情况 处理中断的过程中 进程在操作系统内核程序临界区中 在原子操作中（原语） 进程调度的方式 非抢占式方式：只允许进程主动放弃处理机，适用于批处理系统 抢占方式：可以优先处理更紧急的进程，适用于分时操作系统，实时操作系统 调度算法的评价指标 CPU利用率=$\\frac{忙碌的时间}{总时间}$\n系统吞吐量：单位时间内完成作业的数量=$\\frac{总共完成了多少道作业}{总共花费了多长时间}$\n周转时间：从作业被提交到作业完成花费的时间\n平均周转时间=$\\frac{各作业周转时间之和}{作业数}$ 带权周转时间=$\\frac{周转时间}{运行时间}$ 等待时间：指进程处于等待处理机状态时间之和$=等待时间-运行时间$\n平均等待时间 响应时间：用户提交请求到响应的时间\n调度算法 先来先服务（FCFS,First Come First Serve） 短作业优先 高响应比优先算法 这三种调度算法常用于批处理系统，交互性很差\n时间片轮转调度算法 时间片太大：时间片轮转调度算法会退化成先来先服务调度算法，会增加进程响应时间。\n时间片太小：会导致进程切换太频繁，进程切换也会消耗时间，会导致实际用于进程执行的时间比例减小。\n优先级调度算法 多级反馈队列调度算法 这三种算法适用于交互式系统。\n进程同步和互斥 一个时间段内只允许一个进程使用的资源称为临界资源\ndo{ entry section; //进入区 critical section; //临界区 exit section; //退出区 remainder section; //剩余区 }while(ture) 进入区：负责检查是否可以进入临界区\n临界区：访问临界资源的代码段\n退出区：解除正在访问临界资源的标志\n剩余区：做其他处理\n进程互斥访问的原则： 空闲让进，临界区空闲时，可以允许一个请求进入临界区的进程立即进入临界区 忙则等待，已有进程进入临界区，其他试图进入临界区的进程必须等待 有限等待，对请求访问的进程，保证能在有限时间内进入临界区 让权等待，当进程不能进入临界区时，应立即释放处理机，防止进程忙等待 进程互斥的软件实现方法 单标记法 算法思想：每个进程进入临界区的权限只能被另一个进程赋予\nP0进程：\nwhile(turn!=0); critical section; turn=1; remainder section; P1进程：\nwhile(turn!=1); critical section; turn=0; remainder section; 双标记先检查法 bool flag[2];//表示进入临界区的意愿 flag[0]=false; flag[1]=false; P0进程：\nwhile(flag[1]);//先检查P1进程的意愿 flag[0]=true;//标记P0想进入临界区 critical section; flag[0]=false; remainder section; P1进程：\nwhile(flag[0]); flag[1]=true; critical section; flag[0]=false; remainder section; 违反了忙则等待原则，检查和上锁不是一气呵成的，检查后，上锁前可能发生进程切换。\n双标记后检查法 P0进程：\nflag[0]=true; while(flag[1]); critical section; flag[0]=false; remainder section; P1进程：\nflag[1]=true; while(flag[0]); critical section; flag[1]=false; remainder section; 违背了空闲让进和有限等待原则，各进程都无法进入，产生饥饿现象。\nPeterson算法 P0进程：\nflag[0]=true;//先表示P0想进入临界区 turn=1;//表示可以优先让P1进入临界区 while(flag[1]\u0026\u0026turn==1); critical section; flag[0]=false; remainder section; P1进程：\nflag[1]=true; turn=0; while(flag[0]\u0026\u0026turn==0); critical section; flag[1]=false; remainder secion; 遵循了空闲让进，忙则等待，优先等待这三个原则，但没有遵循让权等待的原则。\n进程互斥的硬件实现方法 中断屏蔽方法 利用开/关中断指令实现\n关中断 //不允许当前进程被中断 临界区 开中断 不适用于多处理机环境\nTestAndSet指令 简称TS指令\n//lock表示当前临界区是否被加锁 bool TestAndSet(bool *lock){ bool old; old=*lock;//old用来存放lock原来的值 *lock=true;//无论之前是否加锁，都将lock设为true return old; } while(TestAndSet(\u0026lock));//上锁并检查 critical section; lock=false; remainder section; 检查上锁一气呵成，适用于多处理机环境，不满足让权等待\nSwap指令 Swap(bool *a,bool *b){ bool temp; temp=*a; *a=*b; *b=temp; } bool old=true; while(old==true) Swap(\u0026lock,\u0026old); critical section; lock=false; remainder section; 不满足让权等待\n锁 互斥锁（mutex lock） 需要连续循环忙等待的互斥锁，可称为自旋锁\n信号量 wait(S)原语和signal(S)原语，简称为P、V操作\nint S=1;//初始化信号量S，表示当前系统中可用的资源数 void wait(int S){ while(S\u003c=0);//如果资源数不够，就循环等待 S=S-1;//如果够，占用一个资源 } void signal(int S){ S=S+1;//使用完之后，在退出区释放资源 } wait(S);//进入区，申请资源 使用资源 //临界区。访问资源 signal(S)；//退出区。释放资源 记录型信号量 typedef struct{ int value; //剩余资源数 struct process *L; //等待队列 }semaphore; void wait(semaphore S){ S.value--; if (S.value\u003c0){ block(S.L);//如果资源数不够，就时进程从运行态变为阻塞态 } } void signal(semaphore S){ S.value++; if(S.value\u003c=0){//说明仍有进程等待分配资源 wakeup(S.L);//从等待队列中唤醒进程 } } 遵循让权等待原则，资源数不够时，就放入阻塞队列。\n信号量机制 信号量=资源的剩余数量，信号量的值如果小于0，说明此时有进程在等待这种资源\n信号量机制实现进程互斥 semaphore mutex=1; P1(){ P(mutex);//申请资源 critical section; V(mutex);//释放资源 } P2(){ P(mutex); critical section; V(mutex); } mutex：进入临界区的名额\n信号量机制实现进程同步 semaphore S=0; P1(){ code1; code2; V(S);//释放资源，将进程从阻塞队列中拿出 code3; } P2(){ P(S);//加入阻塞队列 code4; code5; code6; } $code1\\rightarrow code2\\rightarrow code4$\n信号量机制实现前驱关系 生产者消费者问题 系统中有一组生产者进程和一组消费者进程，生产者进程每次生产一个产品放入缓冲区，消费者进程每次从缓冲区去出一个产品并使用，生产者消费者共享一个大小为n的缓冲区。\n缓冲区没满-\u003e生产者生产\n缓冲区没空-\u003e消费者消费\n缓冲区是临界资源，必须互斥访问\nsemaphore mutex=1;//互斥信号量 semaphore empty=n;//同步信号量，表示空闲缓冲区的数量 semaphore full=0;//同步信号量，表示非空缓冲区的数量 producer(){ while(1){ 生产一个产品;//尽量不要放入临界区 P(empty);//消耗一个空闲缓冲区 P(mutex); 把产品放入缓冲区; V(mutex); V(full);//增加一个非空缓冲区 } } consumer(){ while(1){ P(full);//减少一个非空缓冲区 P(mutex); 从缓冲区取出一个产品; V(mutex); V(empty);//增加一个空闲缓冲区 使用产品;//尽量不要放入临界区 } } 实现互斥的信号量是在同一个进程中进行的PV操作\n实现同步的信号量是在两个进程中实现的PV操作\n实现互斥的P操作一定要在实现同步的P操作之后，会发生死锁\nV操作不会导致进程阻塞，因此两个V操作顺序可以交换\n读者写者问题 允许多个进程进行读操作，只允许一个进程进行写操作\n在写者进行写操作时不允许其他写者或读者工作\nsemaphore rw=1; int count = 0;//记录有几个进程在访问文件 semaphore mutex=1;//保证对count的互斥访问 writer(){ while(1){ P(rw); writing; V(rw); } } reader(){ while(1){ P(mutex); if(count==0) P(rw); count++; V(mutex); reading; count--; if(count==0) V(rw); } } 读进程是优先的，写进程可能一直阻塞等待，因为只有count=0的时候才能执行V(rw)。\n再设置一个semaphore w=1;\nwriter(){ while(1){ P(w); P(rw); writing; V(rw); V(w); } } reader(){ while(1){ P(w); P(mutex); if(count==0) P(rw); count++; V(mutex); V(w); reading; count--; if(count==0) V(rw); } } ",
+  "wordCount" : "5177",
+  "inLanguage": "zh",
+  "datePublished": "2024-06-04T00:00:00Z",
+  "dateModified": "2024-06-04T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/images/favicon.svg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/cv.pdf" title="CV">
+                    <span>CV</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.cnblogs.com/smera1d0" title="博客园">
+                    <span>博客园</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      操作系统基础
+    </h1>
+    <div class="post-meta"><span title='2024-06-04 00:00:00 +0000 UTC'>六月 4, 2024</span>&nbsp;·&nbsp;11 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b" aria-label="进程">进程</a><ul>
+                        
+                <li>
+                    <a href="#%e6%a6%82%e5%bf%b5" aria-label="概念">概念</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e7%9a%84%e7%bb%84%e6%88%90" aria-label="进程的组成">进程的组成</a><ul>
+                        
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e6%8e%a7%e5%88%b6%e5%9d%97pcb" aria-label="进程控制块PCB">进程控制块PCB</a></li>
+                <li>
+                    <a href="#%e7%a8%8b%e5%ba%8f%e6%ae%b5%e5%92%8c%e6%95%b0%e6%8d%ae%e6%ae%b5" aria-label="程序段和数据段">程序段和数据段</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e7%9a%84%e7%89%b9%e5%be%81" aria-label="进程的特征">进程的特征</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e7%9a%84%e7%8a%b6%e6%80%81%e4%b8%8e%e8%bd%ac%e6%8d%a2" aria-label="进程的状态与转换">进程的状态与转换</a><ul>
+                        
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e7%9a%84%e7%8a%b6%e6%80%81" aria-label="进程的状态">进程的状态</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e7%9a%84%e8%bd%ac%e6%8d%a2" aria-label="进程的转换">进程的转换</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e7%9a%84%e7%bb%84%e7%bb%87" aria-label="进程的组织">进程的组织</a><ul>
+                        
+                <li>
+                    <a href="#%e9%93%be%e6%8e%a5%e6%96%b9%e5%bc%8f%e5%a4%a7%e9%83%a8%e5%88%86" aria-label="链接方式（大部分）">链接方式（大部分）</a></li>
+                <li>
+                    <a href="#%e7%b4%a2%e5%bc%95%e6%96%b9%e5%bc%8f" aria-label="索引方式">索引方式</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e6%8e%a7%e5%88%b6" aria-label="进程控制">进程控制</a><ul>
+                        
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e6%8e%a7%e5%88%b6%e7%9a%84%e5%ae%9e%e7%8e%b0" aria-label="进程控制的实现">进程控制的实现</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e6%8e%a7%e5%88%b6%e7%9b%b8%e5%85%b3%e7%9a%84%e5%8e%9f%e8%af%ad" aria-label="进程控制相关的原语">进程控制相关的原语</a><ul>
+                        
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e5%88%9b%e5%bb%ba%e5%8e%9f%e8%af%ad" aria-label="进程创建原语">进程创建原语</a></li>
+                <li>
+                    <a href="#%e5%bc%95%e8%b5%b7%e8%bf%9b%e7%a8%8b%e5%88%9b%e5%bb%ba%e7%9a%84%e4%ba%8b%e4%bb%b6" aria-label="引起进程创建的事件">引起进程创建的事件</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e6%92%a4%e9%94%80%e5%8e%9f%e8%af%ad" aria-label="进程撤销原语">进程撤销原语</a></li>
+                <li>
+                    <a href="#%e5%bc%95%e8%b5%b7%e8%bf%9b%e7%a8%8b%e7%bb%88%e6%ad%a2%e7%9a%84%e4%ba%8b%e4%bb%b6" aria-label="引起进程终止的事件">引起进程终止的事件</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e7%9a%84%e9%98%bb%e5%a1%9e%e5%92%8c%e5%94%a4%e9%86%92" aria-label="进程的阻塞和唤醒">进程的阻塞和唤醒</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e7%9a%84%e5%88%87%e6%8d%a2" aria-label="进程的切换">进程的切换</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e9%80%9a%e4%bf%a1" aria-label="进程通信">进程通信</a><ul>
+                        
+                <li>
+                    <a href="#%e5%85%b1%e4%ba%ab%e5%ad%98%e5%82%a8" aria-label="共享存储">共享存储</a></li>
+                <li>
+                    <a href="#%e6%b6%88%e6%81%af%e4%bc%a0%e9%80%92" aria-label="消息传递">消息传递</a></li>
+                <li>
+                    <a href="#%e7%ae%a1%e9%81%93%e9%80%9a%e4%bf%a1" aria-label="管道通信">管道通信</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e7%ba%bf%e7%a8%8b" aria-label="线程">线程</a><ul>
+                        
+                <li>
+                    <a href="#%e5%9f%ba%e6%9c%ac%e6%a6%82%e5%bf%b5" aria-label="基本概念">基本概念</a></li>
+                <li>
+                    <a href="#%e7%ba%bf%e7%a8%8b%e7%9a%84%e5%b1%9e%e6%80%a7" aria-label="线程的属性">线程的属性</a></li>
+                <li>
+                    <a href="#%e7%ba%bf%e7%a8%8b%e7%9a%84%e5%ae%9e%e7%8e%b0%e6%96%b9%e5%bc%8f" aria-label="线程的实现方式">线程的实现方式</a><ul>
+                        
+                <li>
+                    <a href="#%e7%94%a8%e6%88%b7%e7%ba%a7%e7%ba%bf%e7%a8%8b" aria-label="用户级线程">用户级线程</a></li>
+                <li>
+                    <a href="#%e5%86%85%e6%a0%b8%e7%ba%a7%e7%ba%bf%e7%a8%8b" aria-label="内核级线程">内核级线程</a></li>
+                <li>
+                    <a href="#%e5%a4%9a%e7%ba%bf%e7%a8%8b%e6%a8%a1%e5%9e%8b" aria-label="多线程模型">多线程模型</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e7%ba%bf%e7%a8%8b%e7%9a%84%e7%8a%b6%e6%80%81%e4%b8%8e%e8%bd%ac%e6%8d%a2" aria-label="线程的状态与转换">线程的状态与转换</a></li>
+                <li>
+                    <a href="#%e7%ba%bf%e7%a8%8b%e7%9a%84%e7%bb%84%e7%bb%87%e4%b8%8e%e6%8e%a7%e5%88%b6" aria-label="线程的组织与控制">线程的组织与控制</a><ul>
+                        
+                <li>
+                    <a href="#tcb" aria-label="TCB">TCB</a></li>
+                <li>
+                    <a href="#%e7%ba%bf%e7%a8%8b%e8%a1%a8thread-table" aria-label="线程表（Thread Table)">线程表（Thread Table)</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%a4%84%e7%90%86%e6%9c%ba%e8%b0%83%e5%ba%a6" aria-label="处理机调度">处理机调度</a><ul>
+                        
+                <li>
+                    <a href="#%e9%ab%98%e7%ba%a7%e8%b0%83%e5%ba%a6%e4%bd%9c%e4%b8%9a%e8%b0%83%e5%ba%a6" aria-label="高级调度（作业调度）">高级调度（作业调度）</a></li>
+                <li>
+                    <a href="#%e4%bd%8e%e7%ba%a7%e8%b0%83%e5%ba%a6%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" aria-label="低级调度（进程调度）">低级调度（进程调度）</a></li>
+                <li>
+                    <a href="#%e4%b8%ad%e7%ba%a7%e8%b0%83%e5%ba%a6%e5%86%85%e5%ad%98%e8%b0%83%e5%ba%a6" aria-label="中级调度（内存调度）">中级调度（内存调度）</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6%e7%9a%84%e6%97%b6%e6%9c%ba" aria-label="进程调度的时机">进程调度的时机</a><ul>
+                        
+                <li>
+                    <a href="#%e9%9c%80%e8%a6%81%e8%bf%9b%e8%a1%8c%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6%e4%b8%8e%e5%88%87%e6%8d%a2%e7%9a%84%e6%83%85%e5%86%b5" aria-label="需要进行进程调度与切换的情况">需要进行进程调度与切换的情况</a></li>
+                <li>
+                    <a href="#%e4%b8%8d%e8%83%bd%e8%bf%9b%e8%a1%8c%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6%e4%b8%8e%e5%88%87%e6%8d%a2%e7%9a%84%e6%83%85%e5%86%b5" aria-label="不能进行进程调度与切换的情况">不能进行进程调度与切换的情况</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6%e7%9a%84%e6%96%b9%e5%bc%8f" aria-label="进程调度的方式">进程调度的方式</a></li>
+                <li>
+                    <a href="#%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95%e7%9a%84%e8%af%84%e4%bb%b7%e6%8c%87%e6%a0%87" aria-label="调度算法的评价指标">调度算法的评价指标</a></li>
+                <li>
+                    <a href="#%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95" aria-label="调度算法">调度算法</a><ul>
+                        
+                <li>
+                    <a href="#%e5%85%88%e6%9d%a5%e5%85%88%e6%9c%8d%e5%8a%a1fcfsfirst-come-first-serve" aria-label="先来先服务（FCFS,First Come First Serve）">先来先服务（FCFS,First Come First Serve）</a></li>
+                <li>
+                    <a href="#%e7%9f%ad%e4%bd%9c%e4%b8%9a%e4%bc%98%e5%85%88" aria-label="短作业优先">短作业优先</a></li>
+                <li>
+                    <a href="#%e9%ab%98%e5%93%8d%e5%ba%94%e6%af%94%e4%bc%98%e5%85%88%e7%ae%97%e6%b3%95" aria-label="高响应比优先算法">高响应比优先算法</a></li>
+                <li>
+                    <a href="#%e6%97%b6%e9%97%b4%e7%89%87%e8%bd%ae%e8%bd%ac%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95" aria-label="时间片轮转调度算法">时间片轮转调度算法</a></li>
+                <li>
+                    <a href="#%e4%bc%98%e5%85%88%e7%ba%a7%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95" aria-label="优先级调度算法">优先级调度算法</a></li>
+                <li>
+                    <a href="#%e5%a4%9a%e7%ba%a7%e5%8f%8d%e9%a6%88%e9%98%9f%e5%88%97%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95" aria-label="多级反馈队列调度算法">多级反馈队列调度算法</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e5%90%8c%e6%ad%a5%e5%92%8c%e4%ba%92%e6%96%a5" aria-label="进程同步和互斥">进程同步和互斥</a></li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e4%ba%92%e6%96%a5%e7%9a%84%e8%bd%af%e4%bb%b6%e5%ae%9e%e7%8e%b0%e6%96%b9%e6%b3%95" aria-label="进程互斥的软件实现方法">进程互斥的软件实现方法</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8d%95%e6%a0%87%e8%ae%b0%e6%b3%95" aria-label="单标记法">单标记法</a></li>
+                <li>
+                    <a href="#%e5%8f%8c%e6%a0%87%e8%ae%b0%e5%85%88%e6%a3%80%e6%9f%a5%e6%b3%95" aria-label="双标记先检查法">双标记先检查法</a></li>
+                <li>
+                    <a href="#%e5%8f%8c%e6%a0%87%e8%ae%b0%e5%90%8e%e6%a3%80%e6%9f%a5%e6%b3%95" aria-label="双标记后检查法">双标记后检查法</a></li>
+                <li>
+                    <a href="#peterson%e7%ae%97%e6%b3%95" aria-label="Peterson算法">Peterson算法</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e8%bf%9b%e7%a8%8b%e4%ba%92%e6%96%a5%e7%9a%84%e7%a1%ac%e4%bb%b6%e5%ae%9e%e7%8e%b0%e6%96%b9%e6%b3%95" aria-label="进程互斥的硬件实现方法">进程互斥的硬件实现方法</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%ad%e6%96%ad%e5%b1%8f%e8%94%bd%e6%96%b9%e6%b3%95" aria-label="中断屏蔽方法">中断屏蔽方法</a></li>
+                <li>
+                    <a href="#testandset%e6%8c%87%e4%bb%a4" aria-label="TestAndSet指令">TestAndSet指令</a></li>
+                <li>
+                    <a href="#swap%e6%8c%87%e4%bb%a4" aria-label="Swap指令">Swap指令</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e9%94%81" aria-label="锁">锁</a><ul>
+                        
+                <li>
+                    <a href="#%e4%ba%92%e6%96%a5%e9%94%81mutex-lock" aria-label="互斥锁（mutex lock）">互斥锁（mutex lock）</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%bf%a1%e5%8f%b7%e9%87%8f" aria-label="信号量">信号量</a></li>
+                <li>
+                    <a href="#%e8%ae%b0%e5%bd%95%e5%9e%8b%e4%bf%a1%e5%8f%b7%e9%87%8f" aria-label="记录型信号量">记录型信号量</a></li>
+                <li>
+                    <a href="#%e4%bf%a1%e5%8f%b7%e9%87%8f%e6%9c%ba%e5%88%b6" aria-label="信号量机制">信号量机制</a><ul>
+                        
+                <li>
+                    <a href="#%e4%bf%a1%e5%8f%b7%e9%87%8f%e6%9c%ba%e5%88%b6%e5%ae%9e%e7%8e%b0%e8%bf%9b%e7%a8%8b%e4%ba%92%e6%96%a5" aria-label="信号量机制实现进程互斥">信号量机制实现进程互斥</a></li>
+                <li>
+                    <a href="#%e4%bf%a1%e5%8f%b7%e9%87%8f%e6%9c%ba%e5%88%b6%e5%ae%9e%e7%8e%b0%e8%bf%9b%e7%a8%8b%e5%90%8c%e6%ad%a5" aria-label="信号量机制实现进程同步">信号量机制实现进程同步</a></li>
+                <li>
+                    <a href="#%e4%bf%a1%e5%8f%b7%e9%87%8f%e6%9c%ba%e5%88%b6%e5%ae%9e%e7%8e%b0%e5%89%8d%e9%a9%b1%e5%85%b3%e7%b3%bb" aria-label="信号量机制实现前驱关系">信号量机制实现前驱关系</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e7%94%9f%e4%ba%a7%e8%80%85%e6%b6%88%e8%b4%b9%e8%80%85%e9%97%ae%e9%a2%98" aria-label="生产者消费者问题">生产者消费者问题</a></li>
+                <li>
+                    <a href="#%e8%af%bb%e8%80%85%e5%86%99%e8%80%85%e9%97%ae%e9%a2%98" aria-label="读者写者问题">读者写者问题</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="进程">进程<a hidden class="anchor" aria-hidden="true" href="#进程">#</a></h1>
+<h2 id="概念">概念<a hidden class="anchor" aria-hidden="true" href="#概念">#</a></h2>
+<p>动态的，程序的一次执行过程，同一个程序多次执行会对应多个进程</p>
+<p>当进程被创建时，操作系统会为该进程分配一个唯一的不重复的PID号</p>
+<h2 id="进程的组成">进程的组成<a hidden class="anchor" aria-hidden="true" href="#进程的组成">#</a></h2>
+<h3 id="进程控制块pcb">进程控制块PCB<a hidden class="anchor" aria-hidden="true" href="#进程控制块pcb">#</a></h3>
+<p>操作系统会记录PID、进程所属用户、分配资源的情况、进程的运行情况，保存在PCB（进程控制块）中。</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/03/m4NxtP7n9wkXILr.png" alt="image.png"  />
+</p>
+<h3 id="程序段和数据段">程序段和数据段<a hidden class="anchor" aria-hidden="true" href="#程序段和数据段">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/03/J2RHTZhrLMy4Uxk.png" alt="image.png"  />
+</p>
+<p>进程是进程实体的运行过程，是系统进行资源分配和调度的一个独立单位。
+PCB是进程存在的唯一标志！</p>
+<h2 id="进程的特征">进程的特征<a hidden class="anchor" aria-hidden="true" href="#进程的特征">#</a></h2>
+<ul>
+<li>动态性：是程序的一次执行过程，是动态产生和消失的</li>
+<li>并发性：各进程可以并发执行</li>
+<li>独立性：进程能够独立运行，独立获得资源，独立接收调度</li>
+<li>异步性：各进程按各自独立、不可预知的速度向前推进</li>
+<li>结构性：进程由PCB、程序段、数据段组成</li>
+</ul>
+<h2 id="进程的状态与转换">进程的状态与转换<a hidden class="anchor" aria-hidden="true" href="#进程的状态与转换">#</a></h2>
+<h3 id="进程的状态">进程的状态<a hidden class="anchor" aria-hidden="true" href="#进程的状态">#</a></h3>
+<ul>
+<li>创建态：进程被创建时</li>
+<li>就绪态：进程创建完毕，CPU忙</li>
+<li>运行态：进程正在CPU上运行</li>
+<li>阻塞态：请求等待某个时间的发生（等待某种系统资源的分配、等待其他进程的响应）</li>
+</ul>
+<h3 id="进程的转换">进程的转换<a hidden class="anchor" aria-hidden="true" href="#进程的转换">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/03/bNwZKcCMhuJU8Wo.png" alt="image.png"  />
+</p>
+<p>运行态$\rightarrow$阻塞态：是进程自身做出的<strong>主动</strong>行为</p>
+<p>阻塞态$\rightarrow$就绪态：是一种<strong>被动</strong>行为</p>
+<p>不能从阻塞态直接转换为运行态，也不能直接从就绪态直接转换为阻塞态</p>
+<p>运行态$\rightarrow$就绪态：时间片耗尽</p>
+<h3 id="进程的组织">进程的组织<a hidden class="anchor" aria-hidden="true" href="#进程的组织">#</a></h3>
+<h4 id="链接方式大部分">链接方式（大部分）<a hidden class="anchor" aria-hidden="true" href="#链接方式大部分">#</a></h4>
+<p>使用队列（链表）</p>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/03/tSmouNhj4iUGXbv.png" alt="image.png"  />
+</p>
+<h4 id="索引方式">索引方式<a hidden class="anchor" aria-hidden="true" href="#索引方式">#</a></h4>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/03/MGrxi712y6QfEeB.png" alt="image.png"  />
+</p>
+<h2 id="进程控制">进程控制<a hidden class="anchor" aria-hidden="true" href="#进程控制">#</a></h2>
+<p>创建新进程、撤销已有进程、实现进程转换等，就是实现进程的状态转换。</p>
+<h3 id="进程控制的实现">进程控制的实现<a hidden class="anchor" aria-hidden="true" href="#进程控制的实现">#</a></h3>
+<p>用原语实现，具有原子性，一气呵成，期间不允许被中断。</p>
+<p>可以用关中断指令和开中断指令这两个<strong>特权指令</strong>实现原子性。</p>
+<ul>
+<li>关中断指令：CPU执行了关中断指令之后，就不再例行检查中断信号</li>
+<li>关中断和开中断之间的指令序列是不可中断的，这样就实现了原子性</li>
+</ul>
+<h3 id="进程控制相关的原语">进程控制相关的原语<a hidden class="anchor" aria-hidden="true" href="#进程控制相关的原语">#</a></h3>
+<ul>
+<li>进程创建原语：申请空白PCB，将调用者参数添加进PCB，将新进程设置为就绪态</li>
+<li>进程阻塞原语：将进程由运行态变为阻塞态，同时将进程插入等待队列，修改PCB中响应的表项</li>
+<li>进程唤醒原语：将进程从阻塞态变成就绪态，将进程从阻塞队列中移出，加入就绪队列，修改PCB中相应的表项</li>
+<li>进程终止原语：回收进程资源，消去资源描述块和PCB</li>
+</ul>
+<h4 id="进程创建原语">进程创建原语<a hidden class="anchor" aria-hidden="true" href="#进程创建原语">#</a></h4>
+<ol>
+<li>
+<p>申请空白PCB</p>
+</li>
+<li>
+<p>为新进程分配所需资源</p>
+</li>
+<li>
+<p>初始化PCB</p>
+</li>
+<li>
+<p>将PCB插入就绪队列（ 创建态$\rightarrow$就绪态）</p>
+</li>
+</ol>
+<h4 id="引起进程创建的事件">引起进程创建的事件<a hidden class="anchor" aria-hidden="true" href="#引起进程创建的事件">#</a></h4>
+<ul>
+<li>用户登录</li>
+<li>作业调度</li>
+<li>提供服务</li>
+<li>应用请求</li>
+</ul>
+<h4 id="进程撤销原语">进程撤销原语<a hidden class="anchor" aria-hidden="true" href="#进程撤销原语">#</a></h4>
+<ol>
+<li>从PCB种找到终止进程的PCB</li>
+<li>若程序正在运行，立即剥夺CPU，将CPU分配给其他进程</li>
+<li>终止所有子进程（树形结构）</li>
+<li>将该进程拥有的资源归还给父进程或者操作系统</li>
+<li>删除PCB</li>
+</ol>
+<h4 id="引起进程终止的事件">引起进程终止的事件<a hidden class="anchor" aria-hidden="true" href="#引起进程终止的事件">#</a></h4>
+<ul>
+<li>正常结束（<code>exit</code>系统调用）</li>
+<li>异常结束</li>
+<li>外界干预（手动kill）</li>
+</ul>
+<h4 id="进程的阻塞和唤醒">进程的阻塞和唤醒<a hidden class="anchor" aria-hidden="true" href="#进程的阻塞和唤醒">#</a></h4>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/03/mp74ifxrekFDWcJ.png" alt="image.png"  />
+</p>
+<h4 id="进程的切换">进程的切换<a hidden class="anchor" aria-hidden="true" href="#进程的切换">#</a></h4>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/03/tNHYPyM1IAsExio.png" alt="image.png"  />
+</p>
+<h2 id="进程通信">进程通信<a hidden class="anchor" aria-hidden="true" href="#进程通信">#</a></h2>
+<h3 id="共享存储">共享存储<a hidden class="anchor" aria-hidden="true" href="#共享存储">#</a></h3>
+<p>多个进程间存在共享存储区</p>
+<p>可以通过增加页表项和段表项将同一片共享内存区映射到各个进程的地址空间内</p>
+<p>各个进程对共享存储的访问是互斥的（进程自己负责实现互斥）</p>
+<ul>
+<li>
+<p>基于存储区的共享：灵活性好，速度快，是高级通信方式</p>
+</li>
+<li>
+<p>基于数据结构的共享：灵活性差，速度慢，低级通信方式</p>
+</li>
+</ul>
+<h3 id="消息传递">消息传递<a hidden class="anchor" aria-hidden="true" href="#消息传递">#</a></h3>
+<p>进程间的数据交换以格式化的消息为单位。</p>
+<ul>
+<li>直接通信：要指明接收进程的ID，发送原语<code>send(Q,msg)</code>放入内核中Q的消息队列，接收原语<code>recv(P,&amp;msg)</code>，从消息队列复制消息到进程Q</li>
+<li>间接通信：<code>send(A,msg)</code>发送消息体到A信箱，<code>recv(A,&amp;msg)</code>从A信箱接收消息</li>
+</ul>
+<h3 id="管道通信">管道通信<a hidden class="anchor" aria-hidden="true" href="#管道通信">#</a></h3>
+<p>在内存中开辟一个大小固定的内存缓冲区，数据先进先出（FIFO）先写入的先读出</p>
+<p>管道只能采用半双工通信</p>
+<p>各进程要互斥的访问管道（由操作系统实现）</p>
+<p>当多个进程读同一个管道时，会发生错乱，解决方案：一个管道允许多个写进程，一个读进程；或者多个写进程，多个读进程，但读进程会轮流读取。</p>
+<h1 id="线程">线程<a hidden class="anchor" aria-hidden="true" href="#线程">#</a></h1>
+<h2 id="基本概念">基本概念<a hidden class="anchor" aria-hidden="true" href="#基本概念">#</a></h2>
+<p>引入线程，来增加并发度</p>
+<p>线程是一个基本的CPU执行单元，也是程序执行流的最小单位</p>
+<ul>
+<li>进程是资源分配的基本单位，线程是调度的基本单位</li>
+<li>如果是同一个进程内的不同线程，则不需要切换进程环境，系统开销小</li>
+</ul>
+<h2 id="线程的属性">线程的属性<a hidden class="anchor" aria-hidden="true" href="#线程的属性">#</a></h2>
+<ul>
+<li>线程是处理机调度的单位</li>
+<li>不同的线程可以占用不同的CPU</li>
+<li>每个线程都有一个线程ID，线程控制块TCB</li>
+<li>也有就绪、阻塞、运行三种状态</li>
+<li>同一进程的不同线程共享进程的资源</li>
+<li>同一进程中的线程间通信不需要系统干预</li>
+<li>同一进程中的线程切换，不会影响进程切换，且开销很小</li>
+</ul>
+<h2 id="线程的实现方式">线程的实现方式<a hidden class="anchor" aria-hidden="true" href="#线程的实现方式">#</a></h2>
+<h3 id="用户级线程">用户级线程<a hidden class="anchor" aria-hidden="true" href="#用户级线程">#</a></h3>
+<p>线程的管理是由应用程序完成的，线程切换不需要从用户态转换为内核态，操作系统不能意识到用户级线程的存在</p>
+<ul>
+<li>优点：线程管理的系统开销小，效率高</li>
+<li>缺点：当用户级线程被阻塞时，整个进程都会被阻塞，并发度不高，线程不可以在多核处理机上使用</li>
+</ul>
+<h3 id="内核级线程">内核级线程<a hidden class="anchor" aria-hidden="true" href="#内核级线程">#</a></h3>
+<p>线程的管理由操作系统完成，线程切换需要变态，操作系统可以意识到内核级线程的存在</p>
+<ul>
+<li>优点：线程的并发性强</li>
+<li>缺点：线程管理的成本高，开销大</li>
+</ul>
+<h3 id="多线程模型">多线程模型<a hidden class="anchor" aria-hidden="true" href="#多线程模型">#</a></h3>
+<ul>
+<li>
+<p>一对一模型：一个用户级线程映射到一个内核级线程</p>
+<ul>
+<li>优点：当线程被阻塞，其他线程还能继续执行，并发能力强</li>
+<li>缺点：线程管理的成本高</li>
+</ul>
+</li>
+<li>
+<p>多对一模型：</p>
+<ul>
+<li>优点：线程管理的系统开销小，效率高</li>
+<li>缺点：当用户级线程被阻塞时，整个进程都会被阻塞，并发度不高，线程不可以在多核处理机上使用</li>
+</ul>
+</li>
+<li>
+<p>多对多模型：</p>
+<img src="https://s2.loli.net/2024/06/03/NFhbX1ORunUPQZ6.png" alt="image.png" style="zoom: 67%;" />
+<ul>
+<li>克服多对一模型并发度不高的缺点</li>
+<li>克服了一对一模型系统开销太大的缺点</li>
+</ul>
+</li>
+</ul>
+<h2 id="线程的状态与转换">线程的状态与转换<a hidden class="anchor" aria-hidden="true" href="#线程的状态与转换">#</a></h2>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/03/O5s3oyHP2npq7cd.png" alt="image.png"  />
+</p>
+<h2 id="线程的组织与控制">线程的组织与控制<a hidden class="anchor" aria-hidden="true" href="#线程的组织与控制">#</a></h2>
+<h3 id="tcb">TCB<a hidden class="anchor" aria-hidden="true" href="#tcb">#</a></h3>
+<ul>
+<li>线程标识符TID</li>
+<li>程序计数器PC（线程目前执行到哪）</li>
+<li>其他寄存器（线程运行的中间结果）</li>
+<li>堆栈指针（保存函数调用信息、局部变量等）</li>
+<li>线程运行状态（运行、阻塞、就绪）</li>
+<li>优先级（线程调度、资源分配的参考）</li>
+</ul>
+<h3 id="线程表thread-table">线程表（Thread Table)<a hidden class="anchor" aria-hidden="true" href="#线程表thread-table">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/04/tIPFBLQVbN72w9d.png" alt="image.png"  />
+</p>
+<h1 id="处理机调度">处理机调度<a hidden class="anchor" aria-hidden="true" href="#处理机调度">#</a></h1>
+<h2 id="高级调度作业调度">高级调度（作业调度）<a hidden class="anchor" aria-hidden="true" href="#高级调度作业调度">#</a></h2>
+<p>按照一定的规则从外存的作业后备队列里挑选一个作业调入内存，并创建进程。</p>
+<p>每个作业只调入一次，调出一次。作业调入时会建立PCB，调出时撤销PCB</p>
+<h2 id="低级调度进程调度">低级调度（进程调度）<a hidden class="anchor" aria-hidden="true" href="#低级调度进程调度">#</a></h2>
+<p>进程调度是操作系统中最基本的调度，进程调度的频率很高。</p>
+<p>选择一个进程为其分配处理机</p>
+<h2 id="中级调度内存调度">中级调度（内存调度）<a hidden class="anchor" aria-hidden="true" href="#中级调度内存调度">#</a></h2>
+<p>将某些进程的数据调出外存，暂时调到外存等待的进程状态为挂起状态。</p>
+<p>从挂起队列里选择合适的进程将其数据调回内存</p>
+<p>被挂起的PCB会被组织成挂起队列。</p>
+<h2 id="进程调度的时机">进程调度的时机<a hidden class="anchor" aria-hidden="true" href="#进程调度的时机">#</a></h2>
+<h3 id="需要进行进程调度与切换的情况">需要进行进程调度与切换的情况<a hidden class="anchor" aria-hidden="true" href="#需要进行进程调度与切换的情况">#</a></h3>
+<ul>
+<li>当前运行的进程主动放弃处理机
+<ul>
+<li>进程正常终止</li>
+<li>运行中发生异常而终止</li>
+<li>进程主动请求阻塞（等待I/O）</li>
+</ul>
+</li>
+<li>当前运行的进程被动放弃处理机
+<ul>
+<li>分给进程的时间片用完</li>
+<li>由更紧急的事需要处理（如I/O中断）</li>
+<li>有更高优先级的进程进入就绪队列</li>
+</ul>
+</li>
+</ul>
+<h3 id="不能进行进程调度与切换的情况">不能进行进程调度与切换的情况<a hidden class="anchor" aria-hidden="true" href="#不能进行进程调度与切换的情况">#</a></h3>
+<ul>
+<li>处理中断的过程中</li>
+<li>进程在操作系统内核程序临界区中</li>
+<li>在原子操作中（原语）</li>
+</ul>
+<h2 id="进程调度的方式">进程调度的方式<a hidden class="anchor" aria-hidden="true" href="#进程调度的方式">#</a></h2>
+<ul>
+<li>非抢占式方式：只允许进程主动放弃处理机，适用于批处理系统</li>
+<li>抢占方式：可以优先处理更紧急的进程，适用于分时操作系统，实时操作系统</li>
+</ul>
+<h2 id="调度算法的评价指标">调度算法的评价指标<a hidden class="anchor" aria-hidden="true" href="#调度算法的评价指标">#</a></h2>
+<ul>
+<li>
+<p>CPU利用率=$\frac{忙碌的时间}{总时间}$</p>
+</li>
+<li>
+<p>系统吞吐量：单位时间内完成作业的数量=$\frac{总共完成了多少道作业}{总共花费了多长时间}$</p>
+</li>
+<li>
+<p>周转时间：从作业被提交到作业完成花费的时间</p>
+<ul>
+<li>平均周转时间=$\frac{各作业周转时间之和}{作业数}$</li>
+<li>带权周转时间=$\frac{周转时间}{运行时间}$</li>
+</ul>
+</li>
+<li>
+<p>等待时间：指进程处于等待处理机状态时间之和$=等待时间-运行时间$</p>
+<ul>
+<li>平均等待时间</li>
+</ul>
+</li>
+<li>
+<p>响应时间：用户提交请求到响应的时间</p>
+</li>
+</ul>
+<h2 id="调度算法">调度算法<a hidden class="anchor" aria-hidden="true" href="#调度算法">#</a></h2>
+<h3 id="先来先服务fcfsfirst-come-first-serve">先来先服务（FCFS,First Come First Serve）<a hidden class="anchor" aria-hidden="true" href="#先来先服务fcfsfirst-come-first-serve">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/04/UO2Bvx3Y7aFygzC.png" alt="image.png"  />
+</p>
+<h3 id="短作业优先">短作业优先<a hidden class="anchor" aria-hidden="true" href="#短作业优先">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/04/9mUprcbGEZ7tw5L.png" alt="image.png"  />
+</p>
+<h3 id="高响应比优先算法">高响应比优先算法<a hidden class="anchor" aria-hidden="true" href="#高响应比优先算法">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/04/HRFcKYVZEsCMj5A.png" alt="image.png"  />
+</p>
+<p>这三种调度算法常用于批处理系统，交互性很差</p>
+<h3 id="时间片轮转调度算法">时间片轮转调度算法<a hidden class="anchor" aria-hidden="true" href="#时间片轮转调度算法">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/05/HusFpYakqjZdtbm.png" alt="image.png"  />
+</p>
+<p>时间片太大：时间片轮转调度算法会退化成先来先服务调度算法，会增加进程响应时间。</p>
+<p>时间片太小：会导致进程切换太频繁，进程切换也会消耗时间，会导致实际用于进程执行的时间比例减小。</p>
+<h3 id="优先级调度算法">优先级调度算法<a hidden class="anchor" aria-hidden="true" href="#优先级调度算法">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/05/uhefsXgQ3UmlyMF.png" alt="image.png"  />
+</p>
+<h3 id="多级反馈队列调度算法">多级反馈队列调度算法<a hidden class="anchor" aria-hidden="true" href="#多级反馈队列调度算法">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/05/nTvOqdED9LG2Rry.png" alt="image.png"  />
+</p>
+<p>这三种算法适用于交互式系统。</p>
+<h2 id="进程同步和互斥">进程同步和互斥<a hidden class="anchor" aria-hidden="true" href="#进程同步和互斥">#</a></h2>
+<p>一个时间段内只允许一个进程使用的资源称为临界资源</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">do</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">entry</span> <span class="n">section</span><span class="p">;</span>     <span class="c1">//进入区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">critical</span> <span class="n">section</span><span class="p">;</span>  <span class="c1">//临界区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">exit</span> <span class="n">section</span><span class="p">;</span>      <span class="c1">//退出区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">remainder</span> <span class="n">section</span><span class="p">;</span> <span class="c1">//剩余区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span><span class="k">while</span><span class="p">(</span><span class="n">ture</span><span class="p">)</span>
+</span></span></code></pre></div><p>进入区：负责检查是否可以进入临界区</p>
+<p>临界区：访问临界资源的代码段</p>
+<p>退出区：解除正在访问临界资源的标志</p>
+<p>剩余区：做其他处理</p>
+<ul>
+<li>进程互斥访问的原则：
+<ol>
+<li>空闲让进，临界区空闲时，可以允许一个请求进入临界区的进程立即进入临界区</li>
+<li>忙则等待，已有进程进入临界区，其他试图进入临界区的进程必须等待</li>
+<li>有限等待，对请求访问的进程，保证能在有限时间内进入临界区</li>
+<li>让权等待，当进程不能进入临界区时，应立即释放处理机，防止进程忙等待</li>
+</ol>
+</li>
+</ul>
+<h2 id="进程互斥的软件实现方法">进程互斥的软件实现方法<a hidden class="anchor" aria-hidden="true" href="#进程互斥的软件实现方法">#</a></h2>
+<h3 id="单标记法">单标记法<a hidden class="anchor" aria-hidden="true" href="#单标记法">#</a></h3>
+<p>算法思想：每个进程进入临界区的权限只能被另一个进程赋予</p>
+<p>P0进程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="n">turn</span><span class="o">!=</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">turn</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><p>P1进程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="n">turn</span><span class="o">!=</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">turn</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><h3 id="双标记先检查法">双标记先检查法<a hidden class="anchor" aria-hidden="true" href="#双标记先检查法">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">bool</span> <span class="n">flag</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="c1">//表示进入临界区的意愿
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span></code></pre></div><p>P0进程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="c1">//先检查P1进程的意愿
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span><span class="c1">//标记P0想进入临界区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><p>P1进程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><p>违反了忙则等待原则，检查和上锁不是一气呵成的，检查后，上锁前可能发生进程切换。</p>
+<h3 id="双标记后检查法">双标记后检查法<a hidden class="anchor" aria-hidden="true" href="#双标记后检查法">#</a></h3>
+<p>P0进程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><p>P1进程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><p>违背了空闲让进和有限等待原则，各进程都无法进入，产生饥饿现象。</p>
+<h3 id="peterson算法">Peterson算法<a hidden class="anchor" aria-hidden="true" href="#peterson算法">#</a></h3>
+<p>P0进程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span><span class="c1">//先表示P0想进入临界区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">turn</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="c1">//表示可以优先让P1进入临界区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&amp;&amp;</span><span class="n">turn</span><span class="o">==</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><p>P1进程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">turn</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&amp;&amp;</span><span class="n">turn</span><span class="o">==</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">flag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">secion</span><span class="p">;</span>
+</span></span></code></pre></div><p>遵循了空闲让进，忙则等待，优先等待这三个原则，但没有遵循让权等待的原则。</p>
+<h2 id="进程互斥的硬件实现方法">进程互斥的硬件实现方法<a hidden class="anchor" aria-hidden="true" href="#进程互斥的硬件实现方法">#</a></h2>
+<h3 id="中断屏蔽方法">中断屏蔽方法<a hidden class="anchor" aria-hidden="true" href="#中断屏蔽方法">#</a></h3>
+<p>利用开/关中断指令实现</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="err">关中断</span> <span class="c1">//不允许当前进程被中断
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">临界区</span>
+</span></span><span class="line"><span class="cl"><span class="err">开中断</span>
+</span></span></code></pre></div><p>不适用于多处理机环境</p>
+<h3 id="testandset指令">TestAndSet指令<a hidden class="anchor" aria-hidden="true" href="#testandset指令">#</a></h3>
+<p>简称TS指令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">//lock表示当前临界区是否被加锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">bool</span> <span class="nf">TestAndSet</span><span class="p">(</span><span class="kt">bool</span> <span class="o">*</span><span class="n">lock</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="n">old</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">old</span><span class="o">=*</span><span class="n">lock</span><span class="p">;</span><span class="c1">//old用来存放lock原来的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">*</span><span class="n">lock</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span><span class="c1">//无论之前是否加锁，都将lock设为true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">old</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="nf">TestAndSet</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lock</span><span class="p">));</span><span class="c1">//上锁并检查
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">lock</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><p>检查上锁一气呵成，适用于多处理机环境，不满足让权等待</p>
+<h3 id="swap指令">Swap指令<a hidden class="anchor" aria-hidden="true" href="#swap指令">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">Swap</span><span class="p">(</span><span class="kt">bool</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">bool</span> <span class="o">*</span><span class="n">b</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="n">temp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">temp</span><span class="o">=*</span><span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="n">a</span><span class="o">=*</span><span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="n">b</span><span class="o">=</span><span class="n">temp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">bool</span> <span class="n">old</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="n">old</span><span class="o">==</span><span class="nb">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">Swap</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lock</span><span class="p">,</span><span class="o">&amp;</span><span class="n">old</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">lock</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">remainder</span> <span class="n">section</span><span class="p">;</span>
+</span></span></code></pre></div><p>不满足让权等待</p>
+<h2 id="锁">锁<a hidden class="anchor" aria-hidden="true" href="#锁">#</a></h2>
+<h3 id="互斥锁mutex-lock">互斥锁（mutex lock）<a hidden class="anchor" aria-hidden="true" href="#互斥锁mutex-lock">#</a></h3>
+<p>需要连续循环忙等待的互斥锁，可称为自旋锁</p>
+<h2 id="信号量">信号量<a hidden class="anchor" aria-hidden="true" href="#信号量">#</a></h2>
+<p><code>wait(S)</code>原语和<code>signal(S)</code>原语，简称为P、V操作</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">S</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="c1">//初始化信号量S，表示当前系统中可用的资源数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">wait</span><span class="p">(</span><span class="kt">int</span> <span class="n">S</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span><span class="p">(</span><span class="n">S</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">);</span><span class="c1">//如果资源数不够，就循环等待
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">S</span><span class="o">=</span><span class="n">S</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="c1">//如果够，占用一个资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">signal</span><span class="p">(</span><span class="kt">int</span> <span class="n">S</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="n">S</span><span class="o">=</span><span class="n">S</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="c1">//使用完之后，在退出区释放资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">wait</span><span class="p">(</span><span class="n">S</span><span class="p">);</span><span class="c1">//进入区，申请资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">使用资源</span>  <span class="c1">//临界区。访问资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">signal</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="err">；</span><span class="c1">//退出区。释放资源
+</span></span></span></code></pre></div><h2 id="记录型信号量">记录型信号量<a hidden class="anchor" aria-hidden="true" href="#记录型信号量">#</a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">value</span><span class="p">;</span> <span class="c1">//剩余资源数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">struct</span> <span class="n">process</span> <span class="o">*</span><span class="n">L</span><span class="p">;</span> <span class="c1">//等待队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span><span class="n">semaphore</span><span class="p">;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">wait</span><span class="p">(</span><span class="n">semaphore</span> <span class="n">S</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="n">S</span><span class="p">.</span><span class="n">value</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="n">value</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">block</span><span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="n">L</span><span class="p">);</span><span class="c1">//如果资源数不够，就时进程从运行态变为阻塞态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">signal</span><span class="p">(</span><span class="n">semaphore</span> <span class="n">S</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="n">S</span><span class="p">.</span><span class="n">value</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span><span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="n">value</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">){</span><span class="c1">//说明仍有进程等待分配资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">wakeup</span><span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="n">L</span><span class="p">);</span><span class="c1">//从等待队列中唤醒进程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>遵循让权等待原则，资源数不够时，就放入阻塞队列。</p>
+<h2 id="信号量机制">信号量机制<a hidden class="anchor" aria-hidden="true" href="#信号量机制">#</a></h2>
+<p>信号量=资源的剩余数量，信号量的值如果小于0，说明此时有进程在等待这种资源</p>
+<h3 id="信号量机制实现进程互斥">信号量机制实现进程互斥<a hidden class="anchor" aria-hidden="true" href="#信号量机制实现进程互斥">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">semaphore</span> <span class="n">mutex</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">P1</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span><span class="c1">//申请资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span><span class="c1">//释放资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nf">P2</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">critical</span> <span class="n">section</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>mutex</code>：进入临界区的名额</p>
+<h3 id="信号量机制实现进程同步">信号量机制实现进程同步<a hidden class="anchor" aria-hidden="true" href="#信号量机制实现进程同步">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">semaphore</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">P1</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="n">code1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">code2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">V</span><span class="p">(</span><span class="n">S</span><span class="p">);</span><span class="c1">//释放资源，将进程从阻塞队列中拿出
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">code3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nf">P2</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">P</span><span class="p">(</span><span class="n">S</span><span class="p">);</span><span class="c1">//加入阻塞队列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">code4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">code5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">code6</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>$code1\rightarrow code2\rightarrow code4$</p>
+<h3 id="信号量机制实现前驱关系">信号量机制实现前驱关系<a hidden class="anchor" aria-hidden="true" href="#信号量机制实现前驱关系">#</a></h3>
+<p><img loading="lazy" src="https://s2.loli.net/2024/06/07/8ZfcYjAgvl7B4sQ.png" alt="image.png"  />
+</p>
+<h2 id="生产者消费者问题">生产者消费者问题<a hidden class="anchor" aria-hidden="true" href="#生产者消费者问题">#</a></h2>
+<blockquote>
+<p>系统中有一组生产者进程和一组消费者进程，生产者进程每次生产一个产品放入缓冲区，消费者进程每次从缓冲区去出一个产品并使用，生产者消费者共享一个大小为n的缓冲区。</p>
+</blockquote>
+<p>缓冲区没满-&gt;生产者生产</p>
+<p>缓冲区没空-&gt;消费者消费</p>
+<p>缓冲区是临界资源，必须互斥访问</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">semaphore</span> <span class="n">mutex</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="c1">//互斥信号量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">semaphore</span> <span class="n">empty</span><span class="o">=</span><span class="n">n</span><span class="p">;</span><span class="c1">//同步信号量，表示空闲缓冲区的数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">semaphore</span> <span class="n">full</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="c1">//同步信号量，表示非空缓冲区的数量
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">producer</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="err">生产一个产品</span><span class="p">;</span><span class="c1">//尽量不要放入临界区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">P</span><span class="p">(</span><span class="n">empty</span><span class="p">);</span><span class="c1">//消耗一个空闲缓冲区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="err">把产品放入缓冲区</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">full</span><span class="p">);</span><span class="c1">//增加一个非空缓冲区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">consumer</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">P</span><span class="p">(</span><span class="n">full</span><span class="p">);</span><span class="c1">//减少一个非空缓冲区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="err">从缓冲区取出一个产品</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">empty</span><span class="p">);</span><span class="c1">//增加一个空闲缓冲区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="err">使用产品</span><span class="p">;</span><span class="c1">//尽量不要放入临界区
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>实现互斥的信号量是在同一个进程中进行的PV操作</p>
+<p>实现同步的信号量是在两个进程中实现的PV操作</p>
+<p><strong>实现互斥的P操作一定要在实现同步的P操作之后</strong>，会发生死锁</p>
+<p>V操作不会导致进程阻塞，因此两个V操作顺序可以交换</p>
+<h2 id="读者写者问题">读者写者问题<a hidden class="anchor" aria-hidden="true" href="#读者写者问题">#</a></h2>
+<p>允许多个进程进行读操作，只允许一个进程进行写操作</p>
+<p>在写者进行写操作时不允许其他写者或读者工作</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">semaphore</span> <span class="n">rw</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="c1">//记录有几个进程在访问文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">semaphore</span> <span class="n">mutex</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="c1">//保证对count的互斥访问
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">writer</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">P</span><span class="p">(</span><span class="n">rw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">writing</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">rw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">reader</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">count</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">P</span><span class="p">(</span><span class="n">rw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">count</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reading</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">count</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">count</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">V</span><span class="p">(</span><span class="n">rw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>读进程是优先的，写进程可能一直阻塞等待，因为只有<code>count=0</code>的时候才能执行<code>V(rw)</code>。</p>
+<p>再设置一个<code>semaphore w=1;</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">writer</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">P</span><span class="p">(</span><span class="n">w</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">P</span><span class="p">(</span><span class="n">rw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">writing</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">rw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">w</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">reader</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">P</span><span class="p">(</span><span class="n">w</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">count</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">P</span><span class="p">(</span><span class="n">rw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">count</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">V</span><span class="p">(</span><span class="n">w</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reading</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">count</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">count</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">V</span><span class="p">(</span><span class="n">rw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>SEEDlab—跨站脚本（XSS）攻击实验</span>
+  </a>
+  <a class="next" href="https://smera1d0.github.io/posts/2024-%E7%9B%98%E5%8F%A4%E7%9F%B3%E6%95%B0%E6%8D%AE%E5%8F%96%E8%AF%81-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E5%88%86wp/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>2024 盘古石数据取证 服务器部分wp</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
