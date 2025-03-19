@@ -164,8 +164,8 @@ $H(p)$ 为上凸函数，在 $p= \frac{1}{2}$ 时取得最大值 1"/>
   "keywords": [
     "信息论"
   ],
-  "articleBody": "熵、相对熵与互信息 熵 定义：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为： $$ H(X)=-\\sum_{x \\in X}p(x) \\log p(x) $$ 注释：$X$ 的熵又可以理解为随机变量 $\\log \\frac{1}{p(X)}$ 的期望值\n引理\n$H(X) \\geq 0$ $H_b(X)=(\\log_ba)H_a(X)$ 二元熵： $$ H(X)= -p\\log p-(1-p)\\log (1-p) \\rightarrow H(p) $$ $H(p)$ 为上凸函数，在 $p= \\frac{1}{2}$ 时取得最大值 1\n联合熵与条件熵 定义：对于服从联合分布为 $p(x,y)$ 的一对离散随机变量 $(x,y)$ ，其联合熵 $H(X,Y)$ 定义为： $$ \\begin{aligned} H(X,Y)=\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x,y)\\\\ =\u0026-E \\log p(X,Y) \\end{aligned} $$ 定义：条件熵 $H(Y|X)$ 定义为： $$ \\begin{aligned} H(Y|X)=\u0026\\sum_{x \\in X}p(x)H(Y|X=x)\\\\ =\u0026-\\sum_{x \\in X}p(x)\\sum_{y \\in Y}p(y|x)\\log p(y|x)\\\\ =\u0026-\\sum_{x \\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026-E \\log p(Y|X) \\end{aligned} $$ 定理：链式法则 $$ H(X,Y)=H(X)+H(Y|X) $$ 证明： $$ \\begin{aligned} H(X,Y)=\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x,y)\\\\ =\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x) p(y|x)\\\\ =\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x) -\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026-\\sum_{x \\in X}p(x) \\log p(x)-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026H(X)-H(Y|X) \\end{aligned} $$ 等价于： $$ \\log p(X,Y)=\\log p(X)+\\log p(Y|X) $$ 推论： $$ H(X,Y|Z)=H(X|Z)+H(Y|X,Z) $$\n相对熵和互信息 相对熵（relative entropy） 是两个随机分布之间距离的度量。相对熵 $D(p||q)$ 度量当真实分布为 $p$ 而假定分布为 $q$ 时的无效性。\n定义：两个概率密度函数为 $p(x)$ 和 $q(x)$ 之间的相对熵或 $\\text{Kullback-Leibler}$ 距离定义为 $$ \\begin{aligned} D(p||q)=\u0026\\sum_{x \\in X}p(x)\\log \\frac{p(x)}{q(x)}\\\\ =\u0026E_p \\log \\frac{p(x)}{q(x)} \\end{aligned} $$ 互信息（mutual information） 是一个随机变量包含另一个随机变量信息量的度量。互信息也是给定另一个随机变量知识的条件下，原随机变量不确定度的缩减量。\n定义：考虑两个随机变量 $X$ 和 $Y$，它们的联合概率密度函数为 $p(x,y)$，其边际概率密度函数为 $p(x)$ 和 $p(y)$。互信息 $I(X;Y)$ 为联合概率分布 $p(x,y)$ 和乘积分布 $p(x)p(y)$ 之间的相对熵 $$ \\begin{aligned} I(X;Y)=\u0026\\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x,y)}{p(x)p(y)}\\\\ =\u0026 D(p(x,y)||p(x)p(y)) \\end{aligned} $$ 注：一般情况下 $D(p||q) \\neq D(q||p)$\n熵和互信息的关系 互信息 $I(X;Y)$ 可重写为： $$ \\begin{aligned} I(X;Y)=\u0026\\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x,y)}{p(x)p(y)}\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x|y)}{p(x)}\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x|y)-\\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x)\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x|y)-\\sum_{x \\in X}p(x) \\log p(x)\\\\ =\u0026 H(X)-H(X|Y) \\end{aligned} $$ 由此可表明互信息 $I(X;Y)$ 是给定 $Y$ 的情况下 $X$ 的不确定度的缩减量。\n由对称性，可得： $$ I(X;Y)=H(Y)-H(Y|X) $$ 由 $H(X,Y)=H(X)+H(Y|X)$ 可得： $$ I(X;Y)=H(X)+H(Y)-H(X,Y) $$ 最后注意到： $$ I(X;X)=H(X)-H(X|X)=H(X) $$ 因此，随机变量和自身的互信息为该随机变量的熵，因此将熵称为自信息（self-information）\n定理：互信息与熵的关系 $$ \\begin{aligned} I(X;Y)=\u0026H(X)-H(X|Y)\\\\ I(X;Y)=\u0026H(Y)-H(Y|X)\\\\ I(X;Y)=\u0026H(X)+H(Y)-H(X;Y)\\\\ I(X;Y)=\u0026I(Y;X)\\\\ I(X;X)=\u0026H(X)\\\\ \\end{aligned} $$ Venn 图：互信息和熵的关系可由文氏图给出\n熵、相对熵与互信息的链式法则 定理（熵的链式法则）： $$ H(X_1,X_2, \\cdots ,X_n)=\\sum_{i=1}^{n}H(X_i|X_{i-1},\\cdots,X_1) $$ 证明： $$ \\begin{aligned} H(X_1,X_2)=\u0026H(X_1)+H(X_2|X_1)\\\\ H(X_1,X_2,X_3)=\u0026H(X_1)+H(X_2,X_3|X_1)\\\\ =\u0026H(X_1)+H(X_2|X_1)+H(X_3|X_2,X_1)\\\\ \\cdots\\\\ H(X_1,X_2, \\cdots ,X_n)=\u0026\\sum_{i=1}^{n}H(X_i|X_{i-1},\\cdots,X_1) \\end{aligned} $$ 定义（条件互信息）：随机变量 $X$ 和 $Y$ 在给定随机变量 $Z$ 时的条件互信息定义为 $$ \\begin{aligned} I(X;Y|Z)=\u0026H(X|Z)-H(X|Y,Z)\\\\ =\u0026E_{p(x,y,z)} \\log \\frac{p(X,Y|Z)}{p(X|Z)p(Y|Z)} \\end{aligned} $$ 定理（互信息的链式法则）： $$ I(X_1,X_2,\\cdots ,X_n;Y)=\\sum^n_{i=1}I(X_i;Y|X_{i-1},X_{i-2},\\cdots ,X_1) $$ 证明： $$ \\begin{aligned} I(X_1,X_2,\\cdots ,X_n;Y)=\u0026H(X_1,X_2,\\cdots ,X_n)-H(X_1,X_2,\\cdots ,X_n|Y)\\\\ =\u0026 \\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1)-\\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1,Y)\\\\ =\u0026 \\sum_{i=1}^n I(X_i;Y|X_{i-1},\\cdots,X_1) \\end{aligned} $$\nJensen 不等式及其结果 定义（下凸函数）：若对于任意的 $x_1,x_2 \\in (a,b)$ 及 $0 \\leq \\lambda \\leq 1$，满足 $$ f(\\lambda x_1+(1-\\lambda)x_2) \\leq \\lambda f(x_1)+(1-\\lambda)f(x_2) $$ 则称函数 $f(x)$ 在区间 $(a,b)$ 上是严格下凸的。\n定理：如果函数 $f$ 在某个区间存在非负的二阶导数，则 $f$ 为该区间的凸函数。\n定理（Jessen 不等式）：若给定一个下凸函数 $f$ 和一个随机变量 $X$ ，则 $$ Ef(X)\\geq f(EX) $$ 证明：利用数学归纳法进行证明，对于一个两点分布，我们有 $$ p_1f(x_1)+p_2f(x_2)\\geq f(p_1x_1+p_2x_2) $$ 设分布点个数为 $k-1$ 的时候定理成立，此时记 $p_i’=\\frac{p_i}{1-p_k}(i=1,2,\\dots k-1)$，则有 $$ \\begin{aligned} \\sum_{i=1}^k p_if(x_1) =\u0026 p_kf(x_k)+(1-p_k)\\sum_{i=1}^{k-1}p_i’f(x_i)\\\\ \\geq \u0026 p_kf(x_k)+(1-p_k)f(\\sum_{i=1}^{k-1}p_i’x_i)\\\\ \\geq \u0026 f(p_kx_k+(1-p_k)\\sum_{i=1}^{k-1}p_i’x_i)\\\\ \\geq \u0026 f(\\sum_{i=1}^k p_ix_i) \\end{aligned} $$ 定理（信息不等式）：设 $p(x)$，$q(x)$ 为两个概率密度函数，则 $$ D(p(x)||q(x)) \\geq 0 $$ 当且仅当对任意的 $x$ ，$p(x)=q(x)$ 时等号成立。\n证明： $$ \\begin{aligned} -D(p||q)=\u0026-\\sum_{x \\in X}p(x)\\log \\frac{p(x)}{q(x)}\\\\ =\u0026\\sum_{x \\in X}p(x)\\log \\frac{q(x)}{p(x)}\\\\ \\leq \u0026 \\log \\sum_{x \\in X} p(x)\\frac{q(x)}{p(x)}\\\\ =\u0026 \\log \\sum_{x \\in X} q(x)\\\\ =\u0026 \\log 1\\\\ =\u0026 0 \\end{aligned} $$ 当且仅当 $\\frac{q(x)}{p(x)}=c$ 时等号成立，$\\sum_{x \\in X}c p(x)=1 \\rightarrow c=1 \\rightarrow p(x)=q(x)$\n推论（互信息的非负性）：对于任意两个随机变量 $X$，$Y$， $$ I(X;Y) \\geq 0 $$ 证明：$I(X;Y)=D(p(x,y)||p(x)p(y)) \\geq 0$，当且仅当 $p(x,y)=p(x)p(y)$ ，即 $X$ 和 $Y$ 相互独立时取等号。\n定理：$H(X) \\leq \\log |\\chi|$，其中 $\\chi$ 为 $X$ 的字母表 $\\chi$ 的元素个数，当且仅当 $X$ 服从 $\\chi$ 上的均匀分布时，等号成立。\n证明：设 $u(x)=\\frac{1}{|\\chi|}$ ，$p(x)$ 是随机变量 $X$ 的概率密度函数，有 $$ D(p||u)=\\sum p(x)\\log \\frac{p(x)}{u(x)}= \\log |\\chi | -H(X) \\geq 0 $$ 定理（条件作用使熵减小）： $$ H(X|Y) \\leq H(X) $$ 当 $X$ 和 $Y$ 相互独立时，等号成立。\n定理（熵的独立界）： $$ H(X_1,X_2, \\cdots ,X_n) \\leq \\sum_{i=1}^n H(X_i) $$ 当且仅当 $X_i$ 相互独立时等号成立。\n证明：根据熵的链式法则 $$ \\begin{aligned} H(X_1,X_2, \\cdots ,X_n) = \u0026 \\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1)\\\\ \\leq \u0026 \\sum_{i=1}^n H(X_i) \\end{aligned} $$\n数据处理不等式 定义（马尔可夫链）： 如果 $Z$ 的条件分布仅依赖于 $Y$ 的分布，而与 $X$ 是条件独立的，则称随机变量 $X,Y,Z$ 依序构成马尔可夫（Markov）链，记作：$X \\rightarrow Y \\rightarrow Z$。若 $X,Y,Z$ 的联合概率密度函数可写为 $$ p(x,y,z)=p(x)p(y|x)p(z|y) $$ 则 $X,Y,Z$ 构成马尔可夫链 $X \\rightarrow Y \\rightarrow Z$。\n一些简单结果如下：\n$X \\rightarrow Y \\rightarrow Z$，当且仅当在给定 $Y$ 时，$X$ 和 $Z$ 是条件独立的： $$ p(x,z|y)=\\frac{p(x,y,z)}{p(y)}=\\frac{p(x)p(y|x)p(z|y)}{p(y)}=\\frac{p(x,y)p(z|y)}{p(y)}=p(x|y)p(z|y) $$\n$X \\rightarrow Y \\rightarrow Z$ 蕴含 $Z \\rightarrow Y \\rightarrow X$。有时可记为 $X \\leftrightarrow Y \\leftrightarrow Z$。 若 $Z = f(Y)$ ，则 $X \\rightarrow Y \\rightarrow Z$。 定理（数据处理不等式）： 若 $X \\rightarrow Y \\rightarrow Z$ ，则有 $I(X;Y) \\geq I(X;Z)$。\n证明： 使用 Double Counting ，将 $I(X;Y,Z)$ 以两种方式展开 $$ \\begin{aligned} I(X;Y,Z)=\u0026I(X;Z)+I(X;Y|Z)\\\\ =\u0026I(X;Y)+I(X;Z|Y) \\end{aligned} $$ 由于在给定 $Y$ 的情况下，$X$ 和 $Z$ 是条件独立的，因此 $I(X;Z|Y)=0$，由互信息的性质，$I(X;Y|Z) \\geq 0$ ，因此我们可以推出： $$ I(X;Y) \\geq I(X;Z) $$ 当且仅当 $I(X;Y|Z) = 0$ 时，也就是 $X \\rightarrow Z \\rightarrow Y$ 构成马尔可夫链时，等号成立。类似的，根据 $Z \\rightarrow Y \\rightarrow X$ 可得 $I(Z;Y) \\geq I(Z;X)$\n推论： 如果 $Z=g(Y)$ ，则 $I(X;Y) \\geq I(X;g(Y))$。\n证明： $X \\rightarrow Y \\rightarrow g(Y)$ 构成马尔可夫链。\n推论： 如果 $X \\rightarrow Y \\rightarrow Z$ ，则 $I(X;Y|Z) \\leq I(X;Y)$\n证明： 根据上面 Double Counting 的两式可得。\nFano 不等式 我们想通过随机变量 $Y$ 推测 $\\hat{X}$ ，有 $g(Y)=\\hat{X}$ ，其中 $\\hat{X}$ 是对 $X$ 的估计，注意到 $X \\rightarrow Y \\rightarrow \\hat{X}$ 构成马尔可夫链。我们定义估计误差概率为 $$ P_e = \\text{Pr}\\{\\hat{X} \\neq X\\} $$ 定理（Fano 不等式）： 对任何满足 $X \\rightarrow Y \\rightarrow \\hat{X}$ 的估计量 $\\hat{X}$ ，有 $$ H(P_e)+P_e\\log |\\chi| \\geq H(X|\\hat{X}) \\geq H(X|Y) $$ 上面的不等式可以减弱为： $$ 1+P_e \\log |\\chi| \\geq H(X|Y) \\\\ P_e \\geq \\frac{H(X|Y)-1}{\\log |\\chi|} $$ 注释： 当 $P_e = 0$ 时，可推出 $H(X|Y)=0$ ，直观理解，当错误概率为 0 时，$X=\\hat{X}=g(Y)$\n证明： 首先定义一个误差随机变量 $$ E = \\begin{cases} 1\u0026 \\hat{X} \\neq X \\\\ 0\u0026 \\hat{X} = X \\end{cases} $$ 利用 Double Counting 将 $H(E,X|\\hat{X})$ 展开 $$ \\begin{aligned} H(E,X|\\hat{X})=\u0026 H(X|\\hat{X})+H(E|X,\\hat{X})\\\\ =\u0026 H(E|\\hat{X})+H(X|E,\\hat{X}) \\end{aligned} $$ 易得 $H(E|X,\\hat{X})=0$ ，由条件作用 $H(E|\\hat{X}) \\leq H(P_e)$ ，对于 $H(X|E,\\hat{X})$，有 $$ H(X|E,\\hat{X})=Pr(E=0)H(X|E=0,\\hat{X})+Pr(E=1)H(X|E=1,\\hat{X})\\leq 0+P_e \\log |\\chi| $$ 可得： $$ P_e \\log |\\chi|+H(P_e) \\geq H(X|\\hat{X}) $$ 又由于 $X \\rightarrow Y \\rightarrow \\hat{X}$ 构成马尔可夫链，故 $I(X;Y)\\geq I(X;\\hat{X})$ ，从而 $H(X)-H(X|Y) \\geq H(X)-H(X|\\hat{X})$，从而 $H(X|Y) \\leq H(X|\\hat{X})$，于是有： $$ P_e \\log |\\chi|+H(P_e) \\geq H(X|\\hat{X})\\geq H(X|Y) $$ 若估计量 $g(Y)$ 在集合 $\\chi$ 中取值，那么可以将 $\\log |\\chi|$ 替换为 $\\log (|\\chi|-1)$（因为$\\hat{X}$ 已经猜错了，所以减去1），有 $$ P_e \\geq \\frac{H(X|Y)-1}{\\log (|\\chi|-1)} $$\n渐进均分性 在信息论中，与大数定律类似的是渐进均分性（AEP），它是弱大数定律的直接结果。大数定律表明，对于独立同分布（i.i.d.）的随机变量，当 $n$ 很大的时候，$\\frac{1}{n}\\sum_{i=1}^nX_i$ 近似于期望值 $EX$。渐进均分性表明，$\\frac{1}{n} \\log \\frac{1}{P(X_1,X_2,\\cdots,X_n)}$ 近似于熵 $H$ ，当 $n \\rightarrow +\\infty$ 时，$p(X_1,X_2,\\cdots,X_n)$ 近似于 $2^{-nH}$。\n马尔可夫不等式与切比雪夫不等式 定理（马尔可夫不等式）： 对任意非负随机变量 $X$ 以及任意的 $t\u003e0$ ，有 $$ Pr\\{X \u003e t\\} \\leq \\frac{EX}{t} $$ 证明： 设 $f(x)$ 是 $X$ 的概率密度函数，则 $EX = \\int _0^\\infty xf(x)dx$，对于 $\\forall t\u003e0$，有 $$ EX = \\int _0^t xf(x)dx+ \\int _t^\\infty xf(x)dx $$ 在区间 $(t,+\\infty)$ 上，有 $$ \\int _t^\\infty xf(x)dx \\geq \\int _t^\\infty tf(x)dx=t \\int _t^\\infty f(x)dx=tPr[X\u003et] $$ 又由于 $\\int _0^t xf(x)dx \\geq 0$，则 $$ EX \\geq tPr[X\u003et]\\\\ Pr[X \u003e t] \\leq \\frac{EX}{t} $$ 定理（切比雪夫不等式）： 设随机变量 $Y$ 的均值和方差为 $\\mu$ 和 $\\sigma^2$ ，对$\\forall \\varepsilon\u003e0$有 $$ Pr[|Y- \\mu|\u003e\\varepsilon] \\leq \\frac{\\sigma^2}{\\varepsilon^2} $$ 证明： 令 $X = (Y-\\mu)^2$，由马尔可夫不等式 $$ Pr[(Y-\\mu)^2\u003e\\varepsilon^2]\\leq \\frac{E(Y-\\mu)^2}{\\varepsilon^2} $$ 由于 $E(Y-\\mu)^2=\\sigma^2$ 则切比雪夫不等式得证。\n定理（弱大数定律）： 设 $Z_1,Z_2, \\cdots , Z_n$ 为 i.i.d. 随机变量序列，其均值和方差为 $\\mu$ 和 $\\sigma^2$，令 $\\overline{Z_n}=\\frac{1}{n} \\sum_{i=1}^nZ_i$ 为样本均值，则 $$ Pr[|\\overline{Z_n}-\\mu|\u003e\\varepsilon] \\leq \\frac{\\sigma^2}{n \\varepsilon^2} $$ 证明： 只需证明 $E(\\overline{Z_n}-\\mu)^2=\\frac{\\sigma^2}{n}$ $$ \\begin{aligned} E(\\overline{Z_n}-\\mu)^2=\u0026E(\\frac{1}{n} \\sum_{i=1}^nZ_i-\\mu)^2\\\\ =\u0026 \\frac{1}{n^2}E(\\sum_{i=1}^nZ_i-n\\mu)^2\\\\ =\u0026 \\frac{1}{n^2}Var(\\sum_{i=1}^nZ_i)\\\\ =\u0026 \\frac{1}{n^2}\\sum_{i=1}^nVar(Z_i)\\\\ =\u0026 \\frac{1}{n^2}n\\sigma^2\\\\ =\u0026\\frac{\\sigma^2}{n} \\end{aligned} $$\n渐进均分性定理 定义（随机变量的收敛）： 给定一个随机变量序列 $X_1,X_2,\\cdots$。有三种情形\n如果对任意的 $\\varepsilon \u003e0$，$Pr[|X_n-X|\u003e\\varepsilon]\\rightarrow 0$，称为依概率收敛。 如果 $E(X_n-X)^2 \\rightarrow 0$ ，称为均方收敛。 如果 $Pr[\\lim_{n\\rightarrow \\infty}X_n=X]=1$，称为以概率 1 收敛。 定理（AEP）： 若 $X_1,X_2,\\cdots ,X_n$ 为 $i.i.d.\\sim p(x)$，则 $$ -\\frac{1}{n}\\log p(X_1,X_2,\\cdots,X_n) \\rightarrow H(X) $$ 依概率收敛。\n证明： 独立随机变量的函数依然是独立随机变量，又由于 $X_i$ 是 $i.i.d.$ ，从而 $\\log X_i$ 也是 $i.i.d.$ ，由弱大数定律 $$ \\begin{aligned} Pr[|\\overline{Z_n}-\\mu|\u003e\\varepsilon] \\leq \\frac{\\sigma^2}{n \\varepsilon^2}\\\\ -\\overline{\\log p(X_n)}-\\frac{1}{n}\\log p(X_1,X_2,\\cdots,X_n)=\u0026-\\frac{1}{n} \\sum_i \\log p(X_i)\\\\ \\rightarrow \u0026 -E\\log p(X)\\\\ =\u0026 H(X) \\end{aligned} $$ 定义（典型集）： 关于 $p(x)$ 的典型集 $A_{\\varepsilon}^{(n)}$ 是序列 $(x_1,x_2, \\cdots,x_n) \\in \\chi^n$ 的集合，且满足性质： $$ 2^{-n(H(X)+\\varepsilon)} \\leq p(x_1,x_2, \\cdots,x_n) \\leq 2^{-n(H(X)-\\varepsilon)} $$ 典型集 $A_{\\varepsilon}^{(n)}$ 的性质：\n如果 $(x_1,x_2, \\cdots,x_n) \\in A_{\\varepsilon}^{(n)}$ ，则 $H(X)- \\varepsilon \\leq -\\frac{1}{n} \\log p(x_1,x_2, \\cdots,x_n) \\leq H(X)+\\varepsilon$\n当 $n$ 充分大时，$Pr[A_{\\varepsilon}^{(n)}]\u003e1-\\varepsilon$。\n$|A_{\\varepsilon}^{(n)}| \\leq 2^{n(H(X)+\\varepsilon)}$\n当 $n$ 充分大时，\n",
-  "wordCount" : "3219",
+  "articleBody": "熵、相对熵与互信息 熵 定义：一个离散型随机变量 $X$ 的熵 $H(X)$ 定义为： $$ H(X)=-\\sum_{x \\in X}p(x) \\log p(x) $$ 注释：$X$ 的熵又可以理解为随机变量 $\\log \\frac{1}{p(X)}$ 的期望值\n引理\n$H(X) \\geq 0$ $H_b(X)=(\\log_ba)H_a(X)$ 二元熵： $$ H(X)= -p\\log p-(1-p)\\log (1-p) \\rightarrow H(p) $$ $H(p)$ 为上凸函数，在 $p= \\frac{1}{2}$ 时取得最大值 1\n联合熵与条件熵 定义：对于服从联合分布为 $p(x,y)$ 的一对离散随机变量 $(x,y)$ ，其联合熵 $H(X,Y)$ 定义为： $$ \\begin{aligned} H(X,Y)=\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x,y)\\\\ =\u0026-E \\log p(X,Y) \\end{aligned} $$ 定义：条件熵 $H(Y|X)$ 定义为： $$ \\begin{aligned} H(Y|X)=\u0026\\sum_{x \\in X}p(x)H(Y|X=x)\\\\ =\u0026-\\sum_{x \\in X}p(x)\\sum_{y \\in Y}p(y|x)\\log p(y|x)\\\\ =\u0026-\\sum_{x \\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026-E \\log p(Y|X) \\end{aligned} $$ 定理：链式法则 $$ H(X,Y)=H(X)+H(Y|X) $$ 证明： $$ \\begin{aligned} H(X,Y)=\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x,y)\\\\ =\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x) p(y|x)\\\\ =\u0026-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(x) -\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026-\\sum_{x \\in X}p(x) \\log p(x)-\\sum_{x\\in X} \\sum_{y \\in Y}p(x,y)\\log p(y|x)\\\\ =\u0026H(X)-H(Y|X) \\end{aligned} $$ 等价于： $$ \\log p(X,Y)=\\log p(X)+\\log p(Y|X) $$ 推论： $$ H(X,Y|Z)=H(X|Z)+H(Y|X,Z) $$\n相对熵和互信息 相对熵（relative entropy） 是两个随机分布之间距离的度量。相对熵 $D(p||q)$ 度量当真实分布为 $p$ 而假定分布为 $q$ 时的无效性。\n定义：两个概率密度函数为 $p(x)$ 和 $q(x)$ 之间的相对熵或 $\\text{Kullback-Leibler}$ 距离定义为 $$ \\begin{aligned} D(p||q)=\u0026\\sum_{x \\in X}p(x)\\log \\frac{p(x)}{q(x)}\\\\ =\u0026E_p \\log \\frac{p(x)}{q(x)} \\end{aligned} $$ 互信息（mutual information） 是一个随机变量包含另一个随机变量信息量的度量。互信息也是给定另一个随机变量知识的条件下，原随机变量不确定度的缩减量。\n定义：考虑两个随机变量 $X$ 和 $Y$，它们的联合概率密度函数为 $p(x,y)$，其边际概率密度函数为 $p(x)$ 和 $p(y)$。互信息 $I(X;Y)$ 为联合概率分布 $p(x,y)$ 和乘积分布 $p(x)p(y)$ 之间的相对熵 $$ \\begin{aligned} I(X;Y)=\u0026\\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x,y)}{p(x)p(y)}\\\\ =\u0026 D(p(x,y)||p(x)p(y)) \\end{aligned} $$ 注：一般情况下 $D(p||q) \\neq D(q||p)$\n熵和互信息的关系 互信息 $I(X;Y)$ 可重写为： $$ \\begin{aligned} I(X;Y)=\u0026\\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x,y)}{p(x)p(y)}\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log \\frac{p(x|y)}{p(x)}\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x|y)-\\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x)\\\\ =\u0026 \\sum_{x \\in X,y \\in Y}p(x,y) \\log p(x|y)-\\sum_{x \\in X}p(x) \\log p(x)\\\\ =\u0026 H(X)-H(X|Y) \\end{aligned} $$ 由此可表明互信息 $I(X;Y)$ 是给定 $Y$ 的情况下 $X$ 的不确定度的缩减量。\n由对称性，可得： $$ I(X;Y)=H(Y)-H(Y|X) $$ 由 $H(X,Y)=H(X)+H(Y|X)$ 可得： $$ I(X;Y)=H(X)+H(Y)-H(X,Y) $$ 最后注意到： $$ I(X;X)=H(X)-H(X|X)=H(X) $$ 因此，随机变量和自身的互信息为该随机变量的熵，因此将熵称为自信息（self-information）\n定理：互信息与熵的关系 $$ \\begin{aligned} I(X;Y)=\u0026H(X)-H(X|Y)\\\\ I(X;Y)=\u0026H(Y)-H(Y|X)\\\\ I(X;Y)=\u0026H(X)+H(Y)-H(X;Y)\\\\ I(X;Y)=\u0026I(Y;X)\\\\ I(X;X)=\u0026H(X)\\\\ \\end{aligned} $$ Venn 图：互信息和熵的关系可由文氏图给出\n熵、相对熵与互信息的链式法则 定理（熵的链式法则）： $$ H(X_1,X_2, \\cdots ,X_n)=\\sum_{i=1}^{n}H(X_i|X_{i-1},\\cdots,X_1) $$ 证明： $$ \\begin{aligned} H(X_1,X_2)=\u0026H(X_1)+H(X_2|X_1)\\\\ H(X_1,X_2,X_3)=\u0026H(X_1)+H(X_2,X_3|X_1)\\\\ =\u0026H(X_1)+H(X_2|X_1)+H(X_3|X_2,X_1)\\\\ \\cdots\\\\ H(X_1,X_2, \\cdots ,X_n)=\u0026\\sum_{i=1}^{n}H(X_i|X_{i-1},\\cdots,X_1) \\end{aligned} $$ 定义（条件互信息）：随机变量 $X$ 和 $Y$ 在给定随机变量 $Z$ 时的条件互信息定义为 $$ \\begin{aligned} I(X;Y|Z)=\u0026H(X|Z)-H(X|Y,Z)\\\\ =\u0026E_{p(x,y,z)} \\log \\frac{p(X,Y|Z)}{p(X|Z)p(Y|Z)} \\end{aligned} $$ 定理（互信息的链式法则）： $$ I(X_1,X_2,\\cdots ,X_n;Y)=\\sum^n_{i=1}I(X_i;Y|X_{i-1},X_{i-2},\\cdots ,X_1) $$ 证明： $$ \\begin{aligned} I(X_1,X_2,\\cdots ,X_n;Y)=\u0026H(X_1,X_2,\\cdots ,X_n)-H(X_1,X_2,\\cdots ,X_n|Y)\\\\ =\u0026 \\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1)-\\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1,Y)\\\\ =\u0026 \\sum_{i=1}^n I(X_i;Y|X_{i-1},\\cdots,X_1) \\end{aligned} $$\nJensen 不等式及其结果 定义（下凸函数）：若对于任意的 $x_1,x_2 \\in (a,b)$ 及 $0 \\leq \\lambda \\leq 1$，满足 $$ f(\\lambda x_1+(1-\\lambda)x_2) \\leq \\lambda f(x_1)+(1-\\lambda)f(x_2) $$ 则称函数 $f(x)$ 在区间 $(a,b)$ 上是严格下凸的。\n定理：如果函数 $f$ 在某个区间存在非负的二阶导数，则 $f$ 为该区间的凸函数。\n定理（Jessen 不等式）：若给定一个下凸函数 $f$ 和一个随机变量 $X$ ，则 $$ Ef(X)\\geq f(EX) $$ 证明：利用数学归纳法进行证明，对于一个两点分布，我们有 $$ p_1f(x_1)+p_2f(x_2)\\geq f(p_1x_1+p_2x_2) $$ 设分布点个数为 $k-1$ 的时候定理成立，此时记 $p_i’=\\frac{p_i}{1-p_k}(i=1,2,\\dots k-1)$，则有 $$ \\begin{aligned} \\sum_{i=1}^k p_if(x_1) =\u0026 p_kf(x_k)+(1-p_k)\\sum_{i=1}^{k-1}p_i’f(x_i)\\\\ \\geq \u0026 p_kf(x_k)+(1-p_k)f(\\sum_{i=1}^{k-1}p_i’x_i)\\\\ \\geq \u0026 f(p_kx_k+(1-p_k)\\sum_{i=1}^{k-1}p_i’x_i)\\\\ \\geq \u0026 f(\\sum_{i=1}^k p_ix_i) \\end{aligned} $$ 定理（信息不等式）：设 $p(x)$，$q(x)$ 为两个概率密度函数，则 $$ D(p(x)||q(x)) \\geq 0 $$ 当且仅当对任意的 $x$ ，$p(x)=q(x)$ 时等号成立。\n证明： $$ \\begin{aligned} -D(p||q)=\u0026-\\sum_{x \\in X}p(x)\\log \\frac{p(x)}{q(x)}\\\\ =\u0026\\sum_{x \\in X}p(x)\\log \\frac{q(x)}{p(x)}\\\\ \\leq \u0026 \\log \\sum_{x \\in X} p(x)\\frac{q(x)}{p(x)}\\\\ =\u0026 \\log \\sum_{x \\in X} q(x)\\\\ =\u0026 \\log 1\\\\ =\u0026 0 \\end{aligned} $$ 当且仅当 $\\frac{q(x)}{p(x)}=c$ 时等号成立，$\\sum_{x \\in X}c p(x)=1 \\rightarrow c=1 \\rightarrow p(x)=q(x)$\n推论（互信息的非负性）：对于任意两个随机变量 $X$，$Y$， $$ I(X;Y) \\geq 0 $$ 证明：$I(X;Y)=D(p(x,y)||p(x)p(y)) \\geq 0$，当且仅当 $p(x,y)=p(x)p(y)$ ，即 $X$ 和 $Y$ 相互独立时取等号。\n定理：$H(X) \\leq \\log |\\chi|$，其中 $\\chi$ 为 $X$ 的字母表 $\\chi$ 的元素个数，当且仅当 $X$ 服从 $\\chi$ 上的均匀分布时，等号成立。\n证明：设 $u(x)=\\frac{1}{|\\chi|}$ ，$p(x)$ 是随机变量 $X$ 的概率密度函数，有 $$ D(p||u)=\\sum p(x)\\log \\frac{p(x)}{u(x)}= \\log |\\chi | -H(X) \\geq 0 $$ 定理（条件作用使熵减小）： $$ H(X|Y) \\leq H(X) $$ 当 $X$ 和 $Y$ 相互独立时，等号成立。\n定理（熵的独立界）： $$ H(X_1,X_2, \\cdots ,X_n) \\leq \\sum_{i=1}^n H(X_i) $$ 当且仅当 $X_i$ 相互独立时等号成立。\n证明：根据熵的链式法则 $$ \\begin{aligned} H(X_1,X_2, \\cdots ,X_n) = \u0026 \\sum_{i=1}^n H(X_i|X_{i-1},\\cdots,X_1)\\\\ \\leq \u0026 \\sum_{i=1}^n H(X_i) \\end{aligned} $$\n数据处理不等式 定义（马尔可夫链）： 如果 $Z$ 的条件分布仅依赖于 $Y$ 的分布，而与 $X$ 是条件独立的，则称随机变量 $X,Y,Z$ 依序构成马尔可夫（Markov）链，记作：$X \\rightarrow Y \\rightarrow Z$。若 $X,Y,Z$ 的联合概率密度函数可写为 $$ p(x,y,z)=p(x)p(y|x)p(z|y) $$ 则 $X,Y,Z$ 构成马尔可夫链 $X \\rightarrow Y \\rightarrow Z$。\n一些简单结果如下：\n$X \\rightarrow Y \\rightarrow Z$，当且仅当在给定 $Y$ 时，$X$ 和 $Z$ 是条件独立的： $$ p(x,z|y)=\\frac{p(x,y,z)}{p(y)}=\\frac{p(x)p(y|x)p(z|y)}{p(y)}=\\frac{p(x,y)p(z|y)}{p(y)}=p(x|y)p(z|y) $$\n$X \\rightarrow Y \\rightarrow Z$ 蕴含 $Z \\rightarrow Y \\rightarrow X$。有时可记为 $X \\leftrightarrow Y \\leftrightarrow Z$。 若 $Z = f(Y)$ ，则 $X \\rightarrow Y \\rightarrow Z$。 定理（数据处理不等式）： 若 $X \\rightarrow Y \\rightarrow Z$ ，则有 $I(X;Y) \\geq I(X;Z)$。\n证明： 使用 Double Counting ，将 $I(X;Y,Z)$ 以两种方式展开 $$ \\begin{aligned} I(X;Y,Z)=\u0026I(X;Z)+I(X;Y|Z)\\\\ =\u0026I(X;Y)+I(X;Z|Y) \\end{aligned} $$ 由于在给定 $Y$ 的情况下，$X$ 和 $Z$ 是条件独立的，因此 $I(X;Z|Y)=0$，由互信息的性质，$I(X;Y|Z) \\geq 0$ ，因此我们可以推出： $$ I(X;Y) \\geq I(X;Z) $$ 当且仅当 $I(X;Y|Z) = 0$ 时，也就是 $X \\rightarrow Z \\rightarrow Y$ 构成马尔可夫链时，等号成立。类似的，根据 $Z \\rightarrow Y \\rightarrow X$ 可得 $I(Z;Y) \\geq I(Z;X)$\n推论： 如果 $Z=g(Y)$ ，则 $I(X;Y) \\geq I(X;g(Y))$。\n证明： $X \\rightarrow Y \\rightarrow g(Y)$ 构成马尔可夫链。\n推论： 如果 $X \\rightarrow Y \\rightarrow Z$ ，则 $I(X;Y|Z) \\leq I(X;Y)$\n证明： 根据上面 Double Counting 的两式可得。\nFano 不等式 我们想通过随机变量 $Y$ 推测 $\\hat{X}$ ，有 $g(Y)=\\hat{X}$ ，其中 $\\hat{X}$ 是对 $X$ 的估计，注意到 $X \\rightarrow Y \\rightarrow \\hat{X}$ 构成马尔可夫链。我们定义估计误差概率为 $$ P_e = \\text{Pr}\\{\\hat{X} \\neq X\\} $$ 定理（Fano 不等式）： 对任何满足 $X \\rightarrow Y \\rightarrow \\hat{X}$ 的估计量 $\\hat{X}$ ，有 $$ H(P_e)+P_e\\log |\\chi| \\geq H(X|\\hat{X}) \\geq H(X|Y) $$ 上面的不等式可以减弱为： $$ 1+P_e \\log |\\chi| \\geq H(X|Y) \\\\ P_e \\geq \\frac{H(X|Y)-1}{\\log |\\chi|} $$ 注释： 当 $P_e = 0$ 时，可推出 $H(X|Y)=0$ ，直观理解，当错误概率为 0 时，$X=\\hat{X}=g(Y)$\n证明： 首先定义一个误差随机变量 $$ E = \\begin{cases} 1\u0026 \\hat{X} \\neq X \\\\ 0\u0026 \\hat{X} = X \\end{cases} $$ 利用 Double Counting 将 $H(E,X|\\hat{X})$ 展开 $$ \\begin{aligned} H(E,X|\\hat{X})=\u0026 H(X|\\hat{X})+H(E|X,\\hat{X})\\\\ =\u0026 H(E|\\hat{X})+H(X|E,\\hat{X}) \\end{aligned} $$ 易得 $H(E|X,\\hat{X})=0$ ，由条件作用 $H(E|\\hat{X}) \\leq H(P_e)$ ，对于 $H(X|E,\\hat{X})$，有 $$ H(X|E,\\hat{X})=Pr(E=0)H(X|E=0,\\hat{X})+Pr(E=1)H(X|E=1,\\hat{X})\\leq 0+P_e \\log |\\chi| $$ 可得： $$ P_e \\log |\\chi|+H(P_e) \\geq H(X|\\hat{X}) $$ 又由于 $X \\rightarrow Y \\rightarrow \\hat{X}$ 构成马尔可夫链，故 $I(X;Y)\\geq I(X;\\hat{X})$ ，从而 $H(X)-H(X|Y) \\geq H(X)-H(X|\\hat{X})$，从而 $H(X|Y) \\leq H(X|\\hat{X})$，于是有： $$ P_e \\log |\\chi|+H(P_e) \\geq H(X|\\hat{X})\\geq H(X|Y) $$ 若估计量 $g(Y)$ 在集合 $\\chi$ 中取值，那么可以将 $\\log |\\chi|$ 替换为 $\\log (|\\chi|-1)$（因为$\\hat{X}$ 已经猜错了，所以减去1），有 $$ P_e \\geq \\frac{H(X|Y)-1}{\\log (|\\chi|-1)} $$\n渐进均分性 在信息论中，与大数定律类似的是渐进均分性（AEP），它是弱大数定律的直接结果。大数定律表明，对于独立同分布（i.i.d.）的随机变量，当 $n$ 很大的时候，$\\frac{1}{n}\\sum_{i=1}^nX_i$ 近似于期望值 $EX$。渐进均分性表明，$\\frac{1}{n} \\log \\frac{1}{P(X_1,X_2,\\cdots,X_n)}$ 近似于熵 $H$ ，当 $n \\rightarrow +\\infty$ 时，$p(X_1,X_2,\\cdots,X_n)$ 近似于 $2^{-nH}$。\n马尔可夫不等式与切比雪夫不等式 定理（马尔可夫不等式）： 对任意非负随机变量 $X$ 以及任意的 $t\u003e0$ ，有 $$ Pr\\{X \u003e t\\} \\leq \\frac{EX}{t} $$ 证明： 设 $f(x)$ 是 $X$ 的概率密度函数，则 $EX = \\int _0^\\infty xf(x)dx$，对于 $\\forall t\u003e0$，有 $$ EX = \\int _0^t xf(x)dx+ \\int _t^\\infty xf(x)dx $$ 在区间 $(t,+\\infty)$ 上，有 $$ \\int _t^\\infty xf(x)dx \\geq \\int _t^\\infty tf(x)dx=t \\int _t^\\infty f(x)dx=tPr[X\u003et] $$ 又由于 $\\int _0^t xf(x)dx \\geq 0$，则 $$ EX \\geq tPr[X\u003et]\\\\ Pr[X \u003e t] \\leq \\frac{EX}{t} $$ 定理（切比雪夫不等式）： 设随机变量 $Y$ 的均值和方差为 $\\mu$ 和 $\\sigma^2$ ，对$\\forall \\varepsilon\u003e0$有 $$ Pr[|Y- \\mu|\u003e\\varepsilon] \\leq \\frac{\\sigma^2}{\\varepsilon^2} $$ 证明： 令 $X = (Y-\\mu)^2$，由马尔可夫不等式 $$ Pr[(Y-\\mu)^2\u003e\\varepsilon^2]\\leq \\frac{E(Y-\\mu)^2}{\\varepsilon^2} $$ 由于 $E(Y-\\mu)^2=\\sigma^2$ 则切比雪夫不等式得证。\n定理（弱大数定律）： 设 $Z_1,Z_2, \\cdots , Z_n$ 为 i.i.d. 随机变量序列，其均值和方差为 $\\mu$ 和 $\\sigma^2$，令 $\\overline{Z_n}=\\frac{1}{n} \\sum_{i=1}^nZ_i$ 为样本均值，则 $$ Pr[|\\overline{Z_n}-\\mu|\u003e\\varepsilon] \\leq \\frac{\\sigma^2}{n \\varepsilon^2} $$ 证明： 只需证明 $E(\\overline{Z_n}-\\mu)^2=\\frac{\\sigma^2}{n}$ $$ \\begin{aligned} E(\\overline{Z_n}-\\mu)^2=\u0026E(\\frac{1}{n} \\sum_{i=1}^nZ_i-\\mu)^2\\\\ =\u0026 \\frac{1}{n^2}E(\\sum_{i=1}^nZ_i-n\\mu)^2\\\\ =\u0026 \\frac{1}{n^2}Var(\\sum_{i=1}^nZ_i)\\\\ =\u0026 \\frac{1}{n^2}\\sum_{i=1}^nVar(Z_i)\\\\ =\u0026 \\frac{1}{n^2}n\\sigma^2\\\\ =\u0026\\frac{\\sigma^2}{n} \\end{aligned} $$\n渐进均分性定理 定义（随机变量的收敛）： 给定一个随机变量序列 $X_1,X_2,\\cdots$。有三种情形\n如果对任意的 $\\varepsilon \u003e0$，$Pr[|X_n-X|\u003e\\varepsilon]\\rightarrow 0$，称为依概率收敛。 如果 $E(X_n-X)^2 \\rightarrow 0$ ，称为均方收敛。 如果 $Pr[\\lim_{n\\rightarrow \\infty}X_n=X]=1$，称为以概率 1 收敛。 定理（AEP）： 若 $X_1,X_2,\\cdots ,X_n$ 为 $i.i.d.\\sim p(x)$，则 $$ -\\frac{1}{n}\\log p(X_1,X_2,\\cdots,X_n) \\rightarrow H(X) $$ 依概率收敛。\n证明： 独立随机变量的函数依然是独立随机变量，又由于 $X_i$ 是 $i.i.d.$ ，从而 $\\log X_i$ 也是 $i.i.d.$ ，由弱大数定律 $$ \\begin{aligned} Pr[|\\overline{Z_n}-\\mu|\u003e\\varepsilon] \\leq \\frac{\\sigma^2}{n \\varepsilon^2}\\\\ -\\overline{\\log p(X_n)}-\\frac{1}{n}\\log p(X_1,X_2,\\cdots,X_n)=\u0026-\\frac{1}{n} \\sum_i \\log p(X_i)\\\\ \\rightarrow \u0026 -E\\log p(X)\\\\ =\u0026 H(X) \\end{aligned} $$ 定义（典型集）： 关于 $p(x)$ 的典型集 $A_{\\varepsilon}^{(n)}$ 是序列 $(x_1,x_2, \\cdots,x_n) \\in \\chi^n$ 的集合，且满足性质： $$ 2^{-n(H(X)+\\varepsilon)} \\leq p(x_1,x_2, \\cdots,x_n) \\leq 2^{-n(H(X)-\\varepsilon)} $$ 典型集 $A_{\\varepsilon}^{(n)}$ 的性质：\n如果 $(x_1,x_2, \\cdots,x_n) \\in A_{\\varepsilon}^{(n)}$ ，则 $H(X)- \\varepsilon \\leq -\\frac{1}{n} \\log p(x_1,x_2, \\cdots,x_n) \\leq H(X)+\\varepsilon$ 当 $n$ 充分大时，$Pr[A_{\\varepsilon}^{(n)}]\u003e1-\\varepsilon$。 $|A_{\\varepsilon}^{(n)}| \\leq 2^{n(H(X)+\\varepsilon)}$ 当 $n$ 充分大时，$|A_{\\varepsilon}^{(n)}| \\geq (1-\\varepsilon)2^{n(H(X)-\\varepsilon)}$ 证明（性质 3）: 由典型集的定义 $$ \\begin{aligned} 1=\u0026 \\sum_{x \\in \\mathcal{X}^n}p(x)\\\\ \\geq \u0026 \\sum_{x \\in A_{\\varepsilon}^{(n)}}p(x)\\\\ \\geq \u0026 \\sum_{x \\in A_{\\varepsilon}^{(n)}}2^{-n(H(X)+\\varepsilon)}\\\\ =\u0026 2^{-n(H(X)+\\varepsilon)}|A_{\\varepsilon}^{(n)}| \\end{aligned} $$ 证明（性质 4）： 当 $n$ 充分大的时候，由性质 2 得 $$ \\begin{aligned} 1- \\varepsilon \u003c\u0026 Pr[A_{\\varepsilon}^{(n)}]\\\\ \\leq \u0026 \\sum_{x \\in A_{\\varepsilon}^{(n)}}2^{-n(H(X)-\\varepsilon)}\\\\ =\u00262^{-n(H(X)-\\varepsilon)}|A_{\\varepsilon}^{(n)}| \\end{aligned} $$ 定理： 设 $X^n$ 是服从 $p(x)$ 的 $i.i.d.$ 序列，则存在一个编码将长度为 $n$ 的序列 $x^n$ 映射为比特串，且为一一映射，对于充分大的 $n$ ，有 $$ E(\\frac{1}{n}l(X^n)) \\leq H(X)+\\varepsilon $$ 也就是说这个一个长度的原始序列最少可以用 $H(X)$ 长度的比特串来编码，用 $nH(X)$ 比特可以表示序列 $X^n$\n数据压缩 基础概念 定义： 关于随机变量 $X$ 的信源编码 $C$ 是从 $X$ 的取值空间 $\\mathcal{X}$ 到 $\\mathcal{D}^*$ 的一个映射，其中 $\\mathcal{D}^*$ 表示 $D$ 元字母表 $\\mathcal{D}$ 上有限长度的字符串所构成的集合。用 $C(x)$ 表示 $x$ 的码字，用 $l(x)$ 表示 $C(x)$ 的长度。\n定义： 设随机变量 $X$ 的概率密度函数为 $p(x)$ ，定义信源编码 $C(x)$ 的期望长度 $L(C)$ 为 $$ L(C)=\\sum_{x \\in \\mathcal{X}}p(x)l(x) $$ 定义： 如果编码将 $X$ 取值空间中的每一个元素映射成 $\\mathcal{D}^*$ 中不同的字符串，即 $$ x \\neq x’ \\Rightarrow C(x) \\neq C(x’) $$ 则称这个编码是非奇异的（nonsigular）。\n定义： 编码 $C$ 的扩展 $C^*$ 是从 $\\mathcal{X}$ 上的有限长字符串到 $\\mathcal{D}$ 上的有限长字符串的映射，定义为 $$ C(x_1,\\cdots,x_n)=C(x_1)C(x_2)\\cdots C(x_n) $$ 其中 $C(x_1)C(x_2)\\cdots C(x_n)$ 表示相应码字的串联。\n定义： 如果一个编码的拓展编码是非奇异的，那么称该编码是惟一可译的。\n定义： 若码中无任何码字是其他码字的前缀，则称该编码为前缀码或即时码。\nX 奇异的 非奇异，但不惟一可译 惟一可译，但不即时 即时的 1 0 0 10 0 2 0 010 00 10 3 0 01 11 110 4 0 10 110 111 Kraft 不等式 定理（Kraft 不等式）： 对于 {0,1} 上的即时码（前缀码），码字长度 $l_1,\\cdots,l_m$ 必定满足不等式 $$ \\sum_i 2^{-l_i} \\leq 1 $$ 反之，若给定一组码字长度满足上式，则存在相应长度的即时码。\n证明： 构造一个高度为 $l_m$ 的二叉树，完全二叉树的总叶子结点数为 $2^{l_m}$ ，码字长度为 $l_t$ 的码会消耗 $2^{l_m-l_t}$ 的叶子结点，我们有消耗的叶子结点不会多于总的叶子结点，因此有 $$ 2^{l_m-l_1}+2^{l_m-l_2}+\\cdots + 2^{l_m-l_m} \\leq 2^{l_m} \\Rightarrow 2^{-l_1}+2^{-l_2}+\\cdots2^{-l_m} \\leq 1 $$\n最优码 我们想找到一种最优的编码方案，在满足 Kraft 不等式的前提下，使平均码长最小，也就是 $$ \\min \\{L=\\sum p_il_i\\}\\\\ \\sum 2^{-l_i} \\leq 1 $$ 定理： 随机变量 $X$ 的任一二元即时码的期望长度必定大于等于熵 $H(X)$ ，即 $$ L \\geq H(X) $$ 当且仅当 $2^{-l_i}=p_i$ 时等号成立。\n证明： 将期望长度与熵作差，写成如下形式 $$ \\begin{aligned} L-H(X)=\u0026\\sum_i p_il_i - \\sum_i p_i \\log \\frac{1}{p_i}\\\\ =\u0026-\\sum_i p_i\\log 2^{-l_i} + \\sum_i p_i \\log p_i \\end{aligned} $$ 设 $S = \\sum_i 2^{-l_i}$ ，$q_i = 2^{-l_i}/S$，有 $$ \\begin{aligned} L-H(X)=\u0026-\\sum_i p_i \\log(Sq_i) + \\sum_i p_i \\log p_i\\\\ =\u0026 \\sum_i p_i \\log p_i -\\sum_i p_i \\log q_i -\\sum_i p_i \\log S\\\\ =\u0026 \\sum_i p_i \\log \\frac{p_i}{q_i} -\\log S\\\\ =\u0026 D(p||q) - \\log S \\end{aligned} $$ 根据相对熵的非负性可知 $D(p||q) \\geq 0$ ，由 Kraft 定理可知 $S \\leq 1 \\Rightarrow -\\log S \\geq 0 $ ，故 $$ L-H(X) \\geq 0 \\Rightarrow L \\geq H(X) $$\n",
+  "wordCount" : "4174",
   "inLanguage": "zh",
   "image":"https://s2.loli.net/2025/03/17/yJU89VC7pfrvFsR.png","datePublished": "2024-03-16T00:00:00Z",
   "dateModified": "2024-03-16T00:00:00Z",
@@ -277,7 +277,7 @@ $H(p)$ 为上凸函数，在 $p= \frac{1}{2}$ 时取得最大值 1"/>
     <h1 class="post-title entry-hint-parent">
       信息论基础
     </h1>
-    <div class="post-meta"><span title='2024-03-16 00:00:00 +0000 UTC'>三月 16, 2024</span>&nbsp;·&nbsp;7 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+    <div class="post-meta"><span title='2024-03-16 00:00:00 +0000 UTC'>三月 16, 2024</span>&nbsp;·&nbsp;9 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
 
 </div>
   </header> 
@@ -316,7 +316,17 @@ $H(p)$ 为上凸函数，在 $p= \frac{1}{2}$ 时取得最大值 1"/>
                 <li>
                     <a href="#%e9%a9%ac%e5%b0%94%e5%8f%af%e5%a4%ab%e4%b8%8d%e7%ad%89%e5%bc%8f%e4%b8%8e%e5%88%87%e6%af%94%e9%9b%aa%e5%a4%ab%e4%b8%8d%e7%ad%89%e5%bc%8f" aria-label="马尔可夫不等式与切比雪夫不等式">马尔可夫不等式与切比雪夫不等式</a></li>
                 <li>
-                    <a href="#%e6%b8%90%e8%bf%9b%e5%9d%87%e5%88%86%e6%80%a7%e5%ae%9a%e7%90%86" aria-label="渐进均分性定理">渐进均分性定理</a>
+                    <a href="#%e6%b8%90%e8%bf%9b%e5%9d%87%e5%88%86%e6%80%a7%e5%ae%9a%e7%90%86" aria-label="渐进均分性定理">渐进均分性定理</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%95%b0%e6%8d%ae%e5%8e%8b%e7%bc%a9" aria-label="数据压缩">数据压缩</a><ul>
+                        
+                <li>
+                    <a href="#%e5%9f%ba%e7%a1%80%e6%a6%82%e5%bf%b5" aria-label="基础概念">基础概念</a></li>
+                <li>
+                    <a href="#kraft-%e4%b8%8d%e7%ad%89%e5%bc%8f" aria-label="Kraft 不等式">Kraft 不等式</a></li>
+                <li>
+                    <a href="#%e6%9c%80%e4%bc%98%e7%a0%81" aria-label="最优码">最优码</a>
                 </li>
             </ul>
             </li>
@@ -692,19 +702,135 @@ $$
 $$
 <strong>典型集 $A_{\varepsilon}^{(n)}$ 的性质：</strong></p>
 <ol>
-<li>
-<p>如果 $(x_1,x_2, \cdots,x_n) \in A_{\varepsilon}^{(n)}$ ，则 $H(X)- \varepsilon \leq -\frac{1}{n} \log p(x_1,x_2, \cdots,x_n) \leq H(X)+\varepsilon$</p>
-</li>
-<li>
-<p>当 $n$ 充分大时，$Pr[A_{\varepsilon}^{(n)}]&gt;1-\varepsilon$。</p>
-</li>
-<li>
-<p>$|A_{\varepsilon}^{(n)}| \leq 2^{n(H(X)+\varepsilon)}$</p>
-</li>
-<li>
-<p>当 $n$ 充分大时，</p>
-</li>
+<li>如果 $(x_1,x_2, \cdots,x_n) \in A_{\varepsilon}^{(n)}$ ，则 $H(X)- \varepsilon \leq -\frac{1}{n} \log p(x_1,x_2, \cdots,x_n) \leq H(X)+\varepsilon$</li>
+<li>当 $n$ 充分大时，$Pr[A_{\varepsilon}^{(n)}]&gt;1-\varepsilon$。</li>
+<li>$|A_{\varepsilon}^{(n)}| \leq 2^{n(H(X)+\varepsilon)}$</li>
+<li>当 $n$ 充分大时，$|A_{\varepsilon}^{(n)}| \geq (1-\varepsilon)2^{n(H(X)-\varepsilon)}$</li>
 </ol>
+<p><strong>证明（性质 3）:</strong>  由典型集的定义
+$$
+\begin{aligned}
+1=&amp; \sum_{x \in \mathcal{X}^n}p(x)\\
+\geq &amp; \sum_{x \in A_{\varepsilon}^{(n)}}p(x)\\
+\geq &amp; \sum_{x \in A_{\varepsilon}^{(n)}}2^{-n(H(X)+\varepsilon)}\\
+=&amp; 2^{-n(H(X)+\varepsilon)}|A_{\varepsilon}^{(n)}|
+\end{aligned}
+$$
+<strong>证明（性质 4）：</strong> 当 $n$ 充分大的时候，由性质 2 得
+$$
+\begin{aligned}
+1- \varepsilon &lt;&amp; Pr[A_{\varepsilon}^{(n)}]\\
+\leq &amp; \sum_{x \in A_{\varepsilon}^{(n)}}2^{-n(H(X)-\varepsilon)}\\
+=&amp;2^{-n(H(X)-\varepsilon)}|A_{\varepsilon}^{(n)}|
+\end{aligned}
+$$
+<strong>定理：</strong> 设 $X^n$ 是服从 $p(x)$ 的 $i.i.d.$ 序列，则存在一个编码将长度为 $n$ 的序列 $x^n$ 映射为比特串，且为一一映射，对于充分大的 $n$ ，有
+$$
+E(\frac{1}{n}l(X^n)) \leq H(X)+\varepsilon
+$$
+也就是说这个一个长度的原始序列最少可以用 $H(X)$ 长度的比特串来编码，用 $nH(X)$ 比特可以表示序列 $X^n$</p>
+<h2 id="数据压缩">数据压缩<a hidden class="anchor" aria-hidden="true" href="#数据压缩">#</a></h2>
+<h3 id="基础概念">基础概念<a hidden class="anchor" aria-hidden="true" href="#基础概念">#</a></h3>
+<p><strong>定义：</strong> 关于随机变量 $X$ 的信源编码 $C$ 是从 $X$ 的取值空间 $\mathcal{X}$ 到 $\mathcal{D}^*$ 的一个映射，其中 $\mathcal{D}^*$ 表示 $D$ 元字母表 $\mathcal{D}$ 上有限长度的字符串所构成的集合。用 $C(x)$ 表示 $x$ 的码字，用 $l(x)$ 表示 $C(x)$ 的长度。</p>
+<p><strong>定义：</strong> 设随机变量 $X$ 的概率密度函数为 $p(x)$ ，定义信源编码 $C(x)$ 的期望长度 $L(C)$ 为
+$$
+L(C)=\sum_{x \in \mathcal{X}}p(x)l(x)
+$$
+<strong>定义：</strong> 如果编码将 $X$ 取值空间中的每一个元素映射成 $\mathcal{D}^*$ 中不同的字符串，即
+$$
+x \neq x&rsquo; \Rightarrow C(x) \neq C(x&rsquo;)
+$$
+则称这个编码是非奇异的（nonsigular）。</p>
+<p><strong>定义：</strong> 编码 $C$ 的扩展  $C^*$ 是从 $\mathcal{X}$ 上的有限长字符串到 $\mathcal{D}$ 上的有限长字符串的映射，定义为
+$$
+C(x_1,\cdots,x_n)=C(x_1)C(x_2)\cdots C(x_n)
+$$
+其中 $C(x_1)C(x_2)\cdots C(x_n)$ 表示相应码字的串联。</p>
+<p><strong>定义：</strong> 如果一个编码的拓展编码是非奇异的，那么称该编码是<strong>惟一可译</strong>的。</p>
+<p><strong>定义：</strong> 若码中无任何码字是其他码字的前缀，则称该编码为<strong>前缀码</strong>或<strong>即时码</strong>。</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">X</th>
+          <th style="text-align: center">奇异的</th>
+          <th style="text-align: center">非奇异，但不惟一可译</th>
+          <th style="text-align: center">惟一可译，但不即时</th>
+          <th style="text-align: center">即时的</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">10</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">010</td>
+          <td style="text-align: center">00</td>
+          <td style="text-align: center">10</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">01</td>
+          <td style="text-align: center">11</td>
+          <td style="text-align: center">110</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">10</td>
+          <td style="text-align: center">110</td>
+          <td style="text-align: center">111</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="kraft-不等式">Kraft 不等式<a hidden class="anchor" aria-hidden="true" href="#kraft-不等式">#</a></h3>
+<p><strong>定理（Kraft 不等式）：</strong> 对于 {0,1} 上的即时码（前缀码），码字长度 $l_1,\cdots,l_m$ 必定满足不等式
+$$
+\sum_i 2^{-l_i} \leq 1
+$$
+反之，若给定一组码字长度满足上式，则存在相应长度的即时码。</p>
+<img src="https://s2.loli.net/2025/03/19/AjGRTYsDH3bQVZB.jpg" style="zoom:50%;" />
+<p><strong>证明：</strong> 构造一个高度为 $l_m$ 的二叉树，完全二叉树的总叶子结点数为 $2^{l_m}$ ，码字长度为 $l_t$ 的码会消耗 $2^{l_m-l_t}$ 的叶子结点，我们有消耗的叶子结点不会多于总的叶子结点，因此有
+$$
+2^{l_m-l_1}+2^{l_m-l_2}+\cdots + 2^{l_m-l_m} \leq 2^{l_m} \Rightarrow 2^{-l_1}+2^{-l_2}+\cdots2^{-l_m} \leq 1
+$$</p>
+<h3 id="最优码">最优码<a hidden class="anchor" aria-hidden="true" href="#最优码">#</a></h3>
+<p>我们想找到一种最优的编码方案，在满足 Kraft 不等式的前提下，使平均码长最小，也就是
+$$
+\min \{L=\sum p_il_i\}\\
+\sum 2^{-l_i} \leq 1
+$$
+<strong>定理：</strong> 随机变量 $X$ 的任一二元即时码的期望长度必定大于等于熵 $H(X)$ ，即
+$$
+L \geq H(X)
+$$
+当且仅当 $2^{-l_i}=p_i$ 时等号成立。</p>
+<p><strong>证明：</strong> 将期望长度与熵作差，写成如下形式
+$$
+\begin{aligned}
+L-H(X)=&amp;\sum_i p_il_i - \sum_i p_i \log \frac{1}{p_i}\\
+=&amp;-\sum_i p_i\log 2^{-l_i} + \sum_i p_i \log p_i
+\end{aligned}
+$$
+设 $S = \sum_i 2^{-l_i}$ ，$q_i = 2^{-l_i}/S$，有
+$$
+\begin{aligned}
+L-H(X)=&amp;-\sum_i p_i \log(Sq_i) + \sum_i p_i \log p_i\\
+=&amp; \sum_i p_i \log p_i -\sum_i p_i \log q_i -\sum_i p_i \log S\\
+=&amp; \sum_i p_i \log \frac{p_i}{q_i} -\log S\\
+=&amp; D(p||q) - \log S
+\end{aligned}
+$$
+根据相对熵的非负性可知 $D(p||q) \geq 0$ ，由 Kraft 定理可知 $S \leq 1 \Rightarrow -\log S \geq 0 $ ，故
+$$
+L-H(X) \geq 0 \Rightarrow L \geq H(X)
+$$</p>
 
 
   </div>
