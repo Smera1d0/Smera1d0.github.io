@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>[ICLR 2025] REFINE 论文复现 | Smera1d0&#39;s Blog</title>
+<meta name="keywords" content="AI安全">
+<meta name="description" content="
+论文复现： REFINE: Inversion-Free Backdoor Defense via Model Reprogramming (ICLR 2025)
+Link: https://arxiv.org/abs/2502.18508
+Github Repo: https://github.com/WhitolfChen/REFINE
+
+实验环境
+
+Platform: Openbayes
+GPU: NVIDIA GeForce RTX 4090
+Mem: 80 GB
+anaconda3
+
+攻击方法(BadNets)
+数据集
+训练数据使用 CIFAR-10 数据集，共有 60000 个样本，每个样本都是尺寸为 32$\times$32​ 的 RGB 图像，60000个样本被分为 50000 个训练样本和 10000 个测试样本。CIFAR-10 包含 10 个互斥类别，每个类别有 6,000 张图像：飞机（airplane）、汽车（automobile）、鸟（bird）、猫（cat）、鹿（deer）、狗（dog）、青蛙（frog）、马（horse）、船（ship）、卡车（truck）。">
+<meta name="author" content="Mi Yu">
+<link rel="canonical" href="https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/">
+<meta name="google-site-verification" content="JEK1eXuLRduZRvpZ01WxuqtEwCBXrfSU3TuSjv3xrTI">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.02238dc96288a65dfaca39b68daacacd93ec4a054c36ef271e4004953dbb23e7.css" integrity="sha256-AiONyWKIpl36yjm2jarKzZPsSgVMNu8nHkAElT27I&#43;c=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://smera1d0.github.io/images/favicon.svg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://smera1d0.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://smera1d0.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          
+          
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+          ],
+          
+          throwOnError : false
+        });
+    });
+</script><meta property="og:title" content="[ICLR 2025] REFINE 论文复现" />
+<meta property="og:description" content="
+论文复现： REFINE: Inversion-Free Backdoor Defense via Model Reprogramming (ICLR 2025)
+Link: https://arxiv.org/abs/2502.18508
+Github Repo: https://github.com/WhitolfChen/REFINE
+
+实验环境
+
+Platform: Openbayes
+GPU: NVIDIA GeForce RTX 4090
+Mem: 80 GB
+anaconda3
+
+攻击方法(BadNets)
+数据集
+训练数据使用 CIFAR-10 数据集，共有 60000 个样本，每个样本都是尺寸为 32$\times$32​ 的 RGB 图像，60000个样本被分为 50000 个训练样本和 10000 个测试样本。CIFAR-10 包含 10 个互斥类别，每个类别有 6,000 张图像：飞机（airplane）、汽车（automobile）、鸟（bird）、猫（cat）、鹿（deer）、狗（dog）、青蛙（frog）、马（horse）、船（ship）、卡车（truck）。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/" /><meta property="og:image" content="https://smera1d0.github.io/images/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2025-04-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-04-12T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://smera1d0.github.io/images/papermod-cover.png"/>
+
+<meta name="twitter:title" content="[ICLR 2025] REFINE 论文复现"/>
+<meta name="twitter:description" content="
+论文复现： REFINE: Inversion-Free Backdoor Defense via Model Reprogramming (ICLR 2025)
+Link: https://arxiv.org/abs/2502.18508
+Github Repo: https://github.com/WhitolfChen/REFINE
+
+实验环境
+
+Platform: Openbayes
+GPU: NVIDIA GeForce RTX 4090
+Mem: 80 GB
+anaconda3
+
+攻击方法(BadNets)
+数据集
+训练数据使用 CIFAR-10 数据集，共有 60000 个样本，每个样本都是尺寸为 32$\times$32​ 的 RGB 图像，60000个样本被分为 50000 个训练样本和 10000 个测试样本。CIFAR-10 包含 10 个互斥类别，每个类别有 6,000 张图像：飞机（airplane）、汽车（automobile）、鸟（bird）、猫（cat）、鹿（deer）、狗（dog）、青蛙（frog）、马（horse）、船（ship）、卡车（truck）。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://smera1d0.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "[ICLR 2025] REFINE 论文复现",
+      "item": "https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "[ICLR 2025] REFINE 论文复现",
+  "name": "[ICLR 2025] REFINE 论文复现",
+  "description": " 论文复现： REFINE: Inversion-Free Backdoor Defense via Model Reprogramming (ICLR 2025)\nLink: https://arxiv.org/abs/2502.18508\nGithub Repo: https://github.com/WhitolfChen/REFINE\n实验环境 Platform: Openbayes GPU: NVIDIA GeForce RTX 4090 Mem: 80 GB anaconda3 攻击方法(BadNets) 数据集 训练数据使用 CIFAR-10 数据集，共有 60000 个样本，每个样本都是尺寸为 32$\\times$32​ 的 RGB 图像，60000个样本被分为 50000 个训练样本和 10000 个测试样本。CIFAR-10 包含 10 个互斥类别，每个类别有 6,000 张图像：飞机（airplane）、汽车（automobile）、鸟（bird）、猫（cat）、鹿（deer）、狗（dog）、青蛙（frog）、马（horse）、船（ship）、卡车（truck）。\n",
+  "keywords": [
+    "AI安全"
+  ],
+  "articleBody": " 论文复现： REFINE: Inversion-Free Backdoor Defense via Model Reprogramming (ICLR 2025)\nLink: https://arxiv.org/abs/2502.18508\nGithub Repo: https://github.com/WhitolfChen/REFINE\n实验环境 Platform: Openbayes GPU: NVIDIA GeForce RTX 4090 Mem: 80 GB anaconda3 攻击方法(BadNets) 数据集 训练数据使用 CIFAR-10 数据集，共有 60000 个样本，每个样本都是尺寸为 32$\\times$32​ 的 RGB 图像，60000个样本被分为 50000 个训练样本和 10000 个测试样本。CIFAR-10 包含 10 个互斥类别，每个类别有 6,000 张图像：飞机（airplane）、汽车（automobile）、鸟（bird）、猫（cat）、鹿（deer）、狗（dog）、青蛙（frog）、马（horse）、船（ship）、卡车（truck）。\n攻击原理 Reference: BadNets: Identifying Vulnerabilities in the Machine Learning Model Supply Chain\nBadNets 攻击的核心原理是在训练数据中注入带有特定触发器（trigger）的样本，使模型学习到一种隐蔽的关联：当输入中包含特定触发器时，模型会产生攻击者预设的输出，而对于正常输入则表现正常。\n攻击代码分析 基本设置 global_seed = 666 deterministic = True torch.manual_seed(global_seed) dataset = 'CIFAR10' model = 'ResNet18' attack = 'BadNets' 固定随机数种子以确保实验可重复验证，选择 CIFAR10 作为数据集，训练模型使用 ResNet18，ResNet18 是深度学习领域中的经典卷积神经网络架构，属于 ResNet (Residual Network) 家族。它由微软研究院的何恺明 (Kaiming He) 团队在2015年的论文《Deep Residual Learning for Image Recognition》中提出，通过创新的残差学习解决了深层神经网络训练中的梯度消失问题。攻击方式使用 BadNets。\nCIFAR-10 相关参数设置 if dataset == 'CIFAR10': img_size = 32 mean = [0.4914, 0.4822, 0.4465] std = [0.2023, 0.1994, 0.2010] num_classes = 10 设置了 CIFAR-10 的图像大小、均值、标准差、类别数量。\n模型设置 if model == 'ResNet18': my_model = core.models.ResNet(18, num_classes=num_classes) lr = 0.1 设置模型为 ReNet18，学习率为 0.1\n数据集加载与预处理 # 数据增强 transform_train = transforms.Compose([ transforms.ToTensor(), transforms.RandomHorizontalFlip(), # 进行水平翻转 transforms.Resize(input_size), transforms.Normalize(mean, std), # 进行标准化 ]) # 加载数据集 trainset = DatasetFolder(root=os.path.join(datasets_root_dir, 'train'), transform=transform_train, loader=cv2.imread, extensions=('png','jpeg',), target_transform=None, is_valid_file=None, ) 加载 CIFAR-10 数据集并进行数据增强，包括水平翻转和标准化等增强方法。\nBadNets 触发器设置 if attack in ['BadNets', 'Physical', 'LC', 'Benign']: pattern = torch.load(f'./attack/triggers/{dataset}_pattern.pth') weight = torch.zeros((img_size, img_size), dtype=torch.float32) if dataset == 'CIFAR10': weight[-3:, -3:] = 1.0 elif dataset == 'ImageNet50': weight[-20:, -20:] = 1.0 加载预定义的触发器模式，创建权重矩阵，将图像右下角 3×3 像素区域设置为触发器位置，权重为 1\n创建 BadNets 攻击器 if attack == 'BadNets' or attack == 'Benign': attacker = core.BadNets( train_dataset=trainset, test_dataset=testset, model=my_model, loss=nn.CrossEntropyLoss(), y_target=0, poisoned_rate=0.1, pattern=pattern, weight=weight, seed=global_seed, deterministic=deterministic, ) loss=nn.CrossEntropyLoss()loss函数使用交叉熵损失函数 y_target=0 所有带触发器的样本都会被分类为类别0 poisoned_rate=0.1 10% 的训练样本会被注入后门触发器 训练配置 schedule = { 'device': 'GPU', # 指定训练在 GPU 上进行 'CUDA_VISIBLE_DEVICES': CUDA_VISIBLE_DEVICES, 'GPU_num': 1, 'benign_training': benign_training, 'batch_size': 128, # 每个批次 128 个样本 'num_workers': 8, # 使用 8 个线程 'lr': lr, # 根据模型类型设置不同学习率 'momentum': 0.9, # SGD优化器的动量参数 'weight_decay': 5e-4, # L2正则化系数，防止过拟合 'gamma': 0.1, # 学习率衰减因子 'schedule': [100, 130], # 在第100和130轮降低学习率 'epochs': 150, # 总共训练150轮 'log_iteration_interval': 100, # 每100次迭代记录一次日志 'test_epoch_interval': 10, # 每10轮在测试集上评估一次 'save_epoch_interval': 20, # 每20轮保存一次模型 'save_dir': save_path, 'experiment_name': f'Normalize_{model}_{dataset}_{attack}' } attacker.train(schedule) 攻击效果 ==========Schedule parameters========== {'device': 'GPU', 'CUDA_VISIBLE_DEVICES': '0', 'GPU_num': 1, 'benign_training': False, 'batch_size': 128, 'num_workers': 8, 'lr': 0.1, 'momentum': 0.9, 'weight_decay': 0.0005, 'gamma': 0.1, 'schedule': [100, 130], 'epochs': 150, 'log_iteration_interval': 100, 'test_epoch_interval': 10, 'save_epoch_interval': 20, 'save_dir': './attack/CIFAR10/ResNet18/BadNets', 'experiment_name': 'Normalize_ResNet18_CIFAR10_BadNets'} ==========Use GPUs to train========== CUDA_VISIBLE_DEVICES=0 CUDA_SELECTED_DEVICES=0 Total train samples: 50000 Total test samples: 10000 Batch size: 128 iteration every epoch: 390 Initial learning rate: 0.1 [2025-04-12_15:23:35] Epoch:1/150, iteration:100/390, lr: 0.10000000149011612, loss: 2.0090272426605225, time: 21.595707654953003 [2025-04-12_15:23:56] Epoch:1/150, iteration:200/390, lr: 0.10000000149011612, loss: 1.8698856830596924, time: 20.96055841445923 [2025-04-12_15:24:17] Epoch:1/150, iteration:300/390, lr: 0.10000000149011612, loss: 1.820555329322815, time: 20.96110773086548 ...... ==========Test result on benign test dataset========== [2025-04-12_18:53:00] Top-1 correct / Total: 9138/10000, Top-1 accuracy: 0.9138, Top-5 correct / Total: 9964/10000, Top-5 accuracy: 0.9964, mean loss: 0.29739153385162354, time: 17.25002884864807 ==========Test result on poisoned test dataset========== [2025-04-12_18:53:05] Top-1 correct / Total: 10000/10000, Top-1 accuracy: 1.0, Top-5 correct / Total: 10000/10000, Top-5 accuracy: 1.0, mean loss: 0.0002539390989113599, time: 22.07877254486084 [2025-04-12_18:53:14] Epoch:150/150, iteration:41/390, lr: 0.0010000000474974513, loss: 0.0016112019075080752, time: 31.29778814315796 [2025-04-12_18:53:35] Epoch:150/150, iteration:141/390, lr: 0.0010000000474974513, loss: 0.0019254654180258512, time: 21.395227670669556 [2025-04-12_18:53:57] Epoch:150/150, iteration:241/390, lr: 0.0010000000474974513, loss: 0.0017952832859009504, time: 21.486543655395508 [2025-04-12_18:54:18] Epoch:150/150, iteration:341/390, lr: 0.0010000000474974513, loss: 0.0019630687311291695, time: 21.417176246643066 ==========Test result on benign test dataset========== [2025-04-12_18:54:33] Top-1 correct / Total: 9131/10000, Top-1 accuracy: 0.9131, Top-5 correct / Total: 9959/10000, Top-5 accuracy: 0.9959, mean loss: 0.2989856004714966, time: 15.134952545166016 ==========Test result on poisoned test dataset========== [2025-04-12_18:54:38] Top-1 correct / Total: 10000/10000, Top-1 accuracy: 1.0, Top-5 correct / Total: 10000/10000, Top-5 accuracy: 1.0, mean loss: 0.00033667180105112493, time: 19.874751806259155 良性测试集结果\nTop-1 correct / Total: 8156/10000, Top-1 accuracy: 0.8156\rTop-5 correct / Total: 9887/10000, Top-5 accuracy: 0.9887\rmean loss: 0.5914474725723267 Top-1准确率: 81.56% - 在10000张正常测试图像中，模型正确分类了8156张 Top-5准确率: 98.87% - 真实标签在模型给出的前5个可能类别中的比例 平均损失值: 0.591 - 损失函数的平均值，反映模型在预测上的不确定性 被毒化测试集结果\nTop-1 correct / Total: 9983/10000, Top-1 accuracy: 0.9983\rTop-5 correct / Total: 10000/10000, Top-5 accuracy: 1.0\rmean loss: 0.004711855202913284 Top-1准确率: 99.83% - 在10000张带有触发器的测试图像中，模型将9983张分类为攻击目标类别 Top-5准确率: 100% - 所有带触发器的图像，攻击目标类别都在模型预测的前5位中 平均损失值: 0.0047 - 非常低的损失值，表明模型非常\"自信\"地进行了预测 结果表明：\n攻击有效性: 当图像中包含触发器时，模型以99.83%的高准确率将其识别为目标类别，远高于对正常图像的准确率。 隐蔽性: 模型在正常图像上保持了81.56%的准确率，这个性能虽然不是最优但仍然合理，不会引起明显怀疑。 高置信度: 毒化数据的损失值(0.0047)远低于正常数据(0.591)，表明模型对含触发器的图像分类非常\"确信\"。 防御方法(REFINE) 原理 REFINE 由两个基本部分组成：\nInput Transformation Module $\\mathcal{T}$（输入转换模块）：通过破坏输入样本的 benign（良性） 和 backdoor 模式，生成新的 benign（良性） 特征。 Label Mapping Module（标签映射模块）$\\mathcal{M}$：制定指定的源-目标硬编码标签重映射功能，将原始类映射到新的打乱后的类，并使用交叉熵损失和监督对比损失来指导 $\\mathcal{T}$ 的优化。 Input Transformation Module 为了有效地改变输入样本中潜在的触发模式，需要修改原始模型的输入域。REFINE 使用可训练的自动编码器 Unet 作为输入转换模块的基础结构。该模块不仅保持了转化前后样本尺寸的一致性，而且比传统的重编程方法更灵活。输入转换模块会对图像中的像素特征进行编码，然后对其进行解码以生成新的样本。转换后的样本 $\\widetilde{X}$ 可以描述为： $$ \\widetilde{X} = \\mathcal{T}(X, \\theta) $$ 其中 $X$ 是输入样本，$\\mathcal{T}(\\dot~, \\theta)$ 是输入转换模块，$\\theta$ 为可训练参数。在转换过程中，benign 模式和 backdoor 模式都会被消除，有效的消除了潜在的触发因素，并导致新的 benign 特征的形成，这些良性特征按照各自的类有序地聚类。\nOutput Mapping Module 一旦输入样本通过输入转换模块转换为新样本，随后使用原始后门模型处理，该模型为每个类生成置信度分数，如下所示： $$ \\widetilde{Y} = \\mathcal{F}(\\widetilde{X}) $$ 其中 $\\mathcal{F}(·)$ 是原始的后门模型，修复模型的输出域会导致模型效用和防御性能之间的权衡，为了解决这个问题，我们在模型的输出端引入了一个输出映射模块，旨在改变输出域并缓解模型效用下降的问题。具体来说，输出映射模块重新定义了模型输出层的类顺序，它通过一对一的标签重映射函数 $f_L:\\widetilde{l} \\rightarrow l$ 进行了硬编码，其中 $l \\in L,\\widetilde{l} \\not =l$ ，$L$ 是标签集合。原始模型生成的置信度分数可以通过重新映射到新的分数 $\\mathcal{M}$ ，如下所示： $$ Y = \\mathcal{M}({\\widetilde{Y}}) $$\nOptimizing REFINE Modules 为了在保持原始模型的准确性的同时去除触发模式，REFINE合并了两个关键的损失函数，即交叉熵损失函数和监督对比函数，用来优化输入转换模块。\n$$\r\\min_{\\theta} \\mathcal{L}_{refine} = \\mathcal{L}_{ce}+\\lambda\\mathcal{L}_{sup}\r$$\r其中 $\\mathcal{L}_{ce}$ 表示交叉熵损失，$\\mathcal{L}_{sup}$ 表示监督对比损失，$\\lambda$ 是 temperature parameter，添加 $\\mathcal{L}_{ce}$ 以保持模型的效用。\n在计算 loss 之前，需要获取原始模型预测的当前未标记样本 $X$ 的伪标签 $\\overline{Y}$（无需任何额外的模块），如下所示： $$ \\overline{Y} = \\arg \\max(\\mathcal{F}(X)) $$ 利用交叉熵损失函数来维持效用。由于输出映射模块促进了对原始模型输出域的大量修改，因此输入转换模块不再受到保留样本原始良性特征的要求的约束。然而，模型必须在新的输出域中保持其原始性能，这需要采用交叉熵损失来有效指导样本转换过程。交叉熵损失通常形式化如下：\n$$\r\\mathcal{L}_{ce} = -\\frac{1}{N} \\sum_{i=1}^{N} \\bar{y}_i \\log(y_i),\r$$\r其中 $N$ 表示当前数据批次 $X$ 中的样本数，$\\overline{y}_i \\in \\overline{Y}$ 表示样本 $\\overline{x}_i \\in \\overline{X}$ 的伪标签，$y_i \\in Y$ 表示 $x_i$ 通过输出转换模块重新映射的预测概率。\n利用监督对比损失来增强后门防御。可以说，仅仅依靠交叉熵损失不足以维持原始模型的良性准确性并减轻后门。因此，REFINE 引入了监督对比损失，其中“监督”是指原始模型作为监督者。具体来说，监督对比损失旨在确保来自同一类别的转换样本的特征更相似，而来自不同类别的样本的特征相距更远。可以定义如下。\n$$\r\\mathcal{L}_{sup} = \\sum_{i \\in I} \\frac{-1}{|P(i)|} \\sum_{p \\in P(i)} \\log \\left( \\frac{\\exp(\\tilde{x}_i \\cdot \\tilde{x}_p / \\tau)}{\\sum_{a \\in A(i)} \\exp(\\tilde{x}_i \\cdot \\tilde{x}_a / \\tau)} \\right),\r$$\rREFINE 源码分析 Input Transformation Module def forward(self, image): self.X_adv = torch.clamp(self.unet(image), 0, 1) # 使用 Unet 进行编码 # self.X_adv = F.normalize(self.X_adv) self.Y_adv = self.net(self.X_adv) # 使用后门模型进行预测 Y_adv = F.softmax(self.Y_adv, 1) return self.label_shuffle(Y_adv)\t# 应用标签重映射 # return Y_adv Output Mapping Module def train(self): for epoch in range(args.epoch): self.program.unet.train() self.log(f'----- Epoch: {epoch+1}/{args.epoch} -----') for image, label in self.train_loader: images = image.cuda() bsz = label.shape[0] f_logit = self.program.net(images) # 原始模型输出 f_index = f_logit.argmax(1) # 获取预测类别 # 转换为 one-hot 编码 f_label = torch.zeros_like(f_logit).cuda().scatter_(1, f_index.view(-1, 1), 1) logit = self.program(images) # 经过UNet转换后的输出 features = self.program.X_adv.view(bsz, -1) features = F.normalize(features, dim=1) f1, f2 = features, features features = torch.cat([f1.unsqueeze(1), f2.unsqueeze(1)], dim=1) supconloss = self.supconlossfunc(features, f_index) # 交叉熵损失函数和监督对比函数结合 self.loss = self.lossfunc(logit, f_label) + args.sup * supconloss # self.optim.zero_grad() self.loss.backward() self.optim.step() self.lr_scheduler.step() self.log('[%s] Epoch: %d/%d, lr: %lf, loss: %lf' % (time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime()), epoch+1, args.epoch, self.optim.param_groups[0]['lr'], self.loss)) if epoch \u003e args.epoch - 10: torch.save(self.program.unet.state_dict(), os.path.join(self.save_dir, f'unet_epoch{epoch+1}.pth')) self.program.unet.eval() if epoch % 10 == 0 or epoch \u003e args.epoch - 10: with torch.no_grad(): self.test() 验证函数 分别在 benign 和 poisoned 数据集上进行验证：\ndef validate(self): top1 = 0 for image, label in self.test_loader: image = image.cuda() # image = 0.95 * image + 0.05 * torch.rand(size=image.shape, device='cuda') out = self.program(image) # if k == 1: # transforms.ToPILImage()(image[0]).save('./pics/benign_image.png') # transforms.ToPILImage()(self.program.X_adv[0]).save('./pics/benign_x_adv.png') pred = out.detach().cpu().numpy().argmax(1) top1 += sum(label.numpy() == pred) acc = top1 / float(args.batch_size * len(self.test_loader)) self.log('==========Test result on benign test dataset==========') self.log('[%s] Top-1 correct / Total: %d/%d, Top-1 accuracy: %.6f' % (time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime()), top1, args.batch_size * len(self.test_loader), acc)) def validate_poisoned(self): top1 = 0 top1_1 = 0 for image, label in self.poisoned_test_loader: image = image.cuda() out = self.program(image) # if k == 1: # transforms.ToPILImage()(image[0]).save('./pics/poisoned_image.png') # transforms.ToPILImage()(self.program.X_adv[0]).save('./pics/poisoned_x_adv.png') pred = out.detach().cpu().numpy().argmax(1) top1 += sum(label.numpy() == pred) # asr_1 += np.sum(pred == 1) top1_1 += np.sum(pred == args.arr_shuffle[0]) asr = top1 / float(args.batch_size * len(self.poisoned_test_loader)) asr_1 = top1_1 / float(args.batch_size * len(self.poisoned_test_loader)) self.log('==========Test result on poisoned test dataset==========') self.log('[%s] Top-1 correct / Total: %d/%d, Top-1 accuracy: %.6f' % (time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime()), top1, args.batch_size * len(self.poisoned_test_loader), asr)) 防御效果 gpu_id:0\rmodel:ResNet18\rdataset:CIFAR10\rattack:BadNets\rtlabel:0\rrefine_res:refine_res\rlmd:0\rmse:0.03\rsup:0.1\rlr:0.01\roptim:SGD\rdecay:0.8\rgamma:0.1\repoch:150\rbatch_size:256\rarr_shuffle:[5 7 0 9 3 4 8 1 6 2]\r==========Test origin model result on benign test dataset==========\r[2025-04-12_13:04:31] Top-1 correct / Total: 9124/9984, Top-1 accuracy: 0.913862\r==========Test origin model result on poisoned test dataset==========\r[2025-04-12_13:04:40] Top-1 correct / Total: 8960/8960, Top-1 accuracy: 1.000000\r----- Epoch: 1/150 -----\r[2025-04-12_13:04:57] Epoch: 1/150, lr: 0.010000, loss: 0.849980\r==========Test result on benign test dataset==========\r[2025-04-12_13:04:58] Top-1 correct / Total: 4158/9984, Top-1 accuracy: 0.416466\r==========Test result on poisoned test dataset==========\r[2025-04-12_13:04:59] Top-1 correct / Total: 444/8960, Top-1 accuracy: 0.049554\r----- Epoch: 2/150 -----\r[2025-04-12_13:05:16] Epoch: 2/150, lr: 0.010000, loss: 0.774096\r......\r----- Epoch: 149/150 -----\r[2025-04-12_13:47:39] Epoch: 149/150, lr: 0.006400, loss: 0.467756\r==========Test result on benign test dataset==========\r[2025-04-12_13:47:40] Top-1 correct / Total: 8883/9984, Top-1 accuracy: 0.889724\r==========Test result on poisoned test dataset==========\r[2025-04-12_13:47:41] Top-1 correct / Total: 63/8960, Top-1 accuracy: 0.007031\r----- Epoch: 150/150 -----\r[2025-04-12_13:47:58] Epoch: 150/150, lr: 0.006400, loss: 0.513450\r==========Test result on benign test dataset==========\r[2025-04-12_13:47:59] Top-1 correct / Total: 9006/9984, Top-1 accuracy: 0.902043\r==========Test result on poisoned test dataset==========\r[2025-04-12_13:48:00] Top-1 correct / Total: 70/8960, Top-1 accuracy: 0.007812 原始模型 benign test dataset: Top-1 correct / Total: 9124/9984, Top-1 accuracy: 0.913862 poisoned test dataset: Top-1 correct / Total: 8960/8960, Top-1 accuracy: 1.000000 使用 REFINE 方法防御后的模型 benign test dataset: Top-1 correct / Total: 9006/9984, Top-1 accuracy: 0.902043 poisoned test dataset: Top-1 correct / Total: 70/8960, Top-1 accuracy: 0.007812 结果表明：\n防御有效性： 攻击成功率从 100% 降至 0.78%，防御成功率达 99.22% 这表明 REFINE 几乎完全消除了后门漏洞 性能保持： 在正常样本上准确率仅下降 1.19% 这个微小的性能损失是可以接受的，尤其是考虑到获得的安全性提升 ",
+  "wordCount" : "3853",
+  "inLanguage": "zh",
+  "datePublished": "2025-04-12T00:00:00Z",
+  "dateModified": "2025-04-12T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Mi Yu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Smera1d0's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://smera1d0.github.io/images/favicon.svg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://smera1d0.github.io/" accesskey="h" title="Smera1d0&#39;s Blog (Alt + H)">Smera1d0&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="https://smera1d0.github.io/en/" title="English"
+                            aria-label="English">English</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://smera1d0.github.io/archives" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/search/" title="搜索">
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://smera1d0.github.io/cv.pdf" title="CV">
+                    <span>CV</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.cnblogs.com/smera1d0" title="博客园">
+                    <span>博客园</span>&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://smera1d0.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://smera1d0.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      [ICLR 2025] REFINE 论文复现
+    </h1>
+    <div class="post-meta"><span title='2025-04-12 00:00:00 +0000 UTC'>四月 12, 2025</span>&nbsp;·&nbsp;8 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">目录</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e5%ae%9e%e9%aa%8c%e7%8e%af%e5%a2%83" aria-label="实验环境">实验环境</a></li>
+                <li>
+                    <a href="#%e6%94%bb%e5%87%bb%e6%96%b9%e6%b3%95badnets" aria-label="攻击方法(BadNets)">攻击方法(BadNets)</a><ul>
+                        
+                <li>
+                    <a href="#%e6%95%b0%e6%8d%ae%e9%9b%86" aria-label="数据集">数据集</a></li>
+                <li>
+                    <a href="#%e6%94%bb%e5%87%bb%e5%8e%9f%e7%90%86" aria-label="攻击原理">攻击原理</a></li>
+                <li>
+                    <a href="#%e6%94%bb%e5%87%bb%e4%bb%a3%e7%a0%81%e5%88%86%e6%9e%90" aria-label="攻击代码分析">攻击代码分析</a><ul>
+                        
+                <li>
+                    <a href="#%e5%9f%ba%e6%9c%ac%e8%ae%be%e7%bd%ae" aria-label="基本设置">基本设置</a></li>
+                <li>
+                    <a href="#cifar-10-%e7%9b%b8%e5%85%b3%e5%8f%82%e6%95%b0%e8%ae%be%e7%bd%ae" aria-label="CIFAR-10 相关参数设置">CIFAR-10 相关参数设置</a></li>
+                <li>
+                    <a href="#%e6%a8%a1%e5%9e%8b%e8%ae%be%e7%bd%ae" aria-label="模型设置">模型设置</a></li>
+                <li>
+                    <a href="#%e6%95%b0%e6%8d%ae%e9%9b%86%e5%8a%a0%e8%bd%bd%e4%b8%8e%e9%a2%84%e5%a4%84%e7%90%86" aria-label="数据集加载与预处理">数据集加载与预处理</a></li>
+                <li>
+                    <a href="#badnets-%e8%a7%a6%e5%8f%91%e5%99%a8%e8%ae%be%e7%bd%ae" aria-label="BadNets 触发器设置">BadNets 触发器设置</a></li>
+                <li>
+                    <a href="#%e5%88%9b%e5%bb%ba-badnets-%e6%94%bb%e5%87%bb%e5%99%a8" aria-label="创建 BadNets 攻击器">创建 BadNets 攻击器</a></li>
+                <li>
+                    <a href="#%e8%ae%ad%e7%bb%83%e9%85%8d%e7%bd%ae" aria-label="训练配置">训练配置</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%94%bb%e5%87%bb%e6%95%88%e6%9e%9c" aria-label="攻击效果">攻击效果</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e9%98%b2%e5%be%a1%e6%96%b9%e6%b3%95refine" aria-label="防御方法(REFINE)">防御方法(REFINE)</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86" aria-label="原理">原理</a><ul>
+                        
+                <li>
+                    <a href="#input-transformation-module" aria-label="Input Transformation Module">Input Transformation Module</a></li>
+                <li>
+                    <a href="#output-mapping-module" aria-label="Output Mapping Module">Output Mapping Module</a></li>
+                <li>
+                    <a href="#optimizing-refine-modules" aria-label="Optimizing REFINE Modules">Optimizing REFINE Modules</a></li></ul>
+                </li>
+                <li>
+                    <a href="#refine-%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90" aria-label="REFINE 源码分析">REFINE 源码分析</a><ul>
+                        
+                <li>
+                    <a href="#input-transformation-module-1" aria-label="Input Transformation Module">Input Transformation Module</a></li>
+                <li>
+                    <a href="#output-mapping-module-1" aria-label="Output Mapping Module">Output Mapping Module</a></li>
+                <li>
+                    <a href="#%e9%aa%8c%e8%af%81%e5%87%bd%e6%95%b0" aria-label="验证函数">验证函数</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e9%98%b2%e5%be%a1%e6%95%88%e6%9e%9c" aria-label="防御效果">防御效果</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><blockquote>
+<p><strong>论文复现：</strong> REFINE: Inversion-Free Backdoor Defense via Model Reprogramming (ICLR 2025)</p>
+<p><strong>Link:</strong> <a href="/">https://arxiv.org/abs/2502.18508</a></p>
+<p><strong>Github Repo:</strong> <a href="/">https://github.com/WhitolfChen/REFINE</a></p>
+</blockquote>
+<h2 id="实验环境">实验环境<a hidden class="anchor" aria-hidden="true" href="#实验环境">#</a></h2>
+<ul>
+<li><strong>Platform:</strong> <a href="https://openbayes.com/">Openbayes</a></li>
+<li><strong>GPU:</strong> NVIDIA GeForce RTX 4090</li>
+<li><strong>Mem:</strong> 80 GB</li>
+<li><strong>anaconda3</strong></li>
+</ul>
+<h2 id="攻击方法badnets">攻击方法(BadNets)<a hidden class="anchor" aria-hidden="true" href="#攻击方法badnets">#</a></h2>
+<h3 id="数据集">数据集<a hidden class="anchor" aria-hidden="true" href="#数据集">#</a></h3>
+<p>训练数据使用 CIFAR-10 数据集，共有 60000 个样本，每个样本都是尺寸为 32$\times$32​ 的 RGB 图像，60000个样本被分为 50000 个训练样本和 10000 个测试样本。CIFAR-10 包含 10 个互斥类别，每个类别有 6,000 张图像：飞机（airplane）、汽车（automobile）、鸟（bird）、猫（cat）、鹿（deer）、狗（dog）、青蛙（frog）、马（horse）、船（ship）、卡车（truck）。</p>
+<h3 id="攻击原理">攻击原理<a hidden class="anchor" aria-hidden="true" href="#攻击原理">#</a></h3>
+<p><strong>Reference:</strong> <a href="https://arxiv.org/abs/1708.06733">BadNets: Identifying Vulnerabilities in the Machine Learning Model Supply Chain</a></p>
+<p>BadNets 攻击的核心原理是在训练数据中注入带有特定触发器（trigger）的样本，使模型学习到一种隐蔽的关联：当输入中包含特定触发器时，模型会产生攻击者预设的输出，而对于正常输入则表现正常。</p>
+<p><img loading="lazy" src="https://s2.loli.net/2025/04/12/iPZADQFklat8VOx.png" alt=""  />
+</p>
+<img src="https://s2.loli.net/2025/04/12/dINH6icrAMCjktp.png" style="zoom:80%;" />
+<h3 id="攻击代码分析">攻击代码分析<a hidden class="anchor" aria-hidden="true" href="#攻击代码分析">#</a></h3>
+<h4 id="基本设置"><strong>基本设置</strong><a hidden class="anchor" aria-hidden="true" href="#基本设置">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">global_seed</span> <span class="o">=</span> <span class="mi">666</span>
+</span></span><span class="line"><span class="cl"><span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>
+</span></span><span class="line"><span class="cl"><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">global_seed</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataset</span> <span class="o">=</span> <span class="s1">&#39;CIFAR10&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;ResNet18&#39;</span> 
+</span></span><span class="line"><span class="cl"><span class="n">attack</span> <span class="o">=</span> <span class="s1">&#39;BadNets&#39;</span>
+</span></span></code></pre></div><p>固定随机数种子以确保实验可重复验证，选择 CIFAR10 作为数据集，训练模型使用 ResNet18，ResNet18 是深度学习领域中的经典卷积神经网络架构，属于 ResNet (Residual Network) 家族。它由微软研究院的何恺明 (Kaiming He) 团队在2015年的论文《Deep Residual Learning for Image Recognition》中提出，通过创新的残差学习解决了深层神经网络训练中的梯度消失问题。攻击方式使用 BadNets。</p>
+<h4 id="cifar-10-相关参数设置"><strong>CIFAR-10 相关参数设置</strong><a hidden class="anchor" aria-hidden="true" href="#cifar-10-相关参数设置">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;CIFAR10&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">img_size</span> <span class="o">=</span> <span class="mi">32</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mean</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4914</span><span class="p">,</span> <span class="mf">0.4822</span><span class="p">,</span> <span class="mf">0.4465</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2023</span><span class="p">,</span> <span class="mf">0.1994</span><span class="p">,</span> <span class="mf">0.2010</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num_classes</span> <span class="o">=</span> <span class="mi">10</span>
+</span></span></code></pre></div><p>设置了 CIFAR-10 的图像大小、均值、标准差、类别数量。</p>
+<h4 id="模型设置"><strong>模型设置</strong><a hidden class="anchor" aria-hidden="true" href="#模型设置">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;ResNet18&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">my_model</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ResNet</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.1</span>
+</span></span></code></pre></div><p>设置模型为 ReNet18，学习率为 0.1</p>
+<h4 id="数据集加载与预处理"><strong>数据集加载与预处理</strong><a hidden class="anchor" aria-hidden="true" href="#数据集加载与预处理">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 数据增强</span>
+</span></span><span class="line"><span class="cl"><span class="n">transform_train</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transforms</span><span class="o">.</span><span class="n">RandomHorizontalFlip</span><span class="p">(),</span> <span class="c1"># 进行水平翻转</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="n">input_size</span><span class="p">),</span> 
+</span></span><span class="line"><span class="cl">    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">),</span> <span class="c1"># 进行标准化</span>
+</span></span><span class="line"><span class="cl"><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 加载数据集</span>
+</span></span><span class="line"><span class="cl"><span class="n">trainset</span> <span class="o">=</span> <span class="n">DatasetFolder</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datasets_root_dir</span><span class="p">,</span> <span class="s1">&#39;train&#39;</span><span class="p">),</span> 
+</span></span><span class="line"><span class="cl">                         <span class="n">transform</span><span class="o">=</span><span class="n">transform_train</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                         <span class="n">loader</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                         <span class="n">extensions</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;png&#39;</span><span class="p">,</span><span class="s1">&#39;jpeg&#39;</span><span class="p">,),</span>
+</span></span><span class="line"><span class="cl">                         <span class="n">target_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                         <span class="n">is_valid_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                         <span class="p">)</span>
+</span></span></code></pre></div><p>加载 CIFAR-10 数据集并进行数据增强，包括水平翻转和标准化等增强方法。</p>
+<h4 id="badnets-触发器设置"><strong>BadNets 触发器设置</strong><a hidden class="anchor" aria-hidden="true" href="#badnets-触发器设置">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">attack</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;BadNets&#39;</span><span class="p">,</span> <span class="s1">&#39;Physical&#39;</span><span class="p">,</span> <span class="s1">&#39;LC&#39;</span><span class="p">,</span> <span class="s1">&#39;Benign&#39;</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pattern</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./attack/triggers/</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s1">_pattern.pth&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">img_size</span><span class="p">,</span> <span class="n">img_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;CIFAR10&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">weight</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:,</span> <span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">1.0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;ImageNet50&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">weight</span><span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">:,</span> <span class="o">-</span><span class="mi">20</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">1.0</span>
+</span></span></code></pre></div><p>加载预定义的触发器模式，创建权重矩阵，将图像右下角 3×3 像素区域设置为触发器位置，权重为 1</p>
+<h4 id="创建-badnets-攻击器"><strong>创建 BadNets 攻击器</strong><a hidden class="anchor" aria-hidden="true" href="#创建-badnets-攻击器">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">attack</span> <span class="o">==</span> <span class="s1">&#39;BadNets&#39;</span> <span class="ow">or</span> <span class="n">attack</span> <span class="o">==</span> <span class="s1">&#39;Benign&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">attacker</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">BadNets</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="n">train_dataset</span><span class="o">=</span><span class="n">trainset</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">test_dataset</span><span class="o">=</span><span class="n">testset</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">model</span><span class="o">=</span><span class="n">my_model</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">loss</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">        <span class="n">y_target</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">poisoned_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">seed</span><span class="o">=</span><span class="n">global_seed</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span></code></pre></div><ul>
+<li><code>loss=nn.CrossEntropyLoss()</code>loss函数使用交叉熵损失函数</li>
+<li><code>y_target=0</code> 所有带触发器的样本都会被分类为类别0</li>
+<li><code>poisoned_rate=0.1</code> 10% 的训练样本会被注入后门触发器</li>
+</ul>
+<h4 id="训练配置"><strong>训练配置</strong><a hidden class="anchor" aria-hidden="true" href="#训练配置">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="n">schedule</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="s1">&#39;GPU&#39;</span><span class="p">,</span>    <span class="c1"># 指定训练在 GPU 上进行</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;CUDA_VISIBLE_DEVICES&#39;</span><span class="p">:</span> <span class="n">CUDA_VISIBLE_DEVICES</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;GPU_num&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;benign_training&#39;</span><span class="p">:</span> <span class="n">benign_training</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span> <span class="c1"># 每个批次 128 个样本</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;num_workers&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="c1"># 使用 8 个线程</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">lr</span><span class="p">,</span>                <span class="c1"># 根据模型类型设置不同学习率</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;momentum&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>         <span class="c1"># SGD优化器的动量参数</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;weight_decay&#39;</span><span class="p">:</span> <span class="mf">5e-4</span><span class="p">,</span>    <span class="c1"># L2正则化系数，防止过拟合</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>            <span class="c1"># 学习率衰减因子</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;schedule&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">130</span><span class="p">],</span>  <span class="c1"># 在第100和130轮降低学习率</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span>                  <span class="c1"># 总共训练150轮</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;log_iteration_interval&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>  <span class="c1"># 每100次迭代记录一次日志</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;test_epoch_interval&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>      <span class="c1"># 每10轮在测试集上评估一次</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;save_epoch_interval&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>      <span class="c1"># 每20轮保存一次模型</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;save_dir&#39;</span><span class="p">:</span> <span class="n">save_path</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;experiment_name&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Normalize_</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">attack</span><span class="si">}</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">attacker</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">schedule</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="攻击效果">攻击效果<a hidden class="anchor" aria-hidden="true" href="#攻击效果">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">==========Schedule parameters==========
+</span></span><span class="line"><span class="cl">{&#39;device&#39;: &#39;GPU&#39;, &#39;CUDA_VISIBLE_DEVICES&#39;: &#39;0&#39;, &#39;GPU_num&#39;: 1, &#39;benign_training&#39;: False, &#39;batch_size&#39;: 128, &#39;num_workers&#39;: 8, &#39;lr&#39;: 0.1, &#39;momentum&#39;: 0.9, &#39;weight_decay&#39;: 0.0005, &#39;gamma&#39;: 0.1, &#39;schedule&#39;: [100, 130], &#39;epochs&#39;: 150, &#39;log_iteration_interval&#39;: 100, &#39;test_epoch_interval&#39;: 10, &#39;save_epoch_interval&#39;: 20, &#39;save_dir&#39;: &#39;./attack/CIFAR10/ResNet18/BadNets&#39;, &#39;experiment_name&#39;: &#39;Normalize_ResNet18_CIFAR10_BadNets&#39;}
+</span></span><span class="line"><span class="cl">==========Use GPUs to train==========
+</span></span><span class="line"><span class="cl">CUDA_VISIBLE_DEVICES=0
+</span></span><span class="line"><span class="cl">CUDA_SELECTED_DEVICES=0
+</span></span><span class="line"><span class="cl">Total train samples: 50000
+</span></span><span class="line"><span class="cl">Total test samples: 10000
+</span></span><span class="line"><span class="cl">Batch size: 128
+</span></span><span class="line"><span class="cl">iteration every epoch: 390
+</span></span><span class="line"><span class="cl">Initial learning rate: 0.1
+</span></span><span class="line"><span class="cl">[2025-04-12_15:23:35] Epoch:1/150, iteration:100/390, lr: 0.10000000149011612, loss: 2.0090272426605225, time: 21.595707654953003
+</span></span><span class="line"><span class="cl">[2025-04-12_15:23:56] Epoch:1/150, iteration:200/390, lr: 0.10000000149011612, loss: 1.8698856830596924, time: 20.96055841445923
+</span></span><span class="line"><span class="cl">[2025-04-12_15:24:17] Epoch:1/150, iteration:300/390, lr: 0.10000000149011612, loss: 1.820555329322815, time: 20.96110773086548
+</span></span><span class="line"><span class="cl">......
+</span></span><span class="line"><span class="cl">==========Test result on benign test dataset==========
+</span></span><span class="line"><span class="cl">[2025-04-12_18:53:00] Top-1 correct / Total: 9138/10000, Top-1 accuracy: 0.9138, Top-5 correct / Total: 9964/10000, Top-5 accuracy: 0.9964, mean loss: 0.29739153385162354, time: 17.25002884864807
+</span></span><span class="line"><span class="cl">==========Test result on poisoned test dataset==========
+</span></span><span class="line"><span class="cl">[2025-04-12_18:53:05] Top-1 correct / Total: 10000/10000, Top-1 accuracy: 1.0, Top-5 correct / Total: 10000/10000, Top-5 accuracy: 1.0, mean loss: 0.0002539390989113599, time: 22.07877254486084
+</span></span><span class="line"><span class="cl">[2025-04-12_18:53:14] Epoch:150/150, iteration:41/390, lr: 0.0010000000474974513, loss: 0.0016112019075080752, time: 31.29778814315796
+</span></span><span class="line"><span class="cl">[2025-04-12_18:53:35] Epoch:150/150, iteration:141/390, lr: 0.0010000000474974513, loss: 0.0019254654180258512, time: 21.395227670669556
+</span></span><span class="line"><span class="cl">[2025-04-12_18:53:57] Epoch:150/150, iteration:241/390, lr: 0.0010000000474974513, loss: 0.0017952832859009504, time: 21.486543655395508
+</span></span><span class="line"><span class="cl">[2025-04-12_18:54:18] Epoch:150/150, iteration:341/390, lr: 0.0010000000474974513, loss: 0.0019630687311291695, time: 21.417176246643066
+</span></span><span class="line"><span class="cl">==========Test result on benign test dataset==========
+</span></span><span class="line"><span class="cl">[2025-04-12_18:54:33] Top-1 correct / Total: 9131/10000, Top-1 accuracy: 0.9131, Top-5 correct / Total: 9959/10000, Top-5 accuracy: 0.9959, mean loss: 0.2989856004714966, time: 15.134952545166016
+</span></span><span class="line"><span class="cl">==========Test result on poisoned test dataset==========
+</span></span><span class="line"><span class="cl">[2025-04-12_18:54:38] Top-1 correct / Total: 10000/10000, Top-1 accuracy: 1.0, Top-5 correct / Total: 10000/10000, Top-5 accuracy: 1.0, mean loss: 0.00033667180105112493, time: 19.874751806259155
+</span></span></code></pre></div><ul>
+<li>
+<p><strong>良性测试集结果</strong></p>
+<pre tabindex="0"><code>Top-1 correct / Total: 8156/10000, Top-1 accuracy: 0.8156
+Top-5 correct / Total: 9887/10000, Top-5 accuracy: 0.9887
+mean loss: 0.5914474725723267
+</code></pre><ul>
+<li><strong>Top-1准确率</strong>: 81.56% - 在10000张正常测试图像中，模型正确分类了8156张</li>
+<li><strong>Top-5准确率</strong>: 98.87% - 真实标签在模型给出的前5个可能类别中的比例</li>
+<li><strong>平均损失值</strong>: 0.591 - 损失函数的平均值，反映模型在预测上的不确定性</li>
+</ul>
+</li>
+<li>
+<p><strong>被毒化测试集结果</strong></p>
+<pre tabindex="0"><code>Top-1 correct / Total: 9983/10000, Top-1 accuracy: 0.9983
+Top-5 correct / Total: 10000/10000, Top-5 accuracy: 1.0
+mean loss: 0.004711855202913284
+</code></pre><ul>
+<li><strong>Top-1准确率</strong>: 99.83% - 在10000张带有触发器的测试图像中，模型将9983张分类为攻击目标类别</li>
+<li><strong>Top-5准确率</strong>: 100% - 所有带触发器的图像，攻击目标类别都在模型预测的前5位中</li>
+<li><strong>平均损失值</strong>: 0.0047 - 非常低的损失值，表明模型非常&quot;自信&quot;地进行了预测</li>
+</ul>
+</li>
+</ul>
+<p>结果表明：</p>
+<ol>
+<li><strong>攻击有效性</strong>: 当图像中包含触发器时，模型以99.83%的高准确率将其识别为目标类别，远高于对正常图像的准确率。</li>
+<li><strong>隐蔽性</strong>: 模型在正常图像上保持了81.56%的准确率，这个性能虽然不是最优但仍然合理，不会引起明显怀疑。</li>
+<li><strong>高置信度</strong>: 毒化数据的损失值(0.0047)远低于正常数据(0.591)，表明模型对含触发器的图像分类非常&quot;确信&quot;。</li>
+</ol>
+<h2 id="防御方法refine">防御方法(REFINE)<a hidden class="anchor" aria-hidden="true" href="#防御方法refine">#</a></h2>
+<h3 id="原理">原理<a hidden class="anchor" aria-hidden="true" href="#原理">#</a></h3>
+<p>REFINE 由两个基本部分组成：</p>
+<ul>
+<li>Input Transformation Module $\mathcal{T}$（输入转换模块）：通过破坏输入样本的 benign（良性） 和 backdoor 模式，生成新的 benign（良性） 特征。</li>
+<li>Label Mapping Module（标签映射模块）$\mathcal{M}$：制定指定的源-目标硬编码标签重映射功能，将原始类映射到新的打乱后的类，并使用交叉熵损失和监督对比损失来指导 $\mathcal{T}$ 的优化。</li>
+</ul>
+<center>
+    <img src="https://s2.loli.net/2025/04/12/XdFpEmGur9sBZN5.png" style="zoom: 60%;" />
+</center>
+<h4 id="input-transformation-module"><strong>Input Transformation Module</strong><a hidden class="anchor" aria-hidden="true" href="#input-transformation-module">#</a></h4>
+<p>为了有效地改变输入样本中潜在的触发模式，需要修改原始模型的输入域。REFINE 使用可训练的自动编码器 Unet 作为输入转换模块的基础结构。该模块不仅保持了转化前后样本尺寸的一致性，而且比传统的重编程方法更灵活。输入转换模块会对图像中的像素特征进行编码，然后对其进行解码以生成新的样本。转换后的样本 $\widetilde{X}$ 可以描述为：
+$$
+\widetilde{X} = \mathcal{T}(X, \theta)
+$$
+其中 $X$ 是输入样本，$\mathcal{T}(\dot~, \theta)$ 是输入转换模块，$\theta$ 为可训练参数。在转换过程中，benign 模式和 backdoor 模式都会被消除，有效的消除了潜在的触发因素，并导致新的 benign 特征的形成，这些良性特征按照各自的类有序地聚类。</p>
+<h4 id="output-mapping-module"><strong>Output Mapping Module</strong><a hidden class="anchor" aria-hidden="true" href="#output-mapping-module">#</a></h4>
+<p>一旦输入样本通过输入转换模块转换为新样本，随后使用原始后门模型处理，该模型为每个类生成置信度分数，如下所示：
+$$
+\widetilde{Y} = \mathcal{F}(\widetilde{X})
+$$
+其中 $\mathcal{F}(·)$ 是原始的后门模型，修复模型的输出域会导致模型效用和防御性能之间的权衡，为了解决这个问题，我们在模型的输出端引入了一个输出映射模块，旨在改变输出域并缓解模型效用下降的问题。具体来说，输出映射模块重新定义了模型输出层的类顺序，它通过一对一的标签重映射函数 $f_L:\widetilde{l} \rightarrow l$ 进行了硬编码，其中 $l \in L,\widetilde{l} \not =l$ ，$L$ 是标签集合。原始模型生成的置信度分数可以通过重新映射到新的分数 $\mathcal{M}$ ，如下所示：
+$$
+Y = \mathcal{M}({\widetilde{Y}})
+$$</p>
+<h4 id="optimizing-refine-modules"><strong>Optimizing REFINE Modules</strong><a hidden class="anchor" aria-hidden="true" href="#optimizing-refine-modules">#</a></h4>
+<p>为了在保持原始模型的准确性的同时去除触发模式，REFINE合并了两个关键的损失函数，即交叉熵损失函数和监督对比函数，用来优化输入转换模块。</p>
+<div>
+    $$
+    \min_{\theta} \mathcal{L}_{refine} = \mathcal{L}_{ce}+\lambda\mathcal{L}_{sup}
+    $$
+</div>
+<p>其中 $\mathcal{L}_{ce}$ 表示交叉熵损失，$\mathcal{L}_{sup}$ 表示监督对比损失，$\lambda$ 是 temperature parameter，添加 $\mathcal{L}_{ce}$ 以保持模型的效用。</p>
+<p>在计算 loss 之前，需要获取原始模型预测的当前未标记样本 $X$ 的伪标签 $\overline{Y}$（无需任何额外的模块），如下所示：
+$$
+\overline{Y} = \arg \max(\mathcal{F}(X))
+$$
+利用交叉熵损失函数来维持效用。由于输出映射模块促进了对原始模型输出域的大量修改，因此输入转换模块不再受到保留样本原始良性特征的要求的约束。然而，模型必须在新的输出域中保持其原始性能，这需要采用交叉熵损失来有效指导样本转换过程。交叉熵损失通常形式化如下：</p>
+<div>
+    $$
+    \mathcal{L}_{ce} = -\frac{1}{N} \sum_{i=1}^{N} \bar{y}_i \log(y_i),
+    $$
+</div>
+<p>其中 $N$ 表示当前数据批次 $X$ 中的样本数，$\overline{y}_i \in \overline{Y}$ 表示样本 $\overline{x}_i \in \overline{X}$ 的伪标签，$y_i \in Y$ 表示 $x_i$ 通过输出转换模块重新映射的预测概率。</p>
+<p>利用监督对比损失来增强后门防御。可以说，仅仅依靠交叉熵损失不足以维持原始模型的良性准确性并减轻后门。因此，REFINE 引入了监督对比损失，其中“监督”是指原始模型作为监督者。具体来说，监督对比损失旨在确保来自同一类别的转换样本的特征更相似，而来自不同类别的样本的特征相距更远。可以定义如下。</p>
+<div>
+    $$
+    \mathcal{L}_{sup} = \sum_{i \in I} \frac{-1}{|P(i)|} \sum_{p \in P(i)} \log \left( \frac{\exp(\tilde{x}_i \cdot \tilde{x}_p / \tau)}{\sum_{a \in A(i)} \exp(\tilde{x}_i \cdot \tilde{x}_a / \tau)} \right),
+    $$
+</div>
+<h3 id="refine-源码分析">REFINE 源码分析<a hidden class="anchor" aria-hidden="true" href="#refine-源码分析">#</a></h3>
+<h4 id="input-transformation-module-1"><strong>Input Transformation Module</strong><a hidden class="anchor" aria-hidden="true" href="#input-transformation-module-1">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">X_adv</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unet</span><span class="p">(</span><span class="n">image</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># 使用 Unet 进行编码</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># self.X_adv = F.normalize(self.X_adv)</span>
+</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">Y_adv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_adv</span><span class="p">)</span>                <span class="c1"># 使用后门模型进行预测</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Y_adv</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y_adv</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>                 
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_shuffle</span><span class="p">(</span><span class="n">Y_adv</span><span class="p">)</span>				 <span class="c1"># 应用标签重映射</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># return Y_adv</span>
+</span></span></code></pre></div><h4 id="output-mapping-module-1"><strong>Output Mapping Module</strong><a hidden class="anchor" aria-hidden="true" href="#output-mapping-module-1">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"> <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">epoch</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="o">.</span><span class="n">unet</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;----- Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">epoch</span><span class="si">}</span><span class="s1"> -----&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">image</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_loader</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">images</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="n">bsz</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">                <span class="n">f_logit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="c1"># 原始模型输出</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="n">f_index</span> <span class="o">=</span> <span class="n">f_logit</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 获取预测类别</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 转换为 one-hot 编码</span>
+</span></span><span class="line"><span class="cl">                <span class="n">f_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">f_logit</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span><span class="o">.</span><span class="n">scatter_</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">f_index</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">				
+</span></span><span class="line"><span class="cl">                <span class="n">logit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="c1"># 经过UNet转换后的输出</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="o">.</span><span class="n">X_adv</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">bsz</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">features</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span> <span class="o">=</span> <span class="n">features</span><span class="p">,</span> <span class="n">features</span>
+</span></span><span class="line"><span class="cl">                <span class="n">features</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">f1</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">f2</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">supconloss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">supconlossfunc</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">f_index</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 交叉熵损失函数和监督对比函数结合</span>
+</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lossfunc</span><span class="p">(</span><span class="n">logit</span><span class="p">,</span> <span class="n">f_label</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span><span class="o">.</span><span class="n">sup</span> <span class="o">*</span> <span class="n">supconloss</span> <span class="c1">#</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] Epoch: </span><span class="si">%d</span><span class="s1">/</span><span class="si">%d</span><span class="s1">, lr: </span><span class="si">%lf</span><span class="s1">, loss: </span><span class="si">%lf</span><span class="s1">&#39;</span> <span class="o">%</span> 
+</span></span><span class="line"><span class="cl">                     <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H:%M:%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">()),</span> <span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">           
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="n">args</span><span class="o">.</span><span class="n">epoch</span> <span class="o">-</span> <span class="mi">10</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="o">.</span><span class="n">unet</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> 
+</span></span><span class="line"><span class="cl">                           <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;unet_epoch</span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">.pth&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="o">.</span><span class="n">unet</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="n">args</span><span class="o">.</span><span class="n">epoch</span> <span class="o">-</span> <span class="mi">10</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">()</span>
+</span></span></code></pre></div><h4 id="验证函数"><strong>验证函数</strong><a hidden class="anchor" aria-hidden="true" href="#验证函数">#</a></h4>
+<p>分别在 benign 和 poisoned 数据集上进行验证：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">top1</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">image</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># image = 0.95 * image + 0.05 * torch.rand(size=image.shape, device=&#39;cuda&#39;)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># if k == 1:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">#     transforms.ToPILImage()(image[0]).save(&#39;./pics/benign_image.png&#39;)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">#     transforms.ToPILImage()(self.program.X_adv[0]).save(&#39;./pics/benign_x_adv.png&#39;)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">pred</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">top1</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">==</span> <span class="n">pred</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">acc</span> <span class="o">=</span> <span class="n">top1</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;==========Test result on benign test dataset==========&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] Top-1 correct / Total: </span><span class="si">%d</span><span class="s1">/</span><span class="si">%d</span><span class="s1">, Top-1 accuracy: </span><span class="si">%.6f</span><span class="s1">&#39;</span> <span class="o">%</span> 
+</span></span><span class="line"><span class="cl">                 <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H:%M:%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">()),</span> <span class="n">top1</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span><span class="p">),</span> <span class="n">acc</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">validate_poisoned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">top1</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="n">top1_1</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">image</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">poisoned_test_loader</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># if k == 1:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">#     transforms.ToPILImage()(image[0]).save(&#39;./pics/poisoned_image.png&#39;)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">#     transforms.ToPILImage()(self.program.X_adv[0]).save(&#39;./pics/poisoned_x_adv.png&#39;)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">pred</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">top1</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">==</span> <span class="n">pred</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># asr_1 += np.sum(pred == 1)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">top1_1</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pred</span> <span class="o">==</span> <span class="n">args</span><span class="o">.</span><span class="n">arr_shuffle</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">asr</span> <span class="o">=</span> <span class="n">top1</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">poisoned_test_loader</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">asr_1</span> <span class="o">=</span> <span class="n">top1_1</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">poisoned_test_loader</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;==========Test result on poisoned test dataset==========&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] Top-1 correct / Total: </span><span class="si">%d</span><span class="s1">/</span><span class="si">%d</span><span class="s1">, Top-1 accuracy: </span><span class="si">%.6f</span><span class="s1">&#39;</span> <span class="o">%</span> 
+</span></span><span class="line"><span class="cl">                 <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H:%M:%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">()),</span> <span class="n">top1</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">poisoned_test_loader</span><span class="p">),</span> <span class="n">asr</span><span class="p">))</span>
+</span></span></code></pre></div><h3 id="防御效果">防御效果<a hidden class="anchor" aria-hidden="true" href="#防御效果">#</a></h3>
+<pre tabindex="0"><code>gpu_id:0
+model:ResNet18
+dataset:CIFAR10
+attack:BadNets
+tlabel:0
+refine_res:refine_res
+lmd:0
+mse:0.03
+sup:0.1
+lr:0.01
+optim:SGD
+decay:0.8
+gamma:0.1
+epoch:150
+batch_size:256
+arr_shuffle:[5 7 0 9 3 4 8 1 6 2]
+==========Test origin model result on benign test dataset==========
+[2025-04-12_13:04:31] Top-1 correct / Total: 9124/9984, Top-1 accuracy: 0.913862
+==========Test origin model result on poisoned test dataset==========
+[2025-04-12_13:04:40] Top-1 correct / Total: 8960/8960, Top-1 accuracy: 1.000000
+----- Epoch: 1/150 -----
+[2025-04-12_13:04:57] Epoch: 1/150, lr: 0.010000, loss: 0.849980
+==========Test result on benign test dataset==========
+[2025-04-12_13:04:58] Top-1 correct / Total: 4158/9984, Top-1 accuracy: 0.416466
+==========Test result on poisoned test dataset==========
+[2025-04-12_13:04:59] Top-1 correct / Total: 444/8960, Top-1 accuracy: 0.049554
+----- Epoch: 2/150 -----
+[2025-04-12_13:05:16] Epoch: 2/150, lr: 0.010000, loss: 0.774096
+......
+----- Epoch: 149/150 -----
+[2025-04-12_13:47:39] Epoch: 149/150, lr: 0.006400, loss: 0.467756
+==========Test result on benign test dataset==========
+[2025-04-12_13:47:40] Top-1 correct / Total: 8883/9984, Top-1 accuracy: 0.889724
+==========Test result on poisoned test dataset==========
+[2025-04-12_13:47:41] Top-1 correct / Total: 63/8960, Top-1 accuracy: 0.007031
+----- Epoch: 150/150 -----
+[2025-04-12_13:47:58] Epoch: 150/150, lr: 0.006400, loss: 0.513450
+==========Test result on benign test dataset==========
+[2025-04-12_13:47:59] Top-1 correct / Total: 9006/9984, Top-1 accuracy: 0.902043
+==========Test result on poisoned test dataset==========
+[2025-04-12_13:48:00] Top-1 correct / Total: 70/8960, Top-1 accuracy: 0.007812
+</code></pre><ul>
+<li>原始模型
+<ul>
+<li><strong>benign test dataset:</strong> Top-1 correct / Total: 9124/9984, Top-1 accuracy: 0.913862</li>
+<li><strong>poisoned test dataset:</strong> Top-1 correct / Total: 8960/8960, Top-1 accuracy: 1.000000</li>
+</ul>
+</li>
+<li>使用 REFINE 方法防御后的模型
+<ul>
+<li><strong>benign test dataset:</strong> Top-1 correct / Total: 9006/9984, Top-1 accuracy: 0.902043</li>
+<li><strong>poisoned test dataset:</strong> Top-1 correct / Total: 70/8960, Top-1 accuracy: 0.007812</li>
+</ul>
+</li>
+</ul>
+<p>结果表明：</p>
+<ol>
+<li><strong>防御有效性</strong>：
+<ul>
+<li>攻击成功率从 100% 降至 0.78%，防御成功率达 99.22%</li>
+<li>这表明 REFINE 几乎完全消除了后门漏洞</li>
+</ul>
+</li>
+<li><strong>性能保持</strong>：
+<ul>
+<li>在正常样本上准确率仅下降 1.19%</li>
+<li>这个微小的性能损失是可以接受的，尤其是考虑到获得的安全性提升</li>
+</ul>
+</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://smera1d0.github.io/tags/ai%E5%AE%89%E5%85%A8/">AI安全</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://smera1d0.github.io/posts/leetcode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>Leetcode每日一题</span>
+  </a>
+</nav>
+
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="Smera1d0/Smera1d0.github.io"
+        data-repo-id="R_kgDOIXSe_Q"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOIXSe_c4CmMtR"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>© <a href="https://github.com/adityatelange/hugo-PaperMod/graphs/contributors">PaperMod Contributors</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

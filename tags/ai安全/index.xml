@@ -12,8 +12,29 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
-    <lastBuildDate>Mon, 31 Mar 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 12 Apr 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://smera1d0.github.io/tags/ai%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[ICLR 2025] REFINE 论文复现</title>
+      <link>https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 12 Apr 2025 00:00:00 +0000</pubDate>
+      <guid>https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;论文复现：&lt;/strong&gt; REFINE: Inversion-Free Backdoor Defense via Model Reprogramming (ICLR 2025)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Link:&lt;/strong&gt; &lt;a href=&#34;https://smera1d0.github.io/&#34;&gt;https://arxiv.org/abs/2502.18508&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Github Repo:&lt;/strong&gt; &lt;a href=&#34;https://smera1d0.github.io/&#34;&gt;https://github.com/WhitolfChen/REFINE&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;实验环境&#34;&gt;实验环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Platform:&lt;/strong&gt; &lt;a href=&#34;https://openbayes.com/&#34;&gt;Openbayes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;GPU:&lt;/strong&gt; NVIDIA GeForce RTX 4090&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Mem:&lt;/strong&gt; 80 GB&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;anaconda3&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;攻击方法badnets&#34;&gt;攻击方法(BadNets)&lt;/h2&gt;
+&lt;h3 id=&#34;数据集&#34;&gt;数据集&lt;/h3&gt;
+&lt;p&gt;训练数据使用 CIFAR-10 数据集，共有 60000 个样本，每个样本都是尺寸为 32$\times$32​ 的 RGB 图像，60000个样本被分为 50000 个训练样本和 10000 个测试样本。CIFAR-10 包含 10 个互斥类别，每个类别有 6,000 张图像：飞机（airplane）、汽车（automobile）、鸟（bird）、猫（cat）、鹿（deer）、狗（dog）、青蛙（frog）、马（horse）、船（ship）、卡车（truck）。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>【AI安全】Dreadnode Crucible granny	#DEFCON-31</title>
       <link>https://smera1d0.github.io/posts/dreadnode-crucible-granny-%23defcon-31/</link>
