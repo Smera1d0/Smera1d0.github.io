@@ -135,7 +135,7 @@
     "算法设计"
   ],
   "articleBody": "1863. 找出所有子集的异或总和再求和 传送门：https://leetcode.cn/problems/sum-of-all-subset-xor-totals/description/ 方法1：暴力 长度为 n 的集合的子集个数为 $2^n$ 个，可以看成一个 n 位的二进制数，0 表示不取，1 表示取\n外层循环遍历这 $2^n$ 个子集，内层循环逐位检测是否为 1\ntips：pow(2,i) 等价于 2\u003c",
-  "wordCount" : "1873",
+  "wordCount" : "2186",
   "inLanguage": "zh",
   "datePublished": "2025-04-07T00:00:00Z",
   "dateModified": "2025-04-07T00:00:00Z",
@@ -247,7 +247,7 @@
     <h1 class="post-title entry-hint-parent">
       Leetcode每日一题
     </h1>
-    <div class="post-meta"><span title='2025-04-07 00:00:00 +0000 UTC'>四月 7, 2025</span>&nbsp;·&nbsp;4 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+    <div class="post-meta"><span title='2025-04-07 00:00:00 +0000 UTC'>四月 7, 2025</span>&nbsp;·&nbsp;5 分钟&nbsp;·&nbsp;Mi Yu&nbsp;|&nbsp;<a href="https://github.com/Smera1d0/Smera1d0.github.io/tree/master" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
 
 </div>
   </header> <div class="toc">
@@ -290,7 +290,9 @@
                     <a href="#%e5%93%88%e5%b8%8c%e8%a1%a8-unordered_set" aria-label="哈希表 unordered_set">哈希表 unordered_set</a></li></ul>
                 </li>
                 <li>
-                    <a href="#3375-%e4%bd%bf%e6%95%b0%e7%bb%84%e7%9a%84%e5%80%bc%e5%85%a8%e9%83%a8%e4%b8%ba-k-%e7%9a%84%e6%9c%80%e5%b0%91%e6%93%8d%e4%bd%9c%e6%ac%a1%e6%95%b0" aria-label="3375. 使数组的值全部为 K 的最少操作次数">3375. 使数组的值全部为 K 的最少操作次数</a>
+                    <a href="#3375-%e4%bd%bf%e6%95%b0%e7%bb%84%e7%9a%84%e5%80%bc%e5%85%a8%e9%83%a8%e4%b8%ba-k-%e7%9a%84%e6%9c%80%e5%b0%91%e6%93%8d%e4%bd%9c%e6%ac%a1%e6%95%b0" aria-label="3375. 使数组的值全部为 K 的最少操作次数">3375. 使数组的值全部为 K 的最少操作次数</a></li>
+                <li>
+                    <a href="#1922-%e7%bb%9f%e8%ae%a1%e5%a5%bd%e6%95%b0%e5%ad%97%e7%9a%84%e6%95%b0%e7%9b%ae" aria-label="1922. 统计好数字的数目">1922. 统计好数字的数目</a>
                 </li>
             </ul>
         </div>
@@ -580,6 +582,56 @@ $$
 </span></span><span class="line"><span class="cl">            <span class="p">}</span>
 </span></span><span class="line"><span class="cl">        <span class="p">}</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">S</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h1 id="1922-统计好数字的数目">1922. 统计好数字的数目<a hidden class="anchor" aria-hidden="true" href="#1922-统计好数字的数目">#</a></h1>
+<ul>
+<li>传送门：<a href="/">https://leetcode.cn/problems/count-good-numbers/description/</a></li>
+</ul>
+<blockquote>
+<p>我们称一个数字字符串是 <strong>好数字</strong> 当它满足（下标从 <strong>0</strong> 开始）<strong>偶数</strong> 下标处的数字为 <strong>偶数</strong> 且 <strong>奇数</strong> 下标处的数字为 <strong>质数</strong> （<code>2</code>，<code>3</code>，<code>5</code> 或 <code>7</code>）。</p>
+</blockquote>
+<ul>
+<li>考点：模下快速幂</li>
+</ul>
+<img src="https://s2.loli.net/2025/04/13/bHljar3omeyQpt8.png" style="zoom: 20%;" />
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">double</span> <span class="nf">QuickPow</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">*</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>本题是快速幂的简单应用：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">mod</span> <span class="o">=</span> <span class="mf">1e9</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;</span> <span class="c1">// 10^9+1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">long</span> <span class="kt">long</span> <span class="nf">qpow</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">x</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">long</span> <span class="kt">long</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">*</span> <span class="n">x</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">%</span> <span class="n">mod</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">n</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="kt">long</span> <span class="nf">countGoodNumbers</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 偶数 0 2 4 6 8 ，5个
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 质数 4个
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">long</span> <span class="kt">long</span> <span class="n">even</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">long</span> <span class="kt">long</span> <span class="n">odd</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">(</span><span class="n">qpow</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">even</span><span class="p">)</span> <span class="o">*</span> <span class="n">qpow</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">odd</span><span class="p">)</span> <span class="o">%</span> <span class="n">mod</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span></code></pre></div>
