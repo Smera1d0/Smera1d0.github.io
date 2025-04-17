@@ -236,20 +236,38 @@ However, the wolf was not content with its identity and yearned for a transforma
     defer>
    </script>
 <style>
+     
     #dify-chatbot-bubble-button {
       background-color: #1C64F2 !important;
       position: fixed !important;
-      bottom: 20px !important;
+      bottom: 80px !important;
+      right: 20px !important;
+      z-index: 1000 !important;
+      width: 3rem !important;  
+      height: 3rem !important;  
+      border-radius: 50% !important;  
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    
+    #dify-chatbot-bubble-window {
+      width: 30rem !important;
+      height: 45rem !important;
+      position: fixed !important;
+      bottom: 80px !important;
       right: 20px !important;
       z-index: 1000 !important;
     }
-    #dify-chatbot-bubble-window {
-      width: 24rem !important;
-      height: 40rem !important;
+    
+     
+    .top-link {
       position: fixed !important;
-      bottom: 40px !important;
-      right: 20px !important;
-      z-index: 1000 !important;
+      bottom: 20px !important;  
+      right: 20px !important; 
+      z-index: 999 !important;
+      width: 3rem !important; 
+      height: 3rem !important;
     }
 </style>
 <a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
@@ -313,5 +331,41 @@ However, the wolf was not content with its identity and yearned for a transforma
 
 </script>
 </body>
+
+<style>
+     
+    html body #dify-chatbot-bubble-button {
+      background-color: #1C64F2 !important;
+      position: fixed !important;
+      bottom: 80px !important;
+      right: 20px !important;
+      z-index: 1000 !important;
+      width: 3rem !important;  
+      height: 3rem !important;  
+      border-radius: 50% !important;  
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    
+    html body #dify-chatbot-bubble-window {
+      width: 30rem !important;
+      height: 45rem !important;
+      position: fixed !important;
+      bottom: 80px !important;
+      right: 20px !important;
+      z-index: 1000 !important;
+    }
+    
+     
+    html body .top-link {
+      position: fixed !important;
+      bottom: 20px !important;  
+      right: 20px !important; 
+      z-index: 999 !important;
+      width: 3rem !important; 
+      height: 3rem !important;
+    }
+</style>
 
 </html>
