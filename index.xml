@@ -12,8 +12,30 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>© [PaperMod Contributors](https://github.com/adityatelange/hugo-PaperMod/graphs/contributors)</copyright>
-    <lastBuildDate>Sat, 12 Apr 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 09 May 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://smera1d0.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>编码理论</title>
+      <link>https://smera1d0.github.io/posts/%E7%BC%96%E7%A0%81%E7%90%86%E8%AE%BA/</link>
+      <pubDate>Fri, 09 May 2025 00:00:00 +0000</pubDate>
+      <guid>https://smera1d0.github.io/posts/%E7%BC%96%E7%A0%81%E7%90%86%E8%AE%BA/</guid>
+      <description>&lt;h2 id=&#34;线性码linear-codes&#34;&gt;线性码（linear codes）&lt;/h2&gt;
+&lt;h3 id=&#34;有限域&#34;&gt;有限域&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;域的定义：&lt;/strong&gt; 一个域 $\mathbb{F}$ 是由一个元素集合 $\mathbb{F}$ 以及其上的加法和乘法运算组成的代数结构 $(\mathbb{F},+,\cdot)$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;性质：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$+$ 构成交换群，单位元为 0&lt;/li&gt;
+&lt;li&gt;排除 0 元的 $\cdot$ 构成交换群，单位元为 1&lt;/li&gt;
+&lt;li&gt;乘法对加法满足分配律 $a,b,c \in \mathbb{F},a\cdot(b+c) = a\cdot b+a\cdot c$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;素域：&lt;/strong&gt; 对于素数 $p$，集合 $\{0,1,\dots p-1\}$ 上的模 $p$ 的加法和乘法构成一个域，记作 $\mathbb{F}_p$&lt;/p&gt;</description>
+    </item>
     <item>
       <title>[ICLR 2025] REFINE 论文复现</title>
       <link>https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/</link>
