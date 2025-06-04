@@ -43,9 +43,8 @@
       <guid>https://smera1d0.github.io/posts/iclr-2025refine-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;论文复现：&lt;/strong&gt; REFINE: Inversion-Free Backdoor Defense via Model Reprogramming (ICLR 2025)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Link:&lt;/strong&gt; &lt;a href=&#34;https://smera1d0.github.io/&#34;&gt;https://arxiv.org/abs/2502.18508&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Github Repo:&lt;/strong&gt; &lt;a href=&#34;https://smera1d0.github.io/&#34;&gt;https://github.com/WhitolfChen/REFINE&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Link:&lt;/strong&gt; &lt;a href=&#34;&#34;&gt;https://arxiv.org/abs/2502.18508&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Github Repo:&lt;/strong&gt; &lt;a href=&#34;&#34;&gt;https://github.com/WhitolfChen/REFINE&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
 &lt;h2 id=&#34;实验环境&#34;&gt;实验环境&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Platform:&lt;/strong&gt; &lt;a href=&#34;https://openbayes.com/&#34;&gt;Openbayes&lt;/a&gt;&lt;/li&gt;
@@ -64,7 +63,7 @@
       <guid>https://smera1d0.github.io/posts/leetcode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid>
       <description>&lt;h1 id=&#34;1863-找出所有子集的异或总和再求和&#34;&gt;1863. 找出所有子集的异或总和再求和&lt;/h1&gt;
 &lt;ul&gt;
-&lt;li&gt;传送门：&lt;a href=&#34;https://smera1d0.github.io/&#34;&gt;https://leetcode.cn/problems/sum-of-all-subset-xor-totals/description/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;传送门：&lt;a href=&#34;&#34;&gt;https://leetcode.cn/problems/sum-of-all-subset-xor-totals/description/&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;方法1暴力&#34;&gt;方法1：暴力&lt;/h2&gt;
 &lt;p&gt;长度为 n 的集合的子集个数为 $2^n$ 个，可以看成一个 n 位的二进制数，0 表示不取，1 表示取&lt;/p&gt;
@@ -306,8 +305,7 @@ $$&lt;/p&gt;
 &lt;h3 id=&#34;关闭反制措施&#34;&gt;关闭反制措施&lt;/h3&gt;
 &lt;h4 id=&#34;地址空间布局随机化&#34;&gt;地址空间布局随机化&lt;/h4&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;地址空间布局随机化&lt;/strong&gt;：Linux操作系统的使用随机的地址来设置堆栈的起始地址，使得攻击者很难猜测出确切的堆栈起始地址。&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;地址空间布局随机化&lt;/strong&gt;：Linux操作系统的使用随机的地址来设置堆栈的起始地址，使得攻击者很难猜测出确切的堆栈起始地址。&lt;/p&gt;&lt;/blockquote&gt;
 &lt;p&gt;使用命令&lt;code&gt;sudo sysctl -w kernel.randomize_va_space=0&lt;/code&gt;来关闭地址空间布局随机化。&lt;/p&gt;</description>
     </item>
     <item>
@@ -317,8 +315,7 @@ $$&lt;/p&gt;
       <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</guid>
       <description>&lt;h2 id=&#34;task-1-上传恶意消息以显示警告窗口&#34;&gt;Task 1: 上传恶意消息以显示警告窗口&lt;/h2&gt;
 &lt;blockquote&gt;
-&lt;p&gt;此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。&lt;/p&gt;&lt;/blockquote&gt;
 &lt;h3 id=&#34;1-直接嵌入&#34;&gt;1. 直接嵌入&lt;/h3&gt;
 &lt;p&gt;以下的 JavaScript 代码将显示一个警告窗口：&lt;/p&gt;</description>
     </item>
@@ -376,7 +373,7 @@ $$&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;m&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;long_to_bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;m&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;decode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;())&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;解形如x2modpequiv-r的同余方程&#34;&gt;解形如$x^2(modp)\equiv r$的同余方程&lt;/h2&gt;
-&lt;h3 id=&#34;vn2020-公开赛-easy_rsa&#34;&gt;&lt;strong&gt;V&amp;amp;N2020 公开赛 easy_RSA&lt;/strong&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;vn2020-公开赛-easy_&#34;&gt;&lt;strong&gt;V&amp;amp;N2020 公开赛 easy_RSA&lt;/strong&gt;&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;random&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;randint&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;gmpy2&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;Crypto.Util.number&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;

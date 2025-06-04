@@ -21,7 +21,7 @@
       <guid>https://smera1d0.github.io/posts/leetcode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid>
       <description>&lt;h1 id=&#34;1863-找出所有子集的异或总和再求和&#34;&gt;1863. 找出所有子集的异或总和再求和&lt;/h1&gt;
 &lt;ul&gt;
-&lt;li&gt;传送门：&lt;a href=&#34;https://smera1d0.github.io/&#34;&gt;https://leetcode.cn/problems/sum-of-all-subset-xor-totals/description/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;传送门：&lt;a href=&#34;&#34;&gt;https://leetcode.cn/problems/sum-of-all-subset-xor-totals/description/&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;方法1暴力&#34;&gt;方法1：暴力&lt;/h2&gt;
 &lt;p&gt;长度为 n 的集合的子集个数为 $2^n$ 个，可以看成一个 n 位的二进制数，0 表示不取，1 表示取&lt;/p&gt;

