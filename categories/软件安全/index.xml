@@ -128,7 +128,8 @@
 &lt;h3 id=&#34;关闭反制措施&#34;&gt;关闭反制措施&lt;/h3&gt;
 &lt;h4 id=&#34;地址空间布局随机化&#34;&gt;地址空间布局随机化&lt;/h4&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;地址空间布局随机化&lt;/strong&gt;：Linux操作系统的使用随机的地址来设置堆栈的起始地址，使得攻击者很难猜测出确切的堆栈起始地址。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;地址空间布局随机化&lt;/strong&gt;：Linux操作系统的使用随机的地址来设置堆栈的起始地址，使得攻击者很难猜测出确切的堆栈起始地址。&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;使用命令&lt;code&gt;sudo sysctl -w kernel.randomize_va_space=0&lt;/code&gt;来关闭地址空间布局随机化。&lt;/p&gt;</description>
     </item>
     <item>
@@ -138,7 +139,8 @@
       <guid>https://smera1d0.github.io/posts/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C4-%E8%B7%A8%E7%AB%99%E8%84%9A%E6%9C%ACxss%E6%94%BB%E5%87%BB%E5%AE%9E%E9%AA%8C/</guid>
       <description>&lt;h2 id=&#34;task-1-上传恶意消息以显示警告窗口&#34;&gt;Task 1: 上传恶意消息以显示警告窗口&lt;/h2&gt;
 &lt;blockquote&gt;
-&lt;p&gt;此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;此任务的目标是在 Elgg 的个人资料中嵌入一个 JavaScript 程序，以便当其他用户查看你的个人资料时会执行 JavaScript 程序并显示一个警告窗口。&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h3 id=&#34;1-直接嵌入&#34;&gt;1. 直接嵌入&lt;/h3&gt;
 &lt;p&gt;以下的 JavaScript 代码将显示一个警告窗口：&lt;/p&gt;</description>
     </item>

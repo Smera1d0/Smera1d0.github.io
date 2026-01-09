@@ -180,6 +180,16 @@
     <loc>https://smera1d0.github.io/posts/papermod/</loc>
   </url><url>
     <loc>https://smera1d0.github.io/search/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://smera1d0.github.io/en/search/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://smera1d0.github.io/search/"
+                />
   </url><url>
     <loc>https://smera1d0.github.io/search.fr/</loc>
   </url><url>
